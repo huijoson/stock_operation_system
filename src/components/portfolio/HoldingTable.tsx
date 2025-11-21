@@ -1,0 +1,220 @@
+'use client'
+
+import { Decimal } from 'decimal.js'
+
+interface Holding {
+  id: string
+  portfolioId: string
+  symbol: string
+  quantity: string | Decimal
+  averageCost: string | Decimal
+  createdAt: string | Date
+  updatedAt: string | Date
+}
+
+interface HoldingTableProps {
+  holdings: Holding[]
+  currentPrices?: Record<string, Decimal>
+}
+
+export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTableProps) {
+  // Calculate total cost for a holding
+  const calculateTotalCost = (holding: Holding): string => {
+    const quantity = new Decimal(holding.quantity.toString())
+    const averageCost = new Decimal(holding.averageCost.toString())
+    const totalCost = quantity.times(averageCost)
+    return totalCost.toFixed(2)
+  }
+
+  // Calculate unrealized P&L for a holding
+  const calculateUnrealizedPL = (holding: Holding): Decimal | null => {
+    const currentPrice = currentPrices[holding.symbol]
+    if (!currentPrice) {
+      return null
+    }
+    
+    const quantity = new Decimal(holding.quantity.toString())
+    const averageCost = new Decimal(holding.averageCost.toString())
+    
+    // (currentPrice - averageCost) * quantity
+    return currentPrice.minus(averageCost).times(quantity)
+  }
+
+  // Calculate P&L percentage
+  const calculatePLPercentage = (holding: Holding): Decimal | null => {
+    const currentPrice = currentPrices[holding.symbol]
+    if (!currentPrice) {
+      return null
+    }
+    
+    const averageCost = new Decimal(holding.averageCost.toString())
+    
+    if (averageCost.isZero()) {
+      return null
+    }
+    
+    // ((currentPrice - averageCost) / averageCost) * 100
+    return currentPrice.minus(averageCost).div(averageCost).times(100)
+  }
+
+  // Format number with thousand separators
+  const formatNumber = (value: string | Decimal, decimals: number = 2): string => {
+    const num = new Decimal(value.toString())
+    return num.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
+  // Get color class based on P&L value
+  const getPLColorClass = (pl: Decimal | null): string => {
+    if (!pl) return 'text-gray-500'
+    if (pl.isPositive()) return 'text-green-600'
+    if (pl.isNegative()) return 'text-red-600'
+    return 'text-gray-900'
+  }
+
+  if (holdings.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow p-8 text-center">
+        <p className="text-gray-500">目前沒有持股記錄</p>
+        <p className="text-sm text-gray-400 mt-2">請先新增交易記錄以建立持股</p>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {/* Desktop/Tablet Table View */}
+      <div className="hidden sm:block bg-white rounded-lg shadow overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  股票代號
+                </th>
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  持股數量
+                </th>
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  平均成本
+                </th>
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  總成本
+                </th>
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  目前價格
+                </th>
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  未實現損益
+                </th>
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  報酬率
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {holdings.map((holding) => {
+                const unrealizedPL = calculateUnrealizedPL(holding)
+                const plPercentage = calculatePLPercentage(holding)
+                const currentPrice = currentPrices[holding.symbol]
+                
+                return (
+                  <tr key={holding.id} className="hover:bg-gray-50 transition">
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {holding.symbol}
+                      </div>
+                    </td>
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
+                      <div className="text-sm text-gray-900">
+                        {formatNumber(holding.quantity, 4)}
+                      </div>
+                    </td>
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
+                      <div className="text-sm text-gray-900">
+                        ${formatNumber(holding.averageCost)}
+                      </div>
+                    </td>
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
+                      <div className="text-sm font-medium text-gray-900">
+                        ${formatNumber(calculateTotalCost(holding))}
+                      </div>
+                    </td>
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
+                      <div className="text-sm text-gray-900">
+                        {currentPrice ? `${formatNumber(currentPrice)}` : '-'}
+                      </div>
+                    </td>
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
+                      <div className={`text-sm font-medium ${getPLColorClass(unrealizedPL)}`}>
+                        {unrealizedPL ? `${formatNumber(unrealizedPL)}` : '-'}
+                      </div>
+                    </td>
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
+                      <div className={`text-sm font-medium ${getPLColorClass(plPercentage)}`}>
+                        {plPercentage ? `${formatNumber(plPercentage)}%` : '-'}
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="sm:hidden space-y-4">
+        {holdings.map((holding) => {
+          const unrealizedPL = calculateUnrealizedPL(holding)
+          const plPercentage = calculatePLPercentage(holding)
+          const currentPrice = currentPrices[holding.symbol]
+          
+          return (
+            <div key={holding.id} className="bg-white rounded-lg shadow p-4">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="text-lg font-bold text-gray-900">{holding.symbol}</h3>
+                {plPercentage && (
+                  <span className={`text-sm font-semibold ${getPLColorClass(plPercentage)}`}>
+                    {formatNumber(plPercentage)}%
+                  </span>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-gray-500 text-xs">持股數量</p>
+                  <p className="font-medium text-gray-900">{formatNumber(holding.quantity, 4)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-xs">平均成本</p>
+                  <p className="font-medium text-gray-900">${formatNumber(holding.averageCost)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-xs">總成本</p>
+                  <p className="font-medium text-gray-900">${formatNumber(calculateTotalCost(holding))}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-xs">目前價格</p>
+                  <p className="font-medium text-gray-900">
+                    {currentPrice ? `${formatNumber(currentPrice)}` : '-'}
+                  </p>
+                </div>
+              </div>
+              
+              {unrealizedPL && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">未實現損益</span>
+                    <span className={`text-base font-bold ${getPLColorClass(unrealizedPL)}`}>
+                      ${formatNumber(unrealizedPL)}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </>
+  )
+}
