@@ -200,6 +200,133 @@ export class TransactionService {
   }
 
   /**
+   * Update a transaction and recalculate holdings
+   * 
+   * @param transactionId - Transaction ID to update
+   * @param updates - Updated transaction data
+   * @returns Updated transaction object
+   * @throws Error if transaction not found
+   */
+  async updateTransaction(
+    transactionId: string,
+    updates: {
+      type: 'BUY' | 'SELL'
+      quantity: number
+      price: number
+      date: Date
+    }
+  ): Promise<Transaction> {
+    // Get the existing transaction
+    const existingTransaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+    })
+
+    if (!existingTransaction) {
+      throw new Error('Transaction not found')
+    }
+
+    const { portfolioId, symbol } = existingTransaction
+
+    // Update the transaction
+    const updatedTransaction = await this.prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        type: updates.type,
+        quantity: updates.quantity.toString(),
+        price: updates.price.toString(),
+        date: updates.date,
+      },
+    })
+
+    // Recalculate holdings for this symbol
+    await this.recalculateHoldings(portfolioId, symbol)
+
+    return updatedTransaction
+  }
+
+  /**
+   * Recalculate holdings for a specific symbol in a portfolio
+   * 
+   * @param portfolioId - Portfolio ID
+   * @param symbol - Stock symbol
+   */
+  private async recalculateHoldings(portfolioId: string, symbol: string): Promise<void> {
+    // Get all transactions for this symbol
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        portfolioId,
+        symbol,
+      },
+      orderBy: { date: 'asc' },
+    })
+
+    if (transactions.length === 0) {
+      // No transactions, delete the holding
+      await this.prisma.holding.deleteMany({
+        where: {
+          portfolioId,
+          symbol,
+        },
+      })
+      return
+    }
+
+    // Recalculate holding based on all transactions
+    let totalQuantity = new Decimal(0)
+    let totalCost = new Decimal(0)
+
+    for (const tx of transactions) {
+      const txQuantity = new Decimal(tx.quantity.toString())
+      const txPrice = new Decimal(tx.price.toString())
+
+      if (tx.type === 'BUY') {
+        totalCost = totalCost.plus(txQuantity.mul(txPrice))
+        totalQuantity = totalQuantity.plus(txQuantity)
+      } else if (tx.type === 'SELL') {
+        // For sell, we need to calculate based on current average cost
+        const currentAvgCost = totalQuantity.greaterThan(0) 
+          ? totalCost.div(totalQuantity) 
+          : new Decimal(0)
+        
+        totalCost = totalCost.minus(txQuantity.mul(currentAvgCost))
+        totalQuantity = totalQuantity.minus(txQuantity)
+      }
+    }
+
+    if (totalQuantity.greaterThan(0)) {
+      const avgCost = totalCost.div(totalQuantity)
+
+      // Update or create holding
+      await this.prisma.holding.upsert({
+        where: {
+          portfolioId_symbol: {
+            portfolioId,
+            symbol,
+          },
+        },
+        update: {
+          quantity: totalQuantity.toFixed(8),
+          averageCost: avgCost.toFixed(8),
+        },
+        create: {
+          portfolioId,
+          symbol,
+          quantity: totalQuantity.toFixed(8),
+          averageCost: avgCost.toFixed(8),
+        },
+      })
+    } else {
+      // Quantity is zero or negative, delete holding
+      await this.prisma.holding.deleteMany({
+        where: {
+          portfolioId,
+          symbol,
+        },
+      })
+    }
+  }
+
+  /**
    * Delete a transaction and recalculate holdings
    * 
    * @param transactionId - Transaction ID to delete

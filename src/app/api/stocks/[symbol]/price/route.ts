@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { StockService } from '@/services/stock.service'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@/lib/db/prisma'
 
-const prisma = new PrismaClient()
 const stockService = new StockService(prisma)
 
 /**
@@ -54,7 +53,5 @@ export async function GET(
       { error: 'Failed to fetch stock price' },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }

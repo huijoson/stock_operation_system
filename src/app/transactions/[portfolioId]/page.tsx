@@ -6,6 +6,7 @@ import TransactionTable from '@/components/transactions/TransactionTable'
 import TransactionForm from '@/components/transactions/TransactionForm'
 import ImportDialog from '@/components/transactions/ImportDialog'
 import ExportButton from '@/components/transactions/ExportButton'
+import EditTransactionDialog from '@/components/transactions/EditTransactionDialog'
 
 interface Transaction {
   id: string
@@ -28,6 +29,7 @@ export default function TransactionListPage() {
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [showImportDialog, setShowImportDialog] = useState(false)
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
 
   useEffect(() => {
     if (portfolioId) {
@@ -82,6 +84,35 @@ export default function TransactionListPage() {
 
       await fetchTransactions()
       setShowForm(false)
+    } catch (err: any) {
+      throw err
+    }
+  }
+
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction)
+  }
+
+  const handleUpdate = async (id: string, data: {
+    type: 'BUY' | 'SELL'
+    quantity: number
+    price: number
+    date: string
+  }) => {
+    try {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to update transaction')
+      }
+
+      await fetchTransactions()
+      setEditingTransaction(null)
     } catch (err: any) {
       throw err
     }
@@ -165,7 +196,19 @@ export default function TransactionListPage() {
           </div>
         )}
 
-        <TransactionTable transactions={transactions} onDelete={handleDelete} />
+        <TransactionTable 
+          transactions={transactions} 
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+        />
+
+        {editingTransaction && (
+          <EditTransactionDialog
+            transaction={editingTransaction}
+            onClose={() => setEditingTransaction(null)}
+            onSave={handleUpdate}
+          />
+        )}
 
         {showImportDialog && (
           <ImportDialog

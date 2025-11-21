@@ -14,9 +14,10 @@ interface Transaction {
 interface TransactionTableProps {
   transactions: Transaction[]
   onDelete: (id: string) => void
+  onEdit: (transaction: Transaction) => void
 }
 
-export default function TransactionTable({ transactions, onDelete }: TransactionTableProps) {
+export default function TransactionTable({ transactions, onDelete, onEdit }: TransactionTableProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('zh-TW', {
@@ -105,6 +106,12 @@ export default function TransactionTable({ transactions, onDelete }: Transaction
                     </td>
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
+                        onClick={() => onEdit(transaction)}
+                        className="text-blue-600 hover:text-blue-900 mr-4"
+                      >
+                        編輯
+                      </button>
+                      <button
                         onClick={() => onDelete(transaction.id)}
                         className="text-red-600 hover:text-red-900"
                       >
@@ -151,12 +158,20 @@ export default function TransactionTable({ transactions, onDelete }: Transaction
                   <p className="text-xs text-gray-500">總金額</p>
                   <p className="text-base font-bold text-gray-900">${formatNumber(total.toString())}</p>
                 </div>
-                <button
-                  onClick={() => onDelete(transaction.id)}
-                  className="text-red-600 hover:text-red-900 text-sm font-medium"
-                >
-                  刪除
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => onEdit(transaction)}
+                    className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                  >
+                    編輯
+                  </button>
+                  <button
+                    onClick={() => onDelete(transaction.id)}
+                    className="text-red-600 hover:text-red-900 text-sm font-medium"
+                  >
+                    刪除
+                  </button>
+                </div>
               </div>
             </div>
           )
