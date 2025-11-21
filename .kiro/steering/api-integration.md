@@ -32,7 +32,7 @@ const response = await axios.get(url, {
 
 **支援的市場：**
 - 台股：從本地資料庫查詢
-- 美股：透過 Yahoo Finance API 即時查詢
+- 美股：透過 Yahoo Finance API 即時查詢（包含股票和 ETF）
 
 **API 端點：**
 1. 股價查詢：`https://query1.finance.yahoo.com/v8/finance/chart/{symbol}`
@@ -54,6 +54,7 @@ const response = await axios.get(url, {
 - 格式：英文字母（例如：AAPL、GOOGL、TSMC）
 - 來源：Yahoo Finance API
 - ID 前綴：`us-` （例如：`us-AAPL`）
+- 支援類型：股票（EQUITY）和 ETF（例如：QQQ、SPY、VOO）
 
 ## 數值精度規範
 

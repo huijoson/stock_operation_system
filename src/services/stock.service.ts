@@ -432,10 +432,10 @@ export class StockService {
 
       const quotes = response.data?.quotes || []
       
-      // Filter for stocks only (exclude ETFs, mutual funds, etc.)
+      // Filter for stocks and ETFs (include both EQUITY and ETF types)
       const stocks = quotes
         .filter((quote: any) => 
-          quote.quoteType === 'EQUITY' && 
+          (quote.quoteType === 'EQUITY' || quote.quoteType === 'ETF') && 
           quote.symbol && 
           quote.shortname
         )
@@ -443,7 +443,7 @@ export class StockService {
           id: `us-${quote.symbol}`, // Prefix with 'us-' to distinguish from local stocks
           symbol: quote.symbol,
           name: quote.shortname || quote.longname || quote.symbol,
-          industry: quote.sector || null,
+          industry: quote.sector || quote.quoteType || null, // Use quoteType if sector not available
         }))
 
       return stocks
