@@ -76,18 +76,22 @@ export async function GET(request: NextRequest) {
         rsi: {
           score: componentScores.rsi.score,
           weight: componentScores.rsi.weight,
+          contribution: componentScores.rsi.score * componentScores.rsi.weight,
         },
         macd: {
           score: componentScores.macd.score,
           weight: componentScores.macd.weight,
+          contribution: componentScores.macd.score * componentScores.macd.weight,
         },
         bollinger: {
           score: componentScores.bollinger.score,
           weight: componentScores.bollinger.weight,
+          contribution: componentScores.bollinger.score * componentScores.bollinger.weight,
         },
         fibonacci: {
           score: componentScores.fibonacci.score,
           weight: componentScores.fibonacci.weight,
+          contribution: componentScores.fibonacci.score * componentScores.fibonacci.weight,
         },
       },
       timestamp: score.timestamp.toISOString(),

@@ -117,10 +117,10 @@ export default function TechnicalScoreCard({
               <div className="flex justify-between items-center text-sm">
                 <span className="font-medium text-gray-700">{component.name}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-600">評分: {component.score.toFixed(0)}</span>
-                  <span className="text-gray-500">權重: {(component.weight * 100).toFixed(0)}%</span>
-                  <span className="font-semibold" style={{ color: getScoreColor(component.contribution) }}>
-                    貢獻: {component.contribution.toFixed(1)}
+                  <span className="text-gray-600">評分: {Number(component.score || 0).toFixed(0)}</span>
+                  <span className="text-gray-500">權重: {(Number(component.weight || 0) * 100).toFixed(0)}%</span>
+                  <span className="font-semibold" style={{ color: getScoreColor(Number(component.contribution || 0)) }}>
+                    貢獻: {Number(component.contribution || 0).toFixed(1)}
                   </span>
                 </div>
               </div>
@@ -145,9 +145,9 @@ export default function TechnicalScoreCard({
           {componentData.map((component, index) => (
             <div key={index} className="flex justify-between">
               <span>
-                {component.name}: {component.score.toFixed(0)} × {(component.weight * 100).toFixed(0)}%
+                {component.name}: {Number(component.score || 0).toFixed(0)} × {(Number(component.weight || 0) * 100).toFixed(0)}%
               </span>
-              <span className="font-medium">= {component.contribution.toFixed(1)}</span>
+              <span className="font-medium">= {Number(component.contribution || 0).toFixed(1)}</span>
             </div>
           ))}
           <div className="border-t border-gray-300 pt-1 mt-2 flex justify-between font-semibold">
