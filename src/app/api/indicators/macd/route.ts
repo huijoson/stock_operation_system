@@ -111,11 +111,20 @@ export async function GET(request: NextRequest) {
       fastPeriod,
       slowPeriod,
       signalPeriod,
-      macdLine: result.macdLine.slice(-days),
-      signalLine: result.signalLine.slice(-days),
-      histogram: result.histogram.slice(-days),
+      macdLine: result.macdLine.slice(-days).map(v => Number(v)),
+      signalLine: result.signalLine.slice(-days).map(v => Number(v)),
+      histogram: result.histogram.slice(-days).map(h => ({
+        date: h.date.toISOString().split('T')[0],
+        value: Number(h.value),
+      })),
       crossovers: result.crossovers.filter((_, idx) => idx >= result.crossovers.length - days),
       currentSignal: result.currentSignal,
+      history: result.histogram.slice(-days).map((h, idx) => ({
+        date: h.date.toISOString().split('T')[0],
+        macd: Number(result.macdLine.slice(-days)[idx]),
+        signal: Number(result.signalLine.slice(-days)[idx]),
+        histogram: Number(h.value),
+      })),
       timestamp: new Date().toISOString(),
     }
 

@@ -91,16 +91,36 @@ export async function GET(request: NextRequest) {
     const result = bollingerService.calculateBands(prices, period, stdDev)
 
     // Convert to response format (return only requested days)
+    const slicedData = {
+      upper: result.upper.slice(-days),
+      middle: result.middle.slice(-days),
+      lower: result.lower.slice(-days),
+      bandwidth: result.bandwidth.slice(-days),
+    }
+
+    // Generate dates for history
+    const currentDate = new Date()
+    const history = slicedData.upper.map((_, idx) => {
+      const date = new Date(currentDate)
+      date.setDate(date.getDate() - (slicedData.upper.length - 1 - idx))
+      return {
+        date: date.toISOString().split('T')[0],
+        upper: slicedData.upper[idx].toNumber(),
+        middle: slicedData.middle[idx].toNumber(),
+        lower: slicedData.lower[idx].toNumber(),
+        bandwidth: slicedData.bandwidth[idx],
+      }
+    })
+
     const response = {
       symbol,
       period,
       stdDev,
-      upper: result.upper.slice(-days).map(v => v.toString()),
-      middle: result.middle.slice(-days).map(v => v.toString()),
-      lower: result.lower.slice(-days).map(v => v.toString()),
-      bandwidth: result.bandwidth.slice(-days),
+      history,
       currentPosition: result.currentPosition,
       isSqueezed: bollingerService.detectSqueeze(result, 20),
+      squeezeThreshold: 0.5,
+      expansionThreshold: 1.5,
       timestamp: new Date().toISOString(),
     }
 

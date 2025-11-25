@@ -85,7 +85,10 @@ export async function GET(request: NextRequest) {
       period,
       value: result.value,
       status: result.status,
-      history: result.history.slice(-days), // Return only requested days
+      history: result.history.slice(-days).map(h => ({
+        date: h.date.toISOString().split('T')[0],
+        value: h.value,
+      })),
       divergences: result.divergences,
       timestamp: new Date().toISOString(),
     }
