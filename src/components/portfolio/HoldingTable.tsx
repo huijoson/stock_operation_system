@@ -1,6 +1,7 @@
 'use client'
 
 import { Decimal } from 'decimal.js'
+import { useRouter } from 'next/navigation'
 
 interface Holding {
   id: string
@@ -18,6 +19,8 @@ interface HoldingTableProps {
 }
 
 export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTableProps) {
+  const router = useRouter()
+
   // Calculate total cost for a holding
   const calculateTotalCost = (holding: Holding): string => {
     const quantity = new Decimal(holding.quantity.toString())
@@ -109,6 +112,9 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
                 <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   報酬率
                 </th>
+                <th className="px-4 lg:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  操作
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -154,6 +160,15 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
                         {plPercentage ? `${formatNumber(plPercentage)}%` : '-'}
                       </div>
                     </td>
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-center">
+                      <button
+                        onClick={() => router.push(`/technical-analysis?symbol=${holding.symbol}`)}
+                        className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+                        title="查看技術分析"
+                      >
+                        技術分析
+                      </button>
+                    </td>
                   </tr>
                 )
               })}
@@ -172,7 +187,16 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
           return (
             <div key={holding.id} className="bg-white rounded-lg shadow p-4">
               <div className="flex justify-between items-start mb-3">
-                <h3 className="text-lg font-bold text-gray-900">{holding.symbol}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-gray-900">{holding.symbol}</h3>
+                  <button
+                    onClick={() => router.push(`/technical-analysis?symbol=${holding.symbol}`)}
+                    className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+                    title="查看技術分析"
+                  >
+                    📊
+                  </button>
+                </div>
                 {plPercentage && (
                   <span className={`text-sm font-semibold ${getPLColorClass(plPercentage)}`}>
                     {formatNumber(plPercentage)}%

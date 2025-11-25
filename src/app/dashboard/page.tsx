@@ -182,6 +182,12 @@ export default function DashboardPage() {
               >
                 投資組合
               </button>
+              <button
+                onClick={() => router.push('/technical-analysis')}
+                className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900"
+              >
+                技術分析
+              </button>
               <span className="hidden md:inline text-sm text-gray-700 truncate max-w-[150px]">{user?.email}</span>
               <button
                 onClick={handleLogout}
@@ -262,6 +268,41 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
+
+          {/* Technical Analysis Quick Access */}
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg shadow p-4 sm:p-6 border border-purple-200">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">技術指標分析</h3>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">
+                  使用專業技術指標分析股票走勢，包含 RSI、MACD、布林通道、費波那契等工具
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => router.push('/technical-analysis')}
+                    className="px-3 py-1.5 text-xs sm:text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700"
+                  >
+                    技術分析
+                  </button>
+                  <button
+                    onClick={() => router.push('/fibonacci-tool')}
+                    className="px-3 py-1.5 text-xs sm:text-sm font-medium text-purple-700 bg-white border border-purple-300 rounded-md hover:bg-purple-50"
+                  >
+                    費波那契工具
+                  </button>
+                  <button
+                    onClick={() => router.push('/strategy-builder')}
+                    className="px-3 py-1.5 text-xs sm:text-sm font-medium text-purple-700 bg-white border border-purple-300 rounded-md hover:bg-purple-50"
+                  >
+                    策略建立器
+                  </button>
+                </div>
+              </div>
+              <svg className="hidden sm:block w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+          </div>
 
           {/* Portfolio List */}
           <div className="bg-white rounded-lg shadow">

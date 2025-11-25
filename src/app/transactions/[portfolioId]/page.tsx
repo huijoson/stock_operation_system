@@ -160,6 +160,12 @@ export default function TransactionListPage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">交易記錄</h1>
           </div>
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => router.push('/technical-analysis')}
+              className="flex-1 sm:flex-none bg-indigo-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm sm:text-base"
+            >
+              技術分析
+            </button>
             <ExportButton
               portfolioId={portfolioId}
               type="transactions"

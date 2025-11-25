@@ -98,14 +98,32 @@ export default function PortfolioListPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Navigation */}
+        <div className="mb-4">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="text-blue-600 hover:text-blue-800 inline-flex items-center text-sm sm:text-base"
+          >
+            ← 返回儀表板
+          </button>
+        </div>
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">我的投資組合</h1>
-          <button
-            onClick={() => setShowForm(true)}
-            className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
-          >
-            新增投資組合
-          </button>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => router.push('/technical-analysis')}
+              className="flex-1 sm:flex-none bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm sm:text-base"
+            >
+              技術分析
+            </button>
+            <button
+              onClick={() => setShowForm(true)}
+              className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+            >
+              新增投資組合
+            </button>
+          </div>
         </div>
 
         {error && (

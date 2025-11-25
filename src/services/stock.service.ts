@@ -2,10 +2,13 @@ import { PrismaClient } from '@prisma/client'
 import Decimal from 'decimal.js'
 import axios from 'axios'
 import https from 'https'
+import { indicatorCacheService } from './indicator-cache.service'
 
 /**
  * StockService handles stock price data retrieval and caching
  * Integrates with external APIs (Yahoo Finance) and manages price cache
+ * 
+ * Requirements: 11.3 - Automatically invalidates indicator cache when price data is updated
  */
 export class StockService {
   private prisma: PrismaClient
@@ -155,9 +158,15 @@ export class StockService {
   /**
    * Cache a stock price
    * 
+   * When price data is updated, automatically invalidates all cached indicators
+   * for this stock to ensure indicators are recalculated with the latest data.
+   * 
    * @param symbol - Stock symbol
    * @param price - Price to cache
    * @param date - Date of the price (defaults to now)
+   * 
+   * Requirements: 11.3
+   * Property 24: Cache invalidation mechanism
    */
   async cachePrice(symbol: string, price: Decimal, date?: Date): Promise<void> {
     const priceDate = date || new Date()
@@ -182,6 +191,10 @@ export class StockService {
         price: price.toFixed(8),
       },
     })
+
+    // Invalidate all indicator cache for this symbol when price data is updated
+    // This ensures indicators are recalculated with the latest price data
+    await indicatorCacheService.invalidate(symbol)
   }
 
   /**
@@ -451,6 +464,109 @@ export class StockService {
       console.error(`Error searching US stocks:`, error)
       // Return empty array on error (don't throw, as this is a fallback search)
       return []
+    }
+  }
+
+  /**
+   * Get historical OHLC (Open, High, Low, Close) data for technical indicators
+   * 
+   * @param symbol - Stock symbol
+   * @param startDate - Start date
+   * @param endDate - End date
+   * @returns Array of OHLC data
+   */
+  async getHistoricalOHLC(
+    symbol: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<Array<{ date: Date; open: Decimal; high: Decimal; low: Decimal; close: Decimal }>> {
+    // Validate inputs
+    if (!symbol || symbol.trim().length === 0) {
+      throw new Error('Stock symbol cannot be empty')
+    }
+
+    if (startDate > endDate) {
+      throw new Error('Start date must be before end date')
+    }
+
+    try {
+      // Convert dates to Unix timestamps
+      const period1 = Math.floor(startDate.getTime() / 1000)
+      const period2 = Math.floor(endDate.getTime() / 1000)
+
+      // Use Yahoo Finance API v8
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`
+      
+      // Create axios instance with SSL verification disabled (for development only)
+      const httpsAgent = new https.Agent({
+        rejectUnauthorized: false
+      })
+      
+      const response = await axios.get(url, {
+        params: {
+          period1,
+          period2,
+          interval: '1d',
+        },
+        timeout: 10000,
+        httpsAgent,
+      })
+
+      // Parse response
+      const result = response.data?.chart?.result?.[0]
+      if (!result) {
+        throw new Error(`No data returned for symbol ${symbol}`)
+      }
+
+      const timestamps = result.timestamp
+      const quotes = result.indicators?.quote?.[0]
+      
+      if (!timestamps || !quotes) {
+        throw new Error(`Invalid historical data for symbol ${symbol}`)
+      }
+
+      const { open, high, low, close } = quotes
+
+      if (!open || !high || !low || !close) {
+        throw new Error(`Incomplete OHLC data for symbol ${symbol}`)
+      }
+
+      // Build OHLC array
+      const ohlcData: Array<{ date: Date; open: Decimal; high: Decimal; low: Decimal; close: Decimal }> = []
+      
+      for (let i = 0; i < timestamps.length; i++) {
+        const timestamp = timestamps[i]
+        const openPrice = open[i]
+        const highPrice = high[i]
+        const lowPrice = low[i]
+        const closePrice = close[i]
+
+        // Skip null or invalid data points
+        if (
+          openPrice !== null && !isNaN(openPrice) &&
+          highPrice !== null && !isNaN(highPrice) &&
+          lowPrice !== null && !isNaN(lowPrice) &&
+          closePrice !== null && !isNaN(closePrice)
+        ) {
+          ohlcData.push({
+            date: new Date(timestamp * 1000),
+            open: new Decimal(openPrice),
+            high: new Decimal(highPrice),
+            low: new Decimal(lowPrice),
+            close: new Decimal(closePrice),
+          })
+        }
+      }
+
+      return ohlcData
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new Error(`Stock not found: ${symbol}`)
+        }
+        throw new Error(`API error: ${error.message}`)
+      }
+      throw error
     }
   }
 

@@ -16,6 +16,7 @@ model User {
   updatedAt  DateTime    @updatedAt
   portfolios Portfolio[]
   sessions   Session[]
+  strategies Strategy[]
 }
 
 model Session {
@@ -82,5 +83,79 @@ model StockPrice {
   createdAt DateTime @default(now())
 
   @@unique([symbol, date])
+  @@index([symbol, date])
+}
+
+model IndicatorCache {
+  id            String   @id @default(cuid())
+  symbol        String
+  indicatorType String   // 'RSI', 'MACD', 'BOLLINGER', etc.
+  period        Int
+  data          String   // SQLite stores JSON as String
+  calculatedAt  DateTime
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+
+  @@unique([symbol, indicatorType, period])
+  @@index([symbol, expiresAt])
+}
+
+model Strategy {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  conditions  String           // SQLite stores JSON as String
+  logic       String           // 'AND' or 'OR'
+  isActive    Int              @default(1) // SQLite uses Int for Boolean
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  backtests   Backtest[]
+  signals     StrategySignal[]
+}
+
+model Backtest {
+  id          String   @id @default(cuid())
+  strategyId  String
+  strategy    Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+  startDate   DateTime
+  endDate     DateTime
+  totalTrades Int
+  winRate     String   // SQLite doesn't have Decimal, use String
+  avgReturn   String   // SQLite doesn't have Decimal, use String
+  maxDrawdown String   // SQLite doesn't have Decimal, use String
+  results     String   // SQLite stores JSON as String
+  createdAt   DateTime @default(now())
+
+  @@index([strategyId, createdAt])
+}
+
+model StrategySignal {
+  id          String   @id @default(cuid())
+  strategyId  String
+  strategy    Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+  symbol      String
+  signalType  String   // 'BUY', 'SELL'
+  price       String   // SQLite doesn't have Decimal, use String
+  conditions  String   // SQLite stores JSON as String
+  triggeredAt DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([strategyId, triggeredAt])
+  @@index([symbol, triggeredAt])
+}
+
+model CandlestickPattern {
+  id            String   @id @default(cuid())
+  symbol        String
+  patternType   String   // 'HAMMER', 'DOJI', 'ENGULFING', etc.
+  signal        String   // 'BULLISH', 'BEARISH', 'NEUTRAL'
+  reliability   Int      // 0-100
+  price         String   // SQLite doesn't have Decimal, use String
+  atGoldenRatio Int      @default(0) // SQLite uses Int for Boolean
+  date          DateTime
+  createdAt     DateTime @default(now())
+
   @@index([symbol, date])
 }
