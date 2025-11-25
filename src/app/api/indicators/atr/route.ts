@@ -89,13 +89,13 @@ export async function GET(request: NextRequest) {
     const response = {
       symbol,
       period,
-      value: result.value.toString(),
+      value: result.value.toNumber(),
       history: result.history.slice(-days).map(h => ({
         date: h.date,
-        value: h.value.toString(),
+        value: h.value.toNumber(),
       })),
       volatilityStatus: result.volatilityStatus,
-      suggestedStopLoss: suggestedStopLoss.toString(),
+      suggestedStopLoss: suggestedStopLoss.toNumber(),
       timestamp: new Date().toISOString(),
     }
 

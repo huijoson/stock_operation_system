@@ -507,7 +507,7 @@ export default function TechnicalAnalysisPage() {
                 <div className="mt-4 grid grid-cols-3 gap-4">
                   <div className="p-4 bg-gray-50 rounded-md">
                     <div className="text-sm text-gray-600">目前 ATR</div>
-                    <div className="text-xl font-bold text-gray-800">{atrData.value.toFixed(2)}</div>
+                    <div className="text-xl font-bold text-gray-800">{Number(atrData.value).toFixed(2)}</div>
                   </div>
                   <div className="p-4 bg-gray-50 rounded-md">
                     <div className="text-sm text-gray-600">波動性狀態</div>
@@ -515,7 +515,9 @@ export default function TechnicalAnalysisPage() {
                   </div>
                   <div className="p-4 bg-gray-50 rounded-md">
                     <div className="text-sm text-gray-600">建議止損距離</div>
-                    <div className="text-xl font-bold text-gray-800">{atrData.suggestedStopLoss?.toFixed(2)}</div>
+                    <div className="text-xl font-bold text-gray-800">
+                      {atrData.suggestedStopLoss ? Number(atrData.suggestedStopLoss).toFixed(2) : 'N/A'}
+                    </div>
                   </div>
                 </div>
               </div>
