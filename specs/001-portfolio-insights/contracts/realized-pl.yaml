@@ -1,0 +1,168 @@
+openapi: 3.0.3
+info:
+  title: 已實現損益 API
+  description: 查詢投資組合的已實現損益（FIFO 計算）
+  version: 1.0.0
+
+paths:
+  /api/realized-pl:
+    get:
+      summary: 取得已實現損益總覽
+      description: 取得使用者所有投資組合的已實現損益加總
+      tags:
+        - 已實現損益
+      parameters:
+        - name: period
+          in: query
+          description: 時間篩選期間
+          required: false
+          schema:
+            type: string
+            enum: [month, quarter, year, all]
+            default: all
+      responses:
+        '200':
+          description: 成功取得已實現損益總覽
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RealizedPLSummary'
+        '401':
+          description: 未授權
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/realized-pl/portfolio/{portfolioId}:
+    get:
+      summary: 取得單一投資組合的已實現損益
+      description: 取得指定投資組合的已實現損益明細
+      tags:
+        - 已實現損益
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [month, quarter, year, all]
+            default: all
+        - name: symbol
+          in: query
+          description: 篩選特定股票
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功取得投資組合已實現損益
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioRealizedPL'
+        '401':
+          description: 未授權
+        '404':
+          description: 投資組合不存在
+
+components:
+  schemas:
+    RealizedPLSummary:
+      type: object
+      properties:
+        totalRealizedPL:
+          type: string
+          description: 總已實現損益（Decimal 字串）
+          example: "1250.50"
+        periodStart:
+          type: string
+          format: date
+          description: 期間開始日期
+        periodEnd:
+          type: string
+          format: date
+          description: 期間結束日期
+        shortTermPL:
+          type: string
+          description: 短期損益（持有 <= 1 年）
+        longTermPL:
+          type: string
+          description: 長期損益（持有 > 1 年）
+        portfolioBreakdown:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortfolioPLBreakdown'
+
+    PortfolioPLBreakdown:
+      type: object
+      properties:
+        portfolioId:
+          type: string
+        portfolioName:
+          type: string
+        realizedPL:
+          type: string
+
+    PortfolioRealizedPL:
+      type: object
+      properties:
+        portfolioId:
+          type: string
+        portfolioName:
+          type: string
+        totalRealizedPL:
+          type: string
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/RealizedPLRecord'
+        symbolBreakdown:
+          type: array
+          items:
+            $ref: '#/components/schemas/SymbolPLBreakdown'
+
+    RealizedPLRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        symbol:
+          type: string
+        saleDate:
+          type: string
+          format: date-time
+        sharesSold:
+          type: string
+        costBasis:
+          type: string
+        saleProceeds:
+          type: string
+        realizedPL:
+          type: string
+        holdingPeriod:
+          type: string
+          enum: [SHORT, LONG]
+
+    SymbolPLBreakdown:
+      type: object
+      properties:
+        symbol:
+          type: string
+        totalPL:
+          type: string
+        tradeCount:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string

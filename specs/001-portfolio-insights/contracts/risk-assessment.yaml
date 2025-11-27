@@ -1,0 +1,238 @@
+openapi: 3.0.3
+info:
+  title: 風險評估 API
+  description: 取得持股的技術分析風險評估
+  version: 1.0.0
+
+paths:
+  /api/risk-assessment/{symbol}:
+    get:
+      summary: 取得單一股票的風險評估
+      description: 取得指定股票的風險評分與技術分析詳情
+      tags:
+        - 風險評估
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+          example: AAPL
+        - name: includeNews
+          in: query
+          description: 是否包含新聞情緒分析
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: 成功取得風險評估
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessment'
+        '404':
+          description: 股票不存在或無足夠資料
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsufficientDataError'
+
+  /api/risk-assessment/portfolio/{portfolioId}:
+    get:
+      summary: 取得投資組合所有持股的風險評估
+      description: 批次取得投資組合內所有持股的風險評分
+      tags:
+        - 風險評估
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功取得投資組合風險評估
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioRiskAssessment'
+
+  /api/risk-assessment/batch:
+    post:
+      summary: 批次計算風險評估（管理員）
+      description: 觸發所有追蹤股票的風險評估批次計算
+      tags:
+        - 風險評估
+        - 管理
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbols:
+                  type: array
+                  items:
+                    type: string
+                  description: 指定股票清單，空則計算全部
+      responses:
+        '202':
+          description: 批次計算已開始
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  symbolCount:
+                    type: integer
+
+components:
+  schemas:
+    RiskAssessment:
+      type: object
+      properties:
+        symbol:
+          type: string
+        riskScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: 風險評分（0 = 最低風險，100 = 最高風險）
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+          description: 風險等級
+        riskLevelLabel:
+          type: string
+          description: 風險等級顯示文字
+          example: "低風險"
+        technicalAnalysis:
+          $ref: '#/components/schemas/TechnicalAnalysisDetail'
+        newsSentiment:
+          $ref: '#/components/schemas/NewsSentimentDetail'
+        weights:
+          $ref: '#/components/schemas/RiskWeights'
+        calculatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    TechnicalAnalysisDetail:
+      type: object
+      properties:
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        components:
+          type: object
+          properties:
+            rsi:
+              $ref: '#/components/schemas/IndicatorScore'
+            macd:
+              $ref: '#/components/schemas/IndicatorScore'
+            bollinger:
+              $ref: '#/components/schemas/IndicatorScore'
+            fibonacci:
+              $ref: '#/components/schemas/IndicatorScore'
+
+    IndicatorScore:
+      type: object
+      properties:
+        score:
+          type: integer
+        weight:
+          type: number
+          format: float
+        signal:
+          type: string
+          description: 指標訊號描述
+          example: "RSI 超賣區域"
+
+    NewsSentimentDetail:
+      type: object
+      nullable: true
+      properties:
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        sentiment:
+          type: string
+          enum: [positive, neutral, negative]
+        sentimentLabel:
+          type: string
+          example: "正面"
+        articleCount:
+          type: integer
+        confidence:
+          type: string
+          enum: [low, medium, high]
+
+    RiskWeights:
+      type: object
+      properties:
+        technical:
+          type: number
+          format: float
+          example: 0.80
+        news:
+          type: number
+          format: float
+          example: 0.20
+
+    PortfolioRiskAssessment:
+      type: object
+      properties:
+        portfolioId:
+          type: string
+        portfolioName:
+          type: string
+        overallRisk:
+          type: string
+          enum: [low, medium, high]
+          description: 投資組合整體風險等級
+        holdings:
+          type: array
+          items:
+            $ref: '#/components/schemas/HoldingRiskSummary'
+        highRiskCount:
+          type: integer
+        mediumRiskCount:
+          type: integer
+        lowRiskCount:
+          type: integer
+
+    HoldingRiskSummary:
+      type: object
+      properties:
+        symbol:
+          type: string
+        riskScore:
+          type: integer
+        riskLevel:
+          type: string
+        marketValue:
+          type: string
+          description: 該持股市值
+
+    InsufficientDataError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "INSUFFICIENT_DATA"
+        message:
+          type: string
+          example: "資料不足，無法評估"
+        minDataDays:
+          type: integer
+          description: 所需最少資料天數
+          example: 50

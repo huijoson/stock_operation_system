@@ -39,6 +39,8 @@ model Portfolio {
   updatedAt    DateTime      @updatedAt
   holdings     Holding[]
   transactions Transaction[]
+  taxLots      TaxLot[]
+  realizedPLs  RealizedPL[]
 }
 
 model Holding {
@@ -55,15 +57,17 @@ model Holding {
 }
 
 model Transaction {
-  id          String    @id @default(cuid())
+  id          String       @id @default(cuid())
   portfolioId String
-  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   symbol      String
   type        String
-  quantity    Decimal   @db.Decimal(18, 8)
-  price       Decimal   @db.Decimal(18, 8)
+  quantity    Decimal      @db.Decimal(18, 8)
+  price       Decimal      @db.Decimal(18, 8)
   date        DateTime
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime     @default(now())
+  taxLot      TaxLot?
+  realizedPLs RealizedPL[]
 
   @@index([portfolioId, date])
 }
@@ -160,4 +164,116 @@ model CandlestickPattern {
   createdAt     DateTime @default(now())
 
   @@index([symbol, date])
+}
+
+model TaxLot {
+  id                String       @id @default(cuid())
+  portfolioId       String
+  portfolio         Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  symbol            String
+  acquisitionDate   DateTime
+  originalShares    Decimal      @db.Decimal(18, 8)
+  costBasisPerShare Decimal      @db.Decimal(18, 8)
+  totalCostBasis    Decimal      @db.Decimal(18, 8)
+  remainingShares   Decimal      @db.Decimal(18, 8)
+  transactionId     String?      @unique
+  transaction       Transaction? @relation(fields: [transactionId], references: [id])
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  realizedPLRecords RealizedPL[]
+
+  @@index([portfolioId, symbol])
+  @@index([portfolioId, symbol, acquisitionDate])
+}
+
+model RealizedPL {
+  id            String      @id @default(cuid())
+  portfolioId   String
+  portfolio     Portfolio   @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  symbol        String
+  taxLotId      String
+  taxLot        TaxLot      @relation(fields: [taxLotId], references: [id])
+  sharesSold    Decimal     @db.Decimal(18, 8)
+  costBasis     Decimal     @db.Decimal(18, 8)
+  saleProceeds  Decimal     @db.Decimal(18, 8)
+  realizedPL    Decimal     @db.Decimal(18, 8)
+  saleDate      DateTime
+  holdingPeriod String
+  createdAt     DateTime    @default(now())
+
+  @@index([portfolioId, saleDate])
+  @@index([portfolioId, symbol])
+}
+
+model RiskAssessment {
+  id                String          @id @default(cuid())
+  symbol            String          @unique
+  riskScore         Int
+  riskLevel         String
+  technicalScore    Int
+  rsiScore          Int
+  macdScore         Int
+  bollingerScore    Int
+  fibonacciScore    Int
+  newsScore         Int?
+  newsSentiment     String?
+  newsArticleCount  Int             @default(0)
+  technicalWeight   Decimal         @db.Decimal(3, 2) @default(0.80)
+  newsWeight        Decimal         @db.Decimal(3, 2) @default(0.20)
+  calculatedAt      DateTime
+  expiresAt         DateTime
+  createdAt         DateTime        @default(now())
+  holdingAdvice     HoldingAdvice?
+
+  @@index([symbol, expiresAt])
+}
+
+model HoldingAdvice {
+  id               String          @id @default(cuid())
+  symbol           String          @unique
+  adviceType       String
+  reasons          Json
+  confidence       Int
+  riskAssessmentId String?         @unique
+  riskAssessment   RiskAssessment? @relation(fields: [riskAssessmentId], references: [id])
+  generatedAt      DateTime
+  expiresAt        DateTime
+  createdAt        DateTime        @default(now())
+
+  @@index([symbol, expiresAt])
+}
+
+model StockNews {
+  id                  String   @id @default(cuid())
+  symbol              String
+  externalId          String?
+  headline            String
+  summary             String?
+  url                 String
+  imageUrl            String?
+  source              String
+  publishedAt         DateTime
+  credibility         String
+  sentimentScore      Decimal  @db.Decimal(4, 3)
+  sentimentLabel      String
+  sentimentConfidence String
+  fetchedAt           DateTime @default(now())
+  expiresAt           DateTime
+  createdAt           DateTime @default(now())
+
+  @@unique([symbol, externalId])
+  @@index([symbol, publishedAt(sort: Desc)])
+  @@index([symbol, expiresAt])
+}
+
+model NewsSourceRating {
+  id               String   @id @default(cuid())
+  sourceName       String   @unique
+  credibilityLevel String
+  description      String?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

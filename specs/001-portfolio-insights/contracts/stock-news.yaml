@@ -1,0 +1,282 @@
+openapi: 3.0.3
+info:
+  title: 股票新聞 API
+  description: 取得持股相關新聞與情緒分析
+  version: 1.0.0
+
+paths:
+  /api/news/{symbol}:
+    get:
+      summary: 取得單一股票的相關新聞
+      description: 取得指定股票的最新新聞列表
+      tags:
+        - 股票新聞
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+          example: AAPL
+        - name: limit
+          in: query
+          description: 回傳新聞數量上限
+          required: false
+          schema:
+            type: integer
+            default: 5
+            maximum: 20
+        - name: credibility
+          in: query
+          description: 篩選來源可信度
+          required: false
+          schema:
+            type: string
+            enum: [official, mainstream, all]
+            default: all
+      responses:
+        '200':
+          description: 成功取得新聞列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsListResponse'
+        '503':
+          description: 新聞服務暫時無法使用
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsServiceError'
+
+  /api/news/portfolio/{portfolioId}:
+    get:
+      summary: 取得投資組合所有持股的新聞
+      description: 彙整投資組合內所有持股的最新新聞
+      tags:
+        - 股票新聞
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limitPerSymbol
+          in: query
+          description: 每檔股票回傳新聞數量上限
+          required: false
+          schema:
+            type: integer
+            default: 3
+      responses:
+        '200':
+          description: 成功取得投資組合新聞
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioNewsResponse'
+
+  /api/news/sentiment/{symbol}:
+    get:
+      summary: 取得股票的新聞情緒分析
+      description: 取得指定股票近期新聞的情緒分析結果
+      tags:
+        - 股票新聞
+        - 情緒分析
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功取得情緒分析
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentimentAnalysis'
+
+  /api/news/sources:
+    get:
+      summary: 取得新聞來源評等清單
+      description: 取得系統內所有新聞來源的可信度評等
+      tags:
+        - 股票新聞
+        - 管理
+      responses:
+        '200':
+          description: 成功取得來源清單
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NewsSourceRating'
+
+components:
+  schemas:
+    NewsListResponse:
+      type: object
+      properties:
+        symbol:
+          type: string
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsArticle'
+        totalCount:
+          type: integer
+        fetchedAt:
+          type: string
+          format: date-time
+
+    NewsArticle:
+      type: object
+      properties:
+        id:
+          type: string
+        headline:
+          type: string
+          description: 新聞標題
+        summary:
+          type: string
+          nullable: true
+          description: 新聞摘要
+        url:
+          type: string
+          format: uri
+          description: 新聞原文連結
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+        source:
+          type: string
+          description: 來源名稱
+        credibility:
+          type: string
+          enum: [official, mainstream, unverified]
+          description: 來源可信度
+        credibilityLabel:
+          type: string
+          description: 可信度顯示文字
+          example: "🏛️ 官方來源"
+        publishedAt:
+          type: string
+          format: date-time
+        publishedAtLabel:
+          type: string
+          description: 發布時間顯示文字
+          example: "2 小時前"
+        sentiment:
+          $ref: '#/components/schemas/ArticleSentiment'
+
+    ArticleSentiment:
+      type: object
+      properties:
+        score:
+          type: number
+          format: float
+          minimum: -1
+          maximum: 1
+          description: 情緒分數（-1 = 負面, 0 = 中性, 1 = 正面）
+        label:
+          type: string
+          enum: [positive, neutral, negative]
+        labelDisplay:
+          type: string
+          description: 情緒顯示文字
+          example: "📈 正面"
+        confidence:
+          type: string
+          enum: [low, medium, high]
+
+    PortfolioNewsResponse:
+      type: object
+      properties:
+        portfolioId:
+          type: string
+        portfolioName:
+          type: string
+        newsBySymbol:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/NewsArticle'
+        highlightedNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/HighlightedNews'
+          description: 重要新聞（官方來源或高影響力）
+
+    HighlightedNews:
+      type: object
+      properties:
+        symbol:
+          type: string
+        article:
+          $ref: '#/components/schemas/NewsArticle'
+        reason:
+          type: string
+          description: 為何被標記為重要
+          example: "SEC 官方公告"
+
+    SentimentAnalysis:
+      type: object
+      properties:
+        symbol:
+          type: string
+        overallSentiment:
+          type: string
+          enum: [positive, neutral, negative]
+        overallSentimentLabel:
+          type: string
+          example: "整體正面"
+        averageScore:
+          type: number
+          format: float
+        articleCount:
+          type: integer
+        confidence:
+          type: string
+          enum: [low, medium, high]
+        breakdown:
+          type: object
+          properties:
+            positiveCount:
+              type: integer
+            neutralCount:
+              type: integer
+            negativeCount:
+              type: integer
+        analyzedAt:
+          type: string
+          format: date-time
+
+    NewsSourceRating:
+      type: object
+      properties:
+        sourceName:
+          type: string
+        credibilityLevel:
+          type: string
+          enum: [official, mainstream, unverified]
+        credibilityLabel:
+          type: string
+        description:
+          type: string
+          nullable: true
+
+    NewsServiceError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "NEWS_SERVICE_UNAVAILABLE"
+        message:
+          type: string
+          example: "新聞載入失敗，請稍後再試"
+        retryAfter:
+          type: integer
+          description: 建議重試等待秒數

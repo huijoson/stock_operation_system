@@ -3,7 +3,6 @@ import { BollingerBandsService } from '@/services/bollinger-bands.service'
 import { StockService } from '@/services/stock.service'
 import { IndicatorCacheService } from '@/services/indicator-cache.service'
 import prisma from '@/lib/db/prisma'
-import Decimal from 'decimal.js'
 
 const bollingerService = new BollingerBandsService()
 const stockService = new StockService(prisma)
@@ -60,9 +59,9 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check cache
+    // Check cache and validate it has the price field
     const cached = await cacheService.get(symbol, 'BOLLINGER', period)
-    if (cached) {
+    if (cached && cached.data.history && cached.data.history[0]?.price !== undefined) {
       return NextResponse.json(cached.data)
     }
 
@@ -98,13 +97,15 @@ export async function GET(request: NextRequest) {
       bandwidth: result.bandwidth.slice(-days),
     }
 
-    // Generate dates for history
+    // Generate dates for response history with prices
     const currentDate = new Date()
-    const history = slicedData.upper.map((_, idx) => {
+    const slicedPrices = prices.slice(-days)
+    const historyData = slicedData.upper.map((_, idx) => {
       const date = new Date(currentDate)
       date.setDate(date.getDate() - (slicedData.upper.length - 1 - idx))
       return {
         date: date.toISOString().split('T')[0],
+        price: slicedPrices[idx],
         upper: slicedData.upper[idx].toNumber(),
         middle: slicedData.middle[idx].toNumber(),
         lower: slicedData.lower[idx].toNumber(),
@@ -116,7 +117,7 @@ export async function GET(request: NextRequest) {
       symbol,
       period,
       stdDev,
-      history,
+      history: historyData,
       currentPosition: result.currentPosition,
       isSqueezed: bollingerService.detectSqueeze(result, 20),
       squeezeThreshold: 0.5,

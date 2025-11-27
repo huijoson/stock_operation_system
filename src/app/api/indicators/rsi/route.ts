@@ -49,9 +49,9 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check cache
+    // Check cache and validate it has the rsi field
     const cached = await cacheService.get(symbol, 'RSI', period)
-    if (cached) {
+    if (cached && cached.data.history && cached.data.history[0]?.rsi !== undefined) {
       return NextResponse.json(cached.data)
     }
 
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       status: result.status,
       history: result.history.slice(-days).map(h => ({
         date: h.date.toISOString().split('T')[0],
-        value: h.value,
+        rsi: h.value, // Use 'rsi' to match RSIIndicator component expectation
       })),
       divergences: result.divergences,
       timestamp: new Date().toISOString(),
