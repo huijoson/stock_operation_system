@@ -99,25 +99,25 @@
 
 ### 測試（TDD - 先寫測試）
 
-- [ ] T027 [P] [US2] 建立風險評估 property-based 測試於 tests/property/risk-assessment.property.test.ts
-- [ ] T028 [P] [US2] 建立 RiskAssessmentService 單元測試於 tests/unit/risk-assessment.service.test.ts
+- [X] T027 [P] [US2] 建立風險評估 property-based 測試於 tests/property/risk-assessment.property.test.ts
+- [X] T028 [P] [US2] 建立 RiskAssessmentService 單元測試於 tests/unit/risk-assessment.service.test.ts
 
 ### 實作
 
-- [ ] T029 [US2] 實作 RiskAssessmentService 核心邏輯於 src/services/risk-assessment.service.ts
-- [ ] T030 [US2] 整合 TechnicalScoreService（技術分數反轉為風險分數）於 src/services/risk-assessment.service.ts
-- [ ] T031 [US2] 實作 /api/risk-assessment/[symbol] GET 端點於 src/app/api/risk-assessment/[symbol]/route.ts
-- [ ] T032 [US2] 實作 /api/risk-assessment/portfolio/[portfolioId] GET 端點於 src/app/api/risk-assessment/portfolio/[portfolioId]/route.ts
-- [ ] T033 [US2] 實作 /api/risk-assessment/batch POST 端點（批次計算）於 src/app/api/risk-assessment/batch/route.ts
-- [ ] T034 [US2] 實作風險評估 24 小時快取機制於 src/services/risk-assessment.service.ts
+- [X] T029 [US2] 實作 RiskAssessmentService 核心邏輯於 src/services/risk-assessment.service.ts
+- [X] T030 [US2] 整合 TechnicalScoreService（技術分數反轉為風險分數）於 src/services/risk-assessment.service.ts
+- [X] T031 [US2] 實作 /api/risk-assessment/[symbol] GET 端點於 src/app/api/risk-assessment/[symbol]/route.ts
+- [X] T032 [US2] 實作 /api/risk-assessment/portfolio/[portfolioId] GET 端點於 src/app/api/risk-assessment/portfolio/[portfolioId]/route.ts
+- [X] T033 [US2] 實作 /api/risk-assessment/batch POST 端點（批次計算）於 src/app/api/risk-assessment/batch/route.ts
+- [X] T034 [US2] 實作風險評估 24 小時快取機制於 src/services/risk-assessment.service.ts
 
 ### UI 元件
 
-- [ ] T035 [P] [US2] 建立 RiskBadge 元件（風險等級徽章）於 src/components/portfolio/RiskBadge.tsx
-- [ ] T036 [P] [US2] 建立 RiskAssessmentPanel 元件（詳細評估）於 src/components/portfolio/RiskAssessmentPanel.tsx
-- [ ] T037 [P] [US2] 建立 TechnicalIndicatorBreakdown 元件（各指標明細）於 src/components/portfolio/TechnicalIndicatorBreakdown.tsx
+- [X] T035 [P] [US2] 建立 RiskBadge 元件（風險等級徽章）於 src/components/portfolio/RiskBadge.tsx
+- [X] T036 [P] [US2] 建立 RiskAssessmentPanel 元件（詳細評估）於 src/components/portfolio/RiskAssessmentPanel.tsx
+- [X] T037 [P] [US2] 建立 TechnicalIndicatorBreakdown 元件（各指標明細）於 src/components/portfolio/TechnicalIndicatorBreakdown.tsx
 - [ ] T038 [US2] 整合 RiskBadge 至持股卡片於 src/components/portfolio/HoldingCard.tsx
-- [ ] T039 [US2] 建立「資料不足，無法評估」提示元件於 src/components/portfolio/InsufficientDataNotice.tsx
+- [X] T039 [US2] 建立「資料不足，無法評估」提示元件於 src/components/portfolio/InsufficientDataNotice.tsx
 
 **Checkpoint**: User Story 2 完成 - 風險評估功能可獨立運作與測試
 
