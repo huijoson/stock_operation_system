@@ -133,20 +133,20 @@
 
 ### 測試（TDD - 先寫測試）
 
-- [ ] T040 [P] [US3] 建立 HoldingAdviceService 單元測試於 tests/unit/holding-advice.service.test.ts
+- [X] T040 [P] [US3] 建立 HoldingAdviceService 單元測試於 tests/unit/holding-advice.service.test.ts
 
 ### 實作
 
-- [ ] T041 [US3] 實作 HoldingAdviceService 核心邏輯於 src/services/holding-advice.service.ts
-- [ ] T042 [US3] 實作建議生成規則（風險等級 + 技術指標訊號）於 src/services/holding-advice.service.ts
-- [ ] T043 [US3] 實作 /api/holding-advice/[symbol] GET 端點於 src/app/api/holding-advice/[symbol]/route.ts
-- [ ] T044 [US3] 實作 /api/holding-advice/portfolio/[portfolioId] GET 端點於 src/app/api/holding-advice/portfolio/[portfolioId]/route.ts
+- [X] T041 [US3] 實作 HoldingAdviceService 核心邏輯於 src/services/holding-advice.service.ts
+- [X] T042 [US3] 實作建議生成規則（風險等級 + 技術指標訊號）於 src/services/holding-advice.service.ts
+- [X] T043 [US3] 實作 /api/holding-advice/[symbol] GET 端點於 src/app/api/holding-advice/[symbol]/route.ts
+- [X] T044 [US3] 實作 /api/holding-advice/portfolio/[portfolioId] GET 端點於 src/app/api/holding-advice/portfolio/[portfolioId]/route.ts
 
 ### UI 元件
 
-- [ ] T045 [P] [US3] 建立 HoldingAdvicePanel 元件於 src/components/portfolio/HoldingAdvicePanel.tsx
-- [ ] T046 [P] [US3] 建立 AdviceTypeBadge 元件（減碼/持有/加碼標籤）於 src/components/portfolio/AdviceTypeBadge.tsx
-- [ ] T047 [P] [US3] 建立 DisclaimerNotice 元件（免責聲明）於 src/components/ui/DisclaimerNotice.tsx
+- [X] T045 [P] [US3] 建立 HoldingAdvicePanel 元件於 src/components/portfolio/HoldingAdvicePanel.tsx
+- [X] T046 [P] [US3] 建立 AdviceTypeBadge 元件（減碼/持有/加碼標籤）於 src/components/portfolio/AdviceTypeBadge.tsx
+- [X] T047 [P] [US3] 建立 DisclaimerNotice 元件（免責聲明）於 src/components/ui/DisclaimerNotice.tsx
 - [ ] T048 [US3] 整合持股建議至持股詳情頁於 src/app/portfolios/[id]/holdings/[symbol]/page.tsx
 
 **Checkpoint**: User Story 3 完成 - 持股建議功能可獨立運作與測試
@@ -161,25 +161,25 @@
 
 ### 測試（TDD - 先寫測試）
 
-- [ ] T049 [P] [US5] 建立 NewsService 單元測試於 tests/unit/news.service.test.ts
-- [ ] T050 [P] [US5] 建立 FinnhubClient 單元測試於 tests/unit/finnhub-client.test.ts
+- [X] T049 [P] [US5] 建立 NewsService 單元測試於 tests/unit/news.service.test.ts
+- [X] T050 [P] [US5] 建立 FinnhubClient 單元測試於 tests/unit/finnhub-client.test.ts
 
 ### 實作
 
-- [ ] T051 [US5] 實作 FinnhubClient 封裝外部 API 於 src/lib/api/finnhub-client.ts
-- [ ] T052 [US5] 實作 NewsService 核心邏輯於 src/services/news.service.ts
-- [ ] T053 [US5] 實作新聞 15 分鐘快取機制於 src/services/news.service.ts
-- [ ] T054 [US5] 實作速率限制處理（60 calls/min）於 src/lib/api/rate-limiter.ts
-- [ ] T055 [US5] 實作 /api/news/[symbol] GET 端點於 src/app/api/news/[symbol]/route.ts
-- [ ] T056 [US5] 實作 /api/news/portfolio/[portfolioId] GET 端點於 src/app/api/news/portfolio/[portfolioId]/route.ts
+- [X] T051 [US5] 實作 FinnhubClient 封裝外部 API 於 src/lib/api/finnhub-client.ts
+- [X] T052 [US5] 實作 NewsService 核心邏輯於 src/services/news.service.ts
+- [X] T053 [US5] 實作新聞 15 分鐘快取機制於 src/services/news.service.ts
+- [X] T054 [US5] 實作速率限制處理（60 calls/min）於 src/lib/api/rate-limiter.ts
+- [X] T055 [US5] 實作 /api/news/[symbol] GET 端點於 src/app/api/news/[symbol]/route.ts
+- [X] T056 [US5] 實作 /api/news/portfolio/[portfolioId] GET 端點於 src/app/api/news/portfolio/[portfolioId]/route.ts
 - [ ] T057 [US5] 實作備援機制（Finnhub 失敗時使用 SEC EDGAR）於 src/services/news.service.ts
 
 ### UI 元件
 
-- [ ] T058 [P] [US5] 建立 NewsCard 元件於 src/components/news/NewsCard.tsx
-- [ ] T059 [P] [US5] 建立 NewsList 元件於 src/components/news/NewsList.tsx
-- [ ] T060 [P] [US5] 建立 NewsLoadingState 元件（非同步載入狀態）於 src/components/news/NewsLoadingState.tsx
-- [ ] T061 [P] [US5] 建立 NewsErrorState 元件（「新聞載入失敗，請稍後再試」）於 src/components/news/NewsErrorState.tsx
+- [X] T058 [P] [US5] 建立 NewsCard 元件於 src/components/news/NewsCard.tsx
+- [X] T059 [P] [US5] 建立 NewsList 元件於 src/components/news/NewsList.tsx
+- [X] T060 [P] [US5] 建立 NewsLoadingState 元件（非同步載入狀態）於 src/components/news/NewsLoadingState.tsx
+- [X] T061 [P] [US5] 建立 NewsErrorState 元件（「新聞載入失敗，請稍後再試」）於 src/components/news/NewsErrorState.tsx
 - [ ] T062 [US5] 整合新聞區塊至持股詳情頁於 src/app/portfolios/[id]/holdings/[symbol]/page.tsx
 
 **Checkpoint**: User Story 5 完成 - 新聞整合功能可獨立運作與測試
@@ -196,18 +196,18 @@
 
 ### 測試（TDD - 先寫測試）
 
-- [ ] T063 [P] [US6] 建立 CredibilityService 單元測試於 tests/unit/credibility.service.test.ts
+- [X] T063 [P] [US6] 建立 CredibilityService 單元測試於 tests/unit/credibility.service.test.ts
 
 ### 實作
 
-- [ ] T064 [US6] 實作 CredibilityService 來源分類邏輯於 src/services/credibility.service.ts
-- [ ] T065 [US6] 整合 CredibilityService 至 NewsService 於 src/services/news.service.ts
-- [ ] T066 [US6] 實作 /api/news/sources GET 端點（來源評等清單）於 src/app/api/news/sources/route.ts
+- [X] T064 [US6] 實作 CredibilityService 來源分類邏輯於 src/services/credibility.service.ts
+- [X] T065 [US6] 整合 CredibilityService 至 NewsService 於 src/services/news.service.ts
+- [X] T066 [US6] 實作 /api/news/sources GET 端點（來源評等清單）於 src/app/api/news/sources/route.ts
 
 ### UI 元件
 
-- [ ] T067 [P] [US6] 建立 CredibilityBadge 元件於 src/components/news/CredibilityBadge.tsx
-- [ ] T068 [US6] 整合 CredibilityBadge 至 NewsCard 於 src/components/news/NewsCard.tsx
+- [X] T067 [P] [US6] 建立 CredibilityBadge 元件於 src/components/news/CredibilityBadge.tsx
+- [X] T068 [US6] 整合 CredibilityBadge 至 NewsCard 於 src/components/news/NewsCard.tsx
 
 **Checkpoint**: User Story 6 完成 - 可信度驗證功能可獨立運作與測試
 
@@ -223,19 +223,19 @@
 
 ### 測試（TDD - 先寫測試）
 
-- [ ] T069 [P] [US7] 建立新聞情緒分析 property-based 測試於 tests/property/news-sentiment.property.test.ts
-- [ ] T070 [P] [US7] 建立 SentimentAnalysisService 單元測試於 tests/unit/sentiment-analysis.service.test.ts
+- [X] T069 [P] [US7] 建立新聞情緒分析 property-based 測試於 tests/property/news-sentiment.property.test.ts
+- [X] T070 [P] [US7] 建立 SentimentAnalysisService 單元測試於 tests/unit/sentiment-analysis.service.test.ts
 
 ### 實作
 
-- [ ] T071 [US7] 實作 SentimentAnalysisService 關鍵字比對邏輯於 src/services/sentiment-analysis.service.ts
+- [X] T071 [US7] 實作 SentimentAnalysisService 關鍵字比對邏輯於 src/services/sentiment-analysis.service.ts
 - [ ] T072 [US7] 整合新聞情緒至 RiskAssessmentService（80/20 權重）於 src/services/risk-assessment.service.ts
 - [ ] T073 [US7] 實作 /api/news/sentiment/[symbol] GET 端點於 src/app/api/news/sentiment/[symbol]/route.ts
 - [ ] T074 [US7] 實作「不含新聞情緒分析」標示（情緒服務不可用時）於 src/services/risk-assessment.service.ts
 
 ### UI 元件
 
-- [ ] T075 [P] [US7] 建立 SentimentBadge 元件於 src/components/news/SentimentBadge.tsx
+- [X] T075 [P] [US7] 建立 SentimentBadge 元件於 src/components/news/SentimentBadge.tsx
 - [ ] T076 [US7] 整合 SentimentBadge 至 NewsCard 於 src/components/news/NewsCard.tsx
 - [ ] T077 [US7] 更新 RiskAssessmentPanel 顯示新聞情緒貢獻於 src/components/portfolio/RiskAssessmentPanel.tsx
 
