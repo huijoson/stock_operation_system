@@ -72,20 +72,20 @@
 
 - [X] T017 [US1] 實作 RealizedPLService FIFO 核心邏輯於 src/services/realized-pl.service.ts
 - [X] T018 [US1] 實作 TaxLotService 成本批次管理於 src/services/tax-lot.service.ts
-- [ ] T019 [US1] 實作 /api/realized-pl GET 端點（總覽）於 src/app/api/realized-pl/route.ts
-- [ ] T020 [US1] 實作 /api/realized-pl/portfolio/[portfolioId] GET 端點於 src/app/api/realized-pl/portfolio/[portfolioId]/route.ts
-- [ ] T021 [US1] 建立時間篩選器邏輯（本月、本季、本年、全部）於 src/lib/utils/date-filters.ts
+- [X] T019 [US1] 實作 /api/realized-pl GET 端點（總覽）於 src/app/api/realized-pl/route.ts
+- [X] T020 [US1] 實作 /api/realized-pl/portfolio/[portfolioId] GET 端點於 src/app/api/realized-pl/portfolio/[portfolioId]/route.ts
+- [X] T021 [US1] 建立時間篩選器邏輯（本月、本季、本年、全部）於 src/lib/utils/date-filters.ts
 
 ### UI 元件
 
-- [ ] T022 [P] [US1] 建立 RealizedPLCard 元件於 src/components/portfolio/RealizedPLCard.tsx
-- [ ] T023 [P] [US1] 建立 RealizedPLBreakdown 元件（按股票明細）於 src/components/portfolio/RealizedPLBreakdown.tsx
-- [ ] T024 [US1] 整合已實現損益區塊至儀表板於 src/app/dashboard/page.tsx
+- [X] T022 [P] [US1] 建立 RealizedPLCard 元件於 src/components/portfolio/RealizedPLCard.tsx
+- [X] T023 [P] [US1] 建立 RealizedPLBreakdown 元件（按股票明細）於 src/components/portfolio/RealizedPLBreakdown.tsx
+- [X] T024 [US1] 整合已實現損益區塊至儀表板於 src/app/dashboard/page.tsx
 
 ### 交易整合
 
-- [ ] T025 [US1] 修改交易新增流程，BUY 時自動建立 TaxLot 於 src/services/transaction.service.ts
-- [ ] T026 [US1] 修改交易新增流程，SELL 時自動計算 RealizedPL 於 src/services/transaction.service.ts
+- [X] T025 [US1] 修改交易新增流程，BUY 時自動建立 TaxLot 於 src/services/transaction.service.ts
+- [X] T026 [US1] 修改交易新增流程，SELL 時自動計算 RealizedPL 於 src/services/transaction.service.ts
 
 **Checkpoint**: User Story 1 完成 - 已實現損益功能可獨立運作與測試
 
