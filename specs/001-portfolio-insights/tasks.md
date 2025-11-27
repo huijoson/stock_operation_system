@@ -64,13 +64,13 @@
 
 ### 測試（TDD - 先寫測試）
 
-- [ ] T014 [P] [US1] 建立 FIFO 計算 property-based 測試於 tests/property/realized-pl.property.test.ts
-- [ ] T015 [P] [US1] 建立 RealizedPLService 單元測試於 tests/unit/realized-pl.service.test.ts
-- [ ] T016 [P] [US1] 建立已實現損益 API 整合測試於 tests/integration/realized-pl.api.test.ts
+- [X] T014 [P] [US1] 建立 FIFO 計算 property-based 測試於 tests/property/realized-pl.property.test.ts
+- [X] T015 [P] [US1] 建立 RealizedPLService 單元測試於 tests/unit/realized-pl.service.test.ts
+- [X] T016 [P] [US1] 建立已實現損益 API 整合測試於 tests/integration/realized-pl.api.test.ts
 
 ### 實作
 
-- [ ] T017 [US1] 實作 RealizedPLService FIFO 核心邏輯於 src/services/realized-pl.service.ts
+- [X] T017 [US1] 實作 RealizedPLService FIFO 核心邏輯於 src/services/realized-pl.service.ts
 - [X] T018 [US1] 實作 TaxLotService 成本批次管理於 src/services/tax-lot.service.ts
 - [ ] T019 [US1] 實作 /api/realized-pl GET 端點（總覽）於 src/app/api/realized-pl/route.ts
 - [ ] T020 [US1] 實作 /api/realized-pl/portfolio/[portfolioId] GET 端點於 src/app/api/realized-pl/portfolio/[portfolioId]/route.ts
