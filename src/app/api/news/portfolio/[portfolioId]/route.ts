@@ -7,10 +7,10 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ): Promise<NextResponse> {
   try {
-    const { portfolioId } = params;
+    const { portfolioId } = await params;
 
     const portfolio = await prisma.portfolio.findUnique({
       where: { id: portfolioId },

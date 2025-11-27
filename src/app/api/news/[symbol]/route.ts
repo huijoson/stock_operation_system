@@ -7,10 +7,11 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { symbol: string } }
+  { params }: { params: Promise<{ symbol: string }> }
 ): Promise<NextResponse> {
   try {
-    const symbol = params.symbol.toUpperCase();
+    const { symbol: rawSymbol } = await params;
+    const symbol = rawSymbol.toUpperCase();
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10', 10);
 

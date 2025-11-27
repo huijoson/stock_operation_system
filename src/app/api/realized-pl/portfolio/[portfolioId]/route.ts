@@ -9,11 +9,11 @@ import { isValidTimePeriod } from '@/lib/utils/date-filters'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { portfolioId: string } }
+  { params }: { params: Promise<{ portfolioId: string }> }
 ) {
   try {
     const user = await requireAuth(request)
-    const { portfolioId } = params
+    const { portfolioId } = await params
     
     const { searchParams } = new URL(request.url)
     const periodParam = searchParams.get('period') || 'all'

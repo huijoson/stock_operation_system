@@ -3,6 +3,7 @@
 import React from 'react';
 import Decimal from 'decimal.js';
 import { CredibilityBadge } from './CredibilityBadge';
+import { SentimentBadge } from './SentimentBadge';
 
 interface NewsCardProps {
   headline: string;
@@ -25,15 +26,8 @@ export function NewsCard({
   imageUrl,
   credibility,
   sentimentLabel,
+  sentimentScore,
 }: NewsCardProps) {
-  const sentimentConfig = {
-    positive: { label: '正面', color: 'text-green-600' },
-    neutral: { label: '中性', color: 'text-gray-600' },
-    negative: { label: '負面', color: 'text-red-600' },
-  };
-
-  const sentConfig = sentimentConfig[sentimentLabel as keyof typeof sentimentConfig] || sentimentConfig.neutral;
-
   return (
     <article className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex gap-4">
@@ -51,9 +45,11 @@ export function NewsCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
             <CredibilityBadge credibility={credibility as 'official' | 'mainstream' | 'unverified'} />
-            <span className={`text-xs font-medium ${sentConfig.color}`}>
-              {sentConfig.label}
-            </span>
+            <SentimentBadge 
+              sentimentLabel={sentimentLabel as 'positive' | 'neutral' | 'negative'} 
+              score={parseFloat(sentimentScore.toString())}
+              size="sm"
+            />
           </div>
 
           <a

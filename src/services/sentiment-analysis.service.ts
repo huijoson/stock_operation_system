@@ -17,6 +17,12 @@ export interface SentimentScoreResult {
   neutralCount: number;
 }
 
+export interface SentimentAnalysisResult {
+  score: number;
+  sentiment: 'positive' | 'neutral' | 'negative';
+  articleCount: number;
+}
+
 export class SentimentAnalysisService {
   private positiveKeywords = [
     'surge', 'soar', 'jump', 'rally', 'gain', 'profit', 'growth',
@@ -33,7 +39,7 @@ export class SentimentAnalysisService {
   constructor(private prisma: PrismaClient) {}
 
   analyzeSentiment(headline: string, summary: string): SentimentResult {
-    const text = ${headline} .toLowerCase();
+    const text = `${headline} ${summary}`.toLowerCase();
     let positiveCount = 0;
     let negativeCount = 0;
 
@@ -93,5 +99,21 @@ export class SentimentAnalysisService {
     else if (averageScore < -0.1) overallLabel = 'negative';
 
     return { symbol, averageScore, overallLabel, newsCount: recentNews.length, positiveCount, negativeCount, neutralCount };
+  }
+
+  async analyzeSentiment(symbol: string): Promise<SentimentAnalysisResult | null> {
+    const sentimentData = await this.getSentimentScore(symbol);
+    
+    if (!sentimentData) {
+      return null;
+    }
+
+    const normalizedScore = Math.max(0, Math.min(100, (sentimentData.averageScore + 1) * 50));
+
+    return {
+      score: normalizedScore,
+      sentiment: sentimentData.overallLabel,
+      articleCount: sentimentData.newsCount,
+    };
   }
 }

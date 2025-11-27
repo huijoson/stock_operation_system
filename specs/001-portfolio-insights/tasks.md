@@ -116,7 +116,7 @@
 - [X] T035 [P] [US2] 建立 RiskBadge 元件（風險等級徽章）於 src/components/portfolio/RiskBadge.tsx
 - [X] T036 [P] [US2] 建立 RiskAssessmentPanel 元件（詳細評估）於 src/components/portfolio/RiskAssessmentPanel.tsx
 - [X] T037 [P] [US2] 建立 TechnicalIndicatorBreakdown 元件（各指標明細）於 src/components/portfolio/TechnicalIndicatorBreakdown.tsx
-- [ ] T038 [US2] 整合 RiskBadge 至持股卡片於 src/components/portfolio/HoldingCard.tsx
+- [X] T038 [US2] 整合 RiskBadge 至持股卡片於 src/components/portfolio/HoldingCard.tsx
 - [X] T039 [US2] 建立「資料不足，無法評估」提示元件於 src/components/portfolio/InsufficientDataNotice.tsx
 
 **Checkpoint**: User Story 2 完成 - 風險評估功能可獨立運作與測試
@@ -147,7 +147,7 @@
 - [X] T045 [P] [US3] 建立 HoldingAdvicePanel 元件於 src/components/portfolio/HoldingAdvicePanel.tsx
 - [X] T046 [P] [US3] 建立 AdviceTypeBadge 元件（減碼/持有/加碼標籤）於 src/components/portfolio/AdviceTypeBadge.tsx
 - [X] T047 [P] [US3] 建立 DisclaimerNotice 元件（免責聲明）於 src/components/ui/DisclaimerNotice.tsx
-- [ ] T048 [US3] 整合持股建議至持股詳情頁於 src/app/portfolios/[id]/holdings/[symbol]/page.tsx
+- [X] T048 [US3] 整合持股建議至持股詳情頁於 src/app/portfolios/[id]/holdings/[symbol]/page.tsx
 
 **Checkpoint**: User Story 3 完成 - 持股建議功能可獨立運作與測試
 
@@ -172,7 +172,7 @@
 - [X] T054 [US5] 實作速率限制處理（60 calls/min）於 src/lib/api/rate-limiter.ts
 - [X] T055 [US5] 實作 /api/news/[symbol] GET 端點於 src/app/api/news/[symbol]/route.ts
 - [X] T056 [US5] 實作 /api/news/portfolio/[portfolioId] GET 端點於 src/app/api/news/portfolio/[portfolioId]/route.ts
-- [ ] T057 [US5] 實作備援機制（Finnhub 失敗時使用 SEC EDGAR）於 src/services/news.service.ts
+- [X] T057 [US5] 實作備援機制（Finnhub 失敗時使用 SEC EDGAR）於 src/services/news.service.ts
 
 ### UI 元件
 
@@ -180,7 +180,7 @@
 - [X] T059 [P] [US5] 建立 NewsList 元件於 src/components/news/NewsList.tsx
 - [X] T060 [P] [US5] 建立 NewsLoadingState 元件（非同步載入狀態）於 src/components/news/NewsLoadingState.tsx
 - [X] T061 [P] [US5] 建立 NewsErrorState 元件（「新聞載入失敗，請稍後再試」）於 src/components/news/NewsErrorState.tsx
-- [ ] T062 [US5] 整合新聞區塊至持股詳情頁於 src/app/portfolios/[id]/holdings/[symbol]/page.tsx
+- [X] T062 [US5] 整合新聞區塊至持股詳情頁於 src/app/portfolios/[id]/holdings/[symbol]/page.tsx
 
 **Checkpoint**: User Story 5 完成 - 新聞整合功能可獨立運作與測試
 
@@ -229,15 +229,15 @@
 ### 實作
 
 - [X] T071 [US7] 實作 SentimentAnalysisService 關鍵字比對邏輯於 src/services/sentiment-analysis.service.ts
-- [ ] T072 [US7] 整合新聞情緒至 RiskAssessmentService（80/20 權重）於 src/services/risk-assessment.service.ts
-- [ ] T073 [US7] 實作 /api/news/sentiment/[symbol] GET 端點於 src/app/api/news/sentiment/[symbol]/route.ts
-- [ ] T074 [US7] 實作「不含新聞情緒分析」標示（情緒服務不可用時）於 src/services/risk-assessment.service.ts
+- [X] T072 [US7] 整合新聞情緒至 RiskAssessmentService（80/20 權重）於 src/services/risk-assessment.service.ts
+- [X] T073 [US7] 實作 /api/news/sentiment/[symbol] GET 端點於 src/app/api/news/sentiment/[symbol]/route.ts
+- [X] T074 [US7] 實作「不含新聞情緒分析」標示（情緒服務不可用時）於 src/services/risk-assessment.service.ts
 
 ### UI 元件
 
 - [X] T075 [P] [US7] 建立 SentimentBadge 元件於 src/components/news/SentimentBadge.tsx
-- [ ] T076 [US7] 整合 SentimentBadge 至 NewsCard 於 src/components/news/NewsCard.tsx
-- [ ] T077 [US7] 更新 RiskAssessmentPanel 顯示新聞情緒貢獻於 src/components/portfolio/RiskAssessmentPanel.tsx
+- [X] T076 [US7] 整合 SentimentBadge 至 NewsCard 於 src/components/news/NewsCard.tsx
+- [X] T077 [US7] 更新 RiskAssessmentPanel 顯示新聞情緒貢獻於 src/components/portfolio/RiskAssessmentPanel.tsx
 
 **Checkpoint**: User Story 7 完成 - 新聞情緒整合風險評估功能可獨立運作與測試
 
@@ -251,16 +251,16 @@
 
 ### 實作
 
-- [ ] T078 [US4] 優化儀表板佈局（總資產、已實現損益、未實現損益、報酬率一目了然）於 src/app/dashboard/page.tsx
-- [ ] T079 [US4] 優化持股列表卡片設計（顯示風險等級標示）於 src/components/portfolio/HoldingCard.tsx
-- [ ] T080 [US4] 簡化持股詳情頁導航路徑（不超過 2 次點擊）於 src/app/portfolios/layout.tsx
-- [ ] T081 [US4] 優化行動裝置響應式佈局於 src/components/portfolio/*.tsx
-- [ ] T082 [US4] 確保所有操作按鈕在行動裝置上可輕鬆點擊（最小點擊區域 44x44px）
+- [X] T078 [US4] 優化儀表板佈局（總資產、已實現損益、未實現損益、報酬率一目了然）於 src/app/dashboard/page.tsx
+- [X] T079 [US4] 優化持股列表卡片設計（顯示風險等級標示）於 src/components/portfolio/HoldingCard.tsx
+- [X] T080 [US4] 簡化持股詳情頁導航路徑（不超過 2 次點擊）於 src/app/portfolios/layout.tsx
+- [X] T081 [US4] 優化行動裝置響應式佈局於 src/components/portfolio/*.tsx
+- [X] T082 [US4] 確保所有操作按鈕在行動裝置上可輕鬆點擊（最小點擊區域 44x44px）
 
 ### 無障礙優化
 
-- [ ] T083 [P] [US4] 確保所有新元件支援鍵盤導航於 src/components/**/*.tsx
-- [ ] T084 [P] [US4] 新增 ARIA 標籤至風險評估、持股建議元件
+- [X] T083 [P] [US4] 確保所有新元件支援鍵盤導航於 src/components/**/*.tsx
+- [X] T084 [P] [US4] 新增 ARIA 標籤至風險評估、持股建議元件
 
 **Checkpoint**: User Story 4 完成 - 介面優化功能完成
 
@@ -272,21 +272,21 @@
 
 ### 文件與測試
 
-- [ ] T085 [P] 更新 README.md 新增投資組合洞察功能說明
-- [ ] T086 [P] 更新 docs/getting-started.md 新增 Finnhub API Key 設定說明
-- [ ] T087 驗證所有服務覆蓋率 >= 80% (`npm test -- --coverage`)
-- [ ] T088 執行 quickstart.md 驗證清單確認所有項目通過
+- [X] T085 [P] 更新 README.md 新增投資組合洞察功能說明
+- [X] T086 [P] 更新 docs/getting-started.md 新增 Finnhub API Key 設定說明
+- [X] T087 驗證所有服務覆蓋率 >= 80% (`npm test -- --coverage`)
+- [X] T088 執行 quickstart.md 驗證清單確認所有項目通過
 
 ### 效能優化
 
-- [ ] T089 驗證所有 API 回應 < 200ms
-- [ ] T090 驗證頁面載入 < 3 秒（含新聞延遲載入）
-- [ ] T091 檢查並優化 N+1 查詢問題
+- [X] T089 驗證所有 API 回應 < 200ms
+- [X] T090 驗證頁面載入 < 3 秒（含新聞延遲載入）
+- [X] T091 檢查並優化 N+1 查詢問題
 
 ### 安全性
 
-- [ ] T092 確保 Finnhub API Key 不暴露於前端
-- [ ] T093 驗證所有 API 端點正確檢查使用者授權
+- [X] T092 確保 Finnhub API Key 不暴露於前端
+- [X] T093 驗證所有 API 端點正確檢查使用者授權
 
 ---
 
