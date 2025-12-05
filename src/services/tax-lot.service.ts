@@ -2,30 +2,34 @@ import prisma from '@/lib/db/prisma'
 import { Decimal } from 'decimal.js'
 import { TaxLot } from '@/types/insights'
 
+interface TransactionInput {
+  id: string
+  portfolioId: string
+  symbol: string
+  quantity: string | number | Decimal | { toString(): string }
+  price: string | number | Decimal | { toString(): string }
+  date: Date
+}
+
 export class TaxLotService {
   /**
    * Create a new TaxLot from a BUY transaction
    */
-  async createFromTransaction(
-    portfolioId: string,
-    transactionId: string,
-    symbol: string,
-    quantity: Decimal,
-    price: Decimal,
-    date: Date
-  ): Promise<TaxLot> {
+  async createFromTransaction(transaction: TransactionInput): Promise<TaxLot> {
+    const quantity = new Decimal(transaction.quantity.toString())
+    const price = new Decimal(transaction.price.toString())
     const totalCostBasis = quantity.mul(price)
     
     const taxLot = await prisma.taxLot.create({
       data: {
-        portfolioId,
-        symbol,
-        acquisitionDate: date,
+        portfolioId: transaction.portfolioId,
+        symbol: transaction.symbol,
+        acquisitionDate: transaction.date,
         originalShares: quantity,
         costBasisPerShare: price,
         totalCostBasis,
         remainingShares: quantity,
-        transactionId
+        transactionId: transaction.id
       }
     })
     
