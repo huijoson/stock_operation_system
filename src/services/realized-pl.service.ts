@@ -58,7 +58,9 @@ export class RealizedPLService {
     )
     
     if (availableLots.length === 0) {
-      throw new Error(`No available TaxLots for ${symbol} in portfolio ${portfolioId}`)
+      throw new Error(
+        `無法賣出 ${symbol}：投資組合中沒有該股票的買入記錄。請先買入股票後再進行賣出操作。`
+      )
     }
     
     // Calculate total available shares
@@ -68,7 +70,9 @@ export class RealizedPLService {
     )
 
     if (sharesSold.gt(totalAvailable)) {
-      throw new Error('Insufficient shares')
+      throw new Error(
+        `無法賣出 ${sharesSold.toString()} 股 ${symbol}：目前可賣出數量僅有 ${totalAvailable.toString()} 股`
+      )
     }
     
     let remainingToSell = sharesSold
