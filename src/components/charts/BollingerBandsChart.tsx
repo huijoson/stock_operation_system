@@ -47,9 +47,32 @@ export default function BollingerBandsChart({
   }
 
   const currentData = data[data.length - 1]
-  const pricePosition = getPricePosition(currentData.price, currentData.upper, currentData.lower)
-  const isSqueeze = squeezeThreshold && currentData.bandwidth ? currentData.bandwidth < squeezeThreshold : false
-  const isExpansion = expansionThreshold && currentData.bandwidth ? currentData.bandwidth > expansionThreshold : false
+  
+  // Validate that currentData has all required fields
+  if (!currentData || currentData.price === undefined || currentData.upper === undefined || currentData.lower === undefined) {
+    return (
+      <div className="flex items-center justify-center bg-white rounded-lg shadow p-6" style={{ height }}>
+        <p className="text-gray-500">資料格式錯誤，無法顯示布林通道圖表</p>
+      </div>
+    )
+  }
+  
+  // Helper function to safely convert to number
+  const toNum = (val: any): number => {
+    if (typeof val === 'number') return val
+    if (val && typeof val.toNumber === 'function') return val.toNumber()
+    return Number(val)
+  }
+
+  const price = toNum(currentData.price)
+  const upper = toNum(currentData.upper)
+  const middle = toNum(currentData.middle)
+  const lower = toNum(currentData.lower)
+  const bandwidth = currentData.bandwidth ? toNum(currentData.bandwidth) : undefined
+
+  const pricePosition = getPricePosition(price, upper, lower)
+  const isSqueeze = squeezeThreshold && bandwidth ? bandwidth < squeezeThreshold : false
+  const isExpansion = expansionThreshold && bandwidth ? bandwidth > expansionThreshold : false
 
   function getPricePosition(price: number, upper: number, lower: number): string {
     const range = upper - lower
@@ -80,7 +103,7 @@ export default function BollingerBandsChart({
         <div className="flex items-center gap-4">
           <div className="text-sm">
             <span className="text-gray-600">價格:</span>
-            <span className="ml-1 font-bold text-gray-800">{currentData.price.toFixed(2)}</span>
+            <span className="ml-1 font-bold text-gray-800">{price.toFixed(2)}</span>
           </div>
           <div
             className="px-2 py-1 rounded text-xs font-semibold text-white"
@@ -110,6 +133,9 @@ export default function BollingerBandsChart({
                 upper: '上軌',
                 middle: '中軌',
                 lower: '下軌',
+              }
+              if (value === undefined || value === null) {
+                return ['N/A', labels[name] || name]
               }
               return [Number(value).toFixed(2), labels[name] || name]
             }}
@@ -179,23 +205,23 @@ export default function BollingerBandsChart({
         <div className="grid grid-cols-3 gap-4 mb-3">
           <div>
             <div className="text-xs text-gray-600">上軌</div>
-            <div className="font-semibold text-red-600">{currentData.upper.toFixed(2)}</div>
+            <div className="font-semibold text-red-600">{upper.toFixed(2)}</div>
           </div>
           <div>
             <div className="text-xs text-gray-600">中軌 (SMA)</div>
-            <div className="font-semibold text-yellow-600">{currentData.middle.toFixed(2)}</div>
+            <div className="font-semibold text-yellow-600">{middle.toFixed(2)}</div>
           </div>
           <div>
             <div className="text-xs text-gray-600">下軌</div>
-            <div className="font-semibold text-green-600">{currentData.lower.toFixed(2)}</div>
+            <div className="font-semibold text-green-600">{lower.toFixed(2)}</div>
           </div>
         </div>
         <div className="text-sm text-gray-700">
           <span className="font-medium">價格位置:</span> {positionInfo.description}
         </div>
-        {currentData.bandwidth && (
+        {bandwidth !== undefined && (
           <div className="text-sm text-gray-700 mt-1">
-            <span className="font-medium">通道寬度:</span> {currentData.bandwidth.toFixed(2)}
+            <span className="font-medium">通道寬度:</span> {bandwidth.toFixed(2)}
             {isSqueeze && <span className="ml-2 text-yellow-600 font-semibold">（盤整狀態）</span>}
             {isExpansion && <span className="ml-2 text-purple-600 font-semibold">（波動加劇）</span>}
           </div>

@@ -40,7 +40,6 @@ const taiwanStocks = [
   
   // 食品產業
   { symbol: '1216', name: '統一', industry: '食品' },
-  { symbol: '1301', name: '台塑', industry: '塑膠' },
   
   // 航運產業
   { symbol: '2603', name: '長榮', industry: '航運' },
@@ -95,6 +94,29 @@ async function main() {
     })
   }
   console.log(`已新增 ${usStocks.length} 筆美股資料`)
+
+  // Seed NewsSourceRating data
+  console.log('開始填充新聞來源評等資料...')
+  const newsSources = [
+    { sourceName: 'SEC', credibilityLevel: 'official', description: 'U.S. Securities and Exchange Commission' },
+    { sourceName: 'BusinessWire', credibilityLevel: 'official', description: 'Official press releases' },
+    { sourceName: 'PR Newswire', credibilityLevel: 'official', description: 'Official press releases' },
+    { sourceName: 'Reuters', credibilityLevel: 'mainstream', description: 'International news agency' },
+    { sourceName: 'Bloomberg', credibilityLevel: 'mainstream', description: 'Financial news and data' },
+    { sourceName: 'CNBC', credibilityLevel: 'mainstream', description: 'Business news network' },
+    { sourceName: 'Wall Street Journal', credibilityLevel: 'mainstream', description: 'Financial newspaper' },
+    { sourceName: 'MarketWatch', credibilityLevel: 'mainstream', description: 'Financial information website' },
+    { sourceName: 'Financial Times', credibilityLevel: 'mainstream', description: 'International business newspaper' },
+  ]
+
+  for (const source of newsSources) {
+    await prisma.newsSourceRating.upsert({
+      where: { sourceName: source.sourceName },
+      update: source,
+      create: source,
+    })
+  }
+  console.log(`已新增 ${newsSources.length} 筆新聞來源評等資料`)
 
   console.log('股票資料填充完成！')
 }

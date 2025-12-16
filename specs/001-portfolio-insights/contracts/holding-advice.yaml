@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: 持股建議 API
+  description: 取得基於技術分析的持股操作建議
+  version: 1.0.0
+
+paths:
+  /api/holding-advice/{symbol}:
+    get:
+      summary: 取得單一股票的持股建議
+      description: 取得指定股票的操作建議（減碼/持有/加碼）與理由
+      tags:
+        - 持股建議
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+          example: AAPL
+      responses:
+        '200':
+          description: 成功取得持股建議
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoldingAdvice'
+        '404':
+          description: 股票不存在或無法生成建議
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoAdviceError'
+
+  /api/holding-advice/portfolio/{portfolioId}:
+    get:
+      summary: 取得投資組合所有持股的建議
+      description: 批次取得投資組合內所有持股的操作建議
+      tags:
+        - 持股建議
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功取得投資組合持股建議
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioHoldingAdvice'
+
+components:
+  schemas:
+    HoldingAdvice:
+      type: object
+      properties:
+        symbol:
+          type: string
+        adviceType:
+          type: string
+          enum: [reduce, hold, add]
+          description: 建議類型
+        adviceTypeLabel:
+          type: string
+          description: 建議類型顯示文字
+          example: "建議減碼"
+        reasons:
+          type: array
+          items:
+            type: string
+          description: 理由清單
+          example:
+            - "技術指標顯示超買，MACD 出現賣出訊號"
+            - "RSI 高於 70，價格接近布林上軌"
+        confidence:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: 信心度
+        confidenceLabel:
+          type: string
+          enum: [低, 中, 高]
+        riskAssessment:
+          $ref: '#/components/schemas/RiskAssessmentSummary'
+        disclaimer:
+          type: string
+          description: 免責聲明
+          example: "此建議僅供參考，投資決策請自行判斷"
+        generatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    RiskAssessmentSummary:
+      type: object
+      properties:
+        riskScore:
+          type: integer
+        riskLevel:
+          type: string
+        riskLevelLabel:
+          type: string
+
+    PortfolioHoldingAdvice:
+      type: object
+      properties:
+        portfolioId:
+          type: string
+        portfolioName:
+          type: string
+        holdings:
+          type: array
+          items:
+            $ref: '#/components/schemas/HoldingAdviceSummary'
+        actionSummary:
+          $ref: '#/components/schemas/ActionSummary'
+        disclaimer:
+          type: string
+          example: "此建議僅供參考，投資決策請自行判斷"
+
+    HoldingAdviceSummary:
+      type: object
+      properties:
+        symbol:
+          type: string
+        adviceType:
+          type: string
+          enum: [reduce, hold, add]
+        adviceTypeLabel:
+          type: string
+        primaryReason:
+          type: string
+          description: 主要理由（第一條）
+        confidence:
+          type: integer
+        riskLevel:
+          type: string
+
+    ActionSummary:
+      type: object
+      properties:
+        reduceCount:
+          type: integer
+          description: 建議減碼的持股數量
+        holdCount:
+          type: integer
+          description: 建議持有的持股數量
+        addCount:
+          type: integer
+          description: 建議加碼的持股數量
+
+    NoAdviceError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "NO_ADVICE_AVAILABLE"
+        message:
+          type: string
+          example: "無法生成建議，資料不足"

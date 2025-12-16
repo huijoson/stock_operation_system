@@ -6,6 +6,7 @@ import { Decimal } from 'decimal.js'
 import PieChart from '@/components/charts/PieChart'
 import LineChart from '@/components/charts/LineChart'
 import BarChart from '@/components/charts/BarChart'
+import RealizedPLCard from '@/components/portfolio/RealizedPLCard'
 
 interface Portfolio {
   id: string
@@ -355,6 +356,9 @@ export default function DashboardPage() {
           {/* Charts Section */}
           {allHoldings.length > 0 && Object.keys(currentPrices).length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              {/* Realized P&L Card */}
+              <RealizedPLCard className="lg:col-span-2" />
+
               {/* Market Value Distribution Pie Chart */}
               <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                 <PieChart
@@ -407,22 +411,6 @@ export default function DashboardPage() {
                   title="各持股損益分布"
                   yAxisLabel="損益 (TWD)"
                 />
-              </div>
-            </div>
-          )}
-
-          {/* Note about realized P&L */}
-          {summary && (
-            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex">
-                <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div>
-                  <p className="text-sm text-blue-800">
-                    <strong>提示：</strong>目前顯示的是未實現損益。已實現損益（已賣出股票的損益）和績效趨勢圖表將在未來版本中加入。
-                  </p>
-                </div>
               </div>
             </div>
           )}

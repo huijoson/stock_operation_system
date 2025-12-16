@@ -36,9 +36,23 @@ DATABASE_URL_TEST="postgresql://使用者名稱:密碼@localhost:5432/測試資�
 # Next.js 設定
 NEXT_PUBLIC_API_URL="http://localhost:3000"
 
+# Finnhub API Key（投資組合洞察功能必填）
+FINNHUB_API_KEY="your_finnhub_api_key_here"
+
 # 其他設定（選用）
 NODE_ENV="development"
 ```
+
+#### 取得 Finnhub API Key
+
+投資組合洞察功能需要 Finnhub API Key 以取得新聞資料：
+
+1. 前往 [Finnhub.io](https://finnhub.io/) 註冊免費帳號
+2. 登入後前往 Dashboard 取得 API Key
+3. 將 API Key 貼到 `.env` 檔案中的 `FINNHUB_API_KEY`
+4. 免費方案限制：60 calls/min，系統已實作快取與速率限制機制
+
+> **注意**: 沒有 Finnhub API Key 系統仍可運行，但新聞整合與情緒分析功能將無法使用。
 
 ### 3. 設定資料庫
 

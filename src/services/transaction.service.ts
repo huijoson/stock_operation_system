@@ -1,6 +1,8 @@
 import { PrismaClient, Transaction, Holding } from '@prisma/client'
 import Decimal from 'decimal.js'
 import { parseCSV, CSVFormat } from '@/lib/csv/csv-parser'
+import { taxLotService } from './tax-lot.service'
+import { realizedPLService } from './realized-pl.service'
 
 /**
  * Transaction input type
@@ -126,6 +128,23 @@ export class TransactionService {
           },
         })
       }
+
+      // Create transaction record first (for BUY)
+      const createdTransaction = await this.prisma.transaction.create({
+        data: {
+          portfolioId,
+          symbol,
+          type,
+          quantity: quantity.toFixed(8),
+          price: price.toFixed(8),
+          date,
+        },
+      })
+
+      // Create TaxLot for this BUY transaction (T025)
+      await taxLotService.createFromTransaction(createdTransaction)
+
+      return createdTransaction
     } else if (type === 'SELL') {
       // Handle sell transaction
       if (!existingHolding) {
@@ -167,21 +186,27 @@ export class TransactionService {
           },
         })
       }
+
+      // Create transaction record first (for SELL)
+      const createdTransaction = await this.prisma.transaction.create({
+        data: {
+          portfolioId,
+          symbol,
+          type,
+          quantity: quantity.toFixed(8),
+          price: price.toFixed(8),
+          date,
+        },
+      })
+
+      // Calculate and create RealizedPL records for this SELL transaction (T026)
+      await realizedPLService.calculateRealizedPL(createdTransaction)
+
+      return createdTransaction
     }
 
-    // Create transaction record
-    const createdTransaction = await this.prisma.transaction.create({
-      data: {
-        portfolioId,
-        symbol,
-        type,
-        quantity: quantity.toFixed(8),
-        price: price.toFixed(8),
-        date,
-      },
-    })
-
-    return createdTransaction
+    // This should not be reached due to validation
+    throw new Error('Invalid transaction type')
   }
 
   /**
