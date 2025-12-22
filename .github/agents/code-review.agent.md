@@ -160,9 +160,8 @@ Group findings by severity:
 
 ### 5. Generate Review Report
 
-Produce a structured Markdown report with the following format:
+Produce a structured Markdown report with the following structure:
 
-````markdown
 ## Code Review Report
 
 ### Summary
@@ -178,7 +177,7 @@ Produce a structured Markdown report with the following format:
 
 #### [Issue Title]
 
-**File**: `path/to/file.ts:line_number`
+**File**: `path/to/file.ts:line_number`  
 **Category**: Security | Performance | Quality | Architecture | Testing
 
 **Problem**:
@@ -188,11 +187,7 @@ Produce a structured Markdown report with the following format:
 [Why this is critical - security risk, data loss, etc.]
 
 **Suggested Solution**:
-
-```typescript
-// Example code showing the fix
-```
-````
+(Include code snippet showing the fix)
 
 **Rationale**:
 [Why this solution is better]
@@ -203,20 +198,14 @@ Produce a structured Markdown report with the following format:
 
 #### [Suggestion Title]
 
-**File**: `path/to/file.ts:line_number`
+**File**: `path/to/file.ts:line_number`  
 **Category**: Performance | Quality | Architecture | Testing | Documentation
 
 **Current Code**:
-
-```typescript
-// Current implementation
-```
+(Include current implementation snippet)
 
 **Suggestion**:
-
-```typescript
-// Improved implementation
-```
+(Include improved implementation snippet)
 
 **Benefit**:
 [Why this improvement helps]
@@ -238,11 +227,10 @@ Produce a structured Markdown report with the following format:
 - [ ] Adequate test coverage
 - [ ] Documentation updated
 
-```
-
 ### 6. Focus Areas
 
 If the user specified focus areas in the input, prioritize those sections:
+
 - Parse the focus area from $ARGUMENTS
 - Perform deeper analysis in that category
 - Provide more detailed findings for the focus area
@@ -251,6 +239,7 @@ If the user specified focus areas in the input, prioritize those sections:
 ### 7. Context-Aware Analysis
 
 Apply project-specific rules from:
+
 - `.specify/memory/constitution.md` - Non-negotiable project rules
 - `.github/copilot-instructions.md` - Coding standards
 - Project-specific linting rules (.eslintrc.json)
@@ -259,6 +248,7 @@ Apply project-specific rules from:
 ### 8. Constructive Feedback
 
 Ensure all feedback is:
+
 - **Specific**: Reference exact line numbers and code
 - **Actionable**: Provide concrete solutions
 - **Educational**: Explain the reasoning
@@ -297,7 +287,8 @@ Ensure all feedback is:
 
 ## Context
 
-Focus on: ${input:focus:Any specific areas to emphasize in the review?}
+$ARGUMENTS
+
+Focus area guidance: Any specific areas to emphasize in the review?
 
 Be constructive and educational in your feedback.
-```
