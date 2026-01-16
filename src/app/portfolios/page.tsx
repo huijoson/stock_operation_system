@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import PortfolioCard from '@/components/portfolio/PortfolioCard'
 import PortfolioForm from '@/components/portfolio/PortfolioForm'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface Portfolio {
   id: string
@@ -89,37 +90,38 @@ export default function PortfolioListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">載入中...</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-gray-600 dark:text-gray-300">載入中...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Navigation */}
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <button
             onClick={() => router.push('/dashboard')}
-            className="text-blue-600 hover:text-blue-800 inline-flex items-center text-sm sm:text-base"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
           >
             ← 返回儀表板
           </button>
+          <ThemeToggle />
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">我的投資組合</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">我的投資組合</h1>
           <div className="flex gap-2 w-full sm:w-auto">
             <button
               onClick={() => router.push('/technical-analysis')}
-              className="flex-1 sm:flex-none bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm sm:text-base"
+              className="flex-1 sm:flex-none bg-purple-600 dark:bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition text-sm sm:text-base"
             >
               技術分析
             </button>
             <button
               onClick={() => setShowForm(true)}
-              className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+              className="flex-1 sm:flex-none bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition text-sm sm:text-base"
             >
               新增投資組合
             </button>
@@ -127,7 +129,7 @@ export default function PortfolioListPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm sm:text-base">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4 text-sm sm:text-base">
             {error}
           </div>
         )}
@@ -143,8 +145,8 @@ export default function PortfolioListPage() {
 
         {portfolios.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-base sm:text-lg">尚未建立任何投資組合</p>
-            <p className="text-gray-400 mt-2 text-sm sm:text-base">點擊上方按鈕建立您的第一個投資組合</p>
+            <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg">尚未建立任何投資組合</p>
+            <p className="text-gray-400 dark:text-gray-500 mt-2 text-sm sm:text-base">點擊上方按鈕建立您的第一個投資組合</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
