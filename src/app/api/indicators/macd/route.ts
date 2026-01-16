@@ -106,24 +106,29 @@ export async function GET(request: NextRequest) {
     const result = macdService.calculateMACD(prices, fastPeriod, slowPeriod, signalPeriod)
 
     // Convert to response format (return only requested days)
+    const slicedHistory = history.slice(-days)
+    const slicedMacdLine = result.macdLine.slice(-days)
+    const slicedSignalLine = result.signalLine.slice(-days)
+    const slicedHistogram = result.histogram.slice(-days)
+    
     const response = {
       symbol,
       fastPeriod,
       slowPeriod,
       signalPeriod,
-      macdLine: result.macdLine.slice(-days).map(v => Number(v)),
-      signalLine: result.signalLine.slice(-days).map(v => Number(v)),
-      histogram: result.histogram.slice(-days).map(h => ({
-        date: h.date.toISOString().split('T')[0],
-        value: Number(h.value),
+      macdLine: slicedMacdLine.map(v => Number(v)),
+      signalLine: slicedSignalLine.map(v => Number(v)),
+      histogram: slicedHistogram.map((h, idx) => ({
+        date: slicedHistory[idx].date.toISOString().split('T')[0],
+        value: Number(h),
       })),
       crossovers: result.crossovers.filter((_, idx) => idx >= result.crossovers.length - days),
       currentSignal: result.currentSignal,
-      history: result.histogram.slice(-days).map((h, idx) => ({
-        date: h.date.toISOString().split('T')[0],
-        macd: Number(result.macdLine.slice(-days)[idx]),
-        signal: Number(result.signalLine.slice(-days)[idx]),
-        histogram: Number(h.value),
+      history: slicedHistogram.map((h, idx) => ({
+        date: slicedHistory[idx].date.toISOString().split('T')[0],
+        macd: Number(slicedMacdLine[idx]),
+        signal: Number(slicedSignalLine[idx]),
+        histogram: Number(h),
       })),
       timestamp: new Date().toISOString(),
     }

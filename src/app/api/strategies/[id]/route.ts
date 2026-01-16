@@ -10,13 +10,13 @@ import { requireAuth } from '@/lib/auth/middleware'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Validate session
     const user = await requireAuth(request)
 
-    const strategyId = params.id
+    const { id: strategyId } = await params
 
     // Get strategy
     const strategyService = new StrategyService()
@@ -63,13 +63,13 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Validate session
     const user = await requireAuth(request)
 
-    const strategyId = params.id
+    const { id: strategyId } = await params
 
     // Get existing strategy to verify ownership
     const strategyService = new StrategyService()
@@ -169,13 +169,13 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Validate session
     const user = await requireAuth(request)
 
-    const strategyId = params.id
+    const { id: strategyId } = await params
 
     // Get existing strategy to verify ownership
     const strategyService = new StrategyService()

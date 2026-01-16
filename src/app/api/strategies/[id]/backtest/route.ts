@@ -10,13 +10,13 @@ import { requireAuth } from '@/lib/auth/middleware'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Validate session
     const user = await requireAuth(request)
 
-    const strategyId = params.id
+    const { id: strategyId } = await params
 
     // Get query parameters
     const { searchParams } = new URL(request.url)
