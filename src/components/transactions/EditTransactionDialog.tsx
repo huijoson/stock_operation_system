@@ -77,37 +77,37 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">編輯交易記錄</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">編輯交易記錄</h3>
         
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               股票代號
             </label>
             <input
               type="text"
               value={transaction.symbol}
               disabled
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
             />
           </div>
 
           <div>
-            <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               交易類型 *
             </label>
             <select
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value as 'BUY' | 'SELL')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="BUY">買入</option>
               <option value="SELL">賣出</option>
@@ -115,7 +115,7 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
           </div>
 
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               數量 *
             </label>
             <input
@@ -123,7 +123,7 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
               id="quantity"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0"
               step="0.000001"
               min="0"
@@ -132,7 +132,7 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
           </div>
 
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               價格 *
             </label>
             <input
@@ -140,7 +140,7 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
               id="price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0.00"
               step="0.000001"
               min="0"
@@ -149,7 +149,7 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
           </div>
 
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               交易日期 *
             </label>
             <input
@@ -157,7 +157,7 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
               id="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -166,14 +166,14 @@ export default function EditTransactionDialog({ transaction, onClose, onSave }: 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               disabled={loading}
             >
               取消
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+              className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition disabled:opacity-50"
               disabled={loading}
             >
               {loading ? '儲存中...' : '儲存'}

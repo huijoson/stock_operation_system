@@ -72,13 +72,13 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">匯入交易記錄</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">匯入交易記錄</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           >
             ✕
           </button>
@@ -87,13 +87,13 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
         <div className="space-y-4">
           {/* Format Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               CSV 格式
             </label>
             <select
               value={format}
               onChange={(e) => setFormat(e.target.value as 'schwab' | 'firstrade')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             >
               <option value="schwab">Schwab</option>
@@ -103,14 +103,14 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
 
           {/* File Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               選擇 CSV 檔案
             </label>
             <input
               type="file"
               accept=".csv"
               onChange={handleFileChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />
           </div>
@@ -119,14 +119,14 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
           <button
             onClick={handleImport}
             disabled={!file || loading}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="w-full bg-blue-500 dark:bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             {loading ? '匯入中...' : '開始匯入'}
           </button>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded">
               {error}
             </div>
           )}
@@ -134,7 +134,7 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
           {/* Import Result */}
           {result && (
             <div className="space-y-3">
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded">
                 <p className="font-semibold">匯入完成</p>
                 <p>成功: {result.successCount} 筆</p>
                 <p>跳過: {result.skippedCount} 筆</p>
@@ -143,7 +143,7 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
 
               {/* Error Details */}
               {result.errors.length > 0 && (
-                <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+                <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 px-4 py-3 rounded">
                   <p className="font-semibold mb-2">錯誤詳情:</p>
                   <ul className="list-disc list-inside space-y-1 max-h-40 overflow-y-auto">
                     {result.errors.map((err, index) => (

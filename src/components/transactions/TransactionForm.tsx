@@ -73,11 +73,11 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">新增交易記錄</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-6">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">新增交易記錄</h3>
       
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
@@ -86,13 +86,13 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 股票代號 *
               </label>
               <button
                 type="button"
                 onClick={() => setUseSearch(!useSearch)}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
               >
                 {useSearch ? '手動輸入' : '使用搜尋'}
               </button>
@@ -108,9 +108,9 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
                   placeholder="搜尋股票代號或名稱..."
                 />
                 {symbol && (
-                  <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-sm">
+                  <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded text-sm">
                     已選擇：<span className="font-semibold">{symbol}</span>
-                    {stockName && <span className="text-gray-600"> - {stockName}</span>}
+                    {stockName && <span className="text-gray-600 dark:text-gray-400"> - {stockName}</span>}
                   </div>
                 )}
               </div>
@@ -123,7 +123,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
                   setSymbol(e.target.value)
                   setStockName('')
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="例如：2330"
                 required
               />
@@ -131,14 +131,14 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
           </div>
 
           <div>
-            <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               交易類型 *
             </label>
             <select
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value as 'BUY' | 'SELL')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="BUY">買入</option>
               <option value="SELL">賣出</option>
@@ -146,7 +146,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
           </div>
 
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               數量 *
             </label>
             <input
@@ -154,7 +154,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
               id="quantity"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0"
               step="0.000001"
               min="0"
@@ -163,7 +163,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
           </div>
 
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               價格 *
             </label>
             <input
@@ -171,7 +171,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
               id="price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0.00"
               step="0.000001"
               min="0"
@@ -180,7 +180,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
           </div>
 
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               交易日期 *
             </label>
             <input
@@ -188,7 +188,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
               id="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -198,14 +198,14 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
             disabled={loading}
           >
             取消
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition disabled:opacity-50"
             disabled={loading}
           >
             {loading ? '處理中...' : '新增交易'}
