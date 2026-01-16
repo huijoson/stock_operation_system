@@ -75,10 +75,10 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">載入中...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">載入中...</p>
         </div>
       </div>
     );
@@ -86,12 +86,12 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
 
   if (error || !holding) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <p className="text-red-800">{error || '找不到持股資料'}</p>
+      <div className="container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <p className="text-red-800 dark:text-red-300">{error || '找不到持股資料'}</p>
           <button
             onClick={() => router.push(`/portfolios/${portfolioId}`)}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="mt-4 px-4 py-2 bg-red-600 dark:bg-red-500 text-white rounded hover:bg-red-700 dark:hover:bg-red-600"
           >
             返回投資組合
           </button>
@@ -105,18 +105,18 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
   const totalCost = quantity.mul(averageCost);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl bg-gray-50 dark:bg-gray-900 min-h-screen">
       <button
         onClick={() => router.push(`/portfolios/${portfolioId}`)}
-        className="mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2"
+        className="mb-6 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
       >
         <span>←</span>
         <span>返回投資組合</span>
       </button>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{symbol}</h1>
-        <div className="flex gap-6 text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{symbol}</h1>
+        <div className="flex gap-6 text-gray-600 dark:text-gray-400">
           <div>
             <span className="text-sm">持有股數：</span>
             <span className="font-medium">{quantity.toFixed()} 股</span>
@@ -161,12 +161,12 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">相關新聞</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-transparent dark:border-gray-700 p-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">相關新聞</h2>
         {news.length > 0 ? (
           <NewsList news={news} />
         ) : (
-          <p className="text-gray-600 text-center py-8">目前沒有相關新聞</p>
+          <p className="text-gray-600 dark:text-gray-400 text-center py-8">目前沒有相關新聞</p>
         )}
       </div>
     </div>

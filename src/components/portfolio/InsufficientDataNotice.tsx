@@ -9,11 +9,11 @@ interface InsufficientDataNoticeProps {
 
 export function InsufficientDataNotice({ symbol, minDataDays = 50 }: InsufficientDataNoticeProps) {
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4" role="alert">
+    <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4" role="alert">
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
           <svg
-            className="w-6 h-6 text-amber-600"
+            className="w-6 h-6 text-amber-600 dark:text-amber-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -28,11 +28,11 @@ export function InsufficientDataNotice({ symbol, minDataDays = 50 }: Insufficien
           </svg>
         </div>
         <div className="flex-1">
-          <h3 className="text-sm font-medium text-amber-800 mb-1">資料不足，無法評估</h3>
-          <p className="text-sm text-amber-700">
+          <h3 className="text-sm font-medium text-amber-800 dark:text-amber-300 mb-1">資料不足，無法評估</h3>
+          <p className="text-sm text-amber-700 dark:text-amber-400">
             {symbol} 的歷史資料不足（需至少 {minDataDays} 個交易日的資料），無法進行風險評估。
           </p>
-          <p className="text-xs text-amber-600 mt-2">
+          <p className="text-xs text-amber-600 dark:text-amber-500 mt-2">
             建議：持續追蹤並累積價格資料後，系統將自動進行風險評估。
           </p>
         </div>

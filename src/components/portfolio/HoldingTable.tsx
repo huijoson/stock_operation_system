@@ -68,17 +68,17 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
 
   // Get color class based on P&L value
   const getPLColorClass = (pl: Decimal | null): string => {
-    if (!pl) return 'text-gray-500'
-    if (pl.isPositive()) return 'text-green-600'
-    if (pl.isNegative()) return 'text-red-600'
-    return 'text-gray-900'
+    if (!pl) return 'text-gray-500 dark:text-gray-400'
+    if (pl.isPositive()) return 'text-green-600 dark:text-green-400'
+    if (pl.isNegative()) return 'text-red-600 dark:text-red-400'
+    return 'text-gray-900 dark:text-white'
   }
 
   if (holdings.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-8 text-center">
-        <p className="text-gray-500">目前沒有持股記錄</p>
-        <p className="text-sm text-gray-400 mt-2">請先新增交易記錄以建立持股</p>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-8 text-center">
+        <p className="text-gray-500 dark:text-gray-400">目前沒有持股記錄</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">請先新增交易記錄以建立持股</p>
       </div>
     )
   }
@@ -86,67 +86,67 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
   return (
     <>
       {/* Desktop/Tablet Table View */}
-      <div className="hidden sm:block bg-white rounded-lg shadow overflow-hidden">
+      <div className="hidden sm:block bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   股票代號
                 </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   持股數量
                 </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   平均成本
                 </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   總成本
                 </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   目前價格
                 </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   未實現損益
                 </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   報酬率
                 </th>
-                <th className="px-4 lg:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 lg:px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   操作
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {holdings.map((holding) => {
                 const unrealizedPL = calculateUnrealizedPL(holding)
                 const plPercentage = calculatePLPercentage(holding)
                 const currentPrice = currentPrices[holding.symbol]
                 
                 return (
-                  <tr key={holding.id} className="hover:bg-gray-50 transition">
+                  <tr key={holding.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {holding.symbol}
                       </div>
                     </td>
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-gray-900 dark:text-gray-300">
                         {formatNumber(holding.quantity, 4)}
                       </div>
                     </td>
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-gray-900 dark:text-gray-300">
                         ${formatNumber(holding.averageCost)}
                       </div>
                     </td>
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
                         ${formatNumber(calculateTotalCost(holding))}
                       </div>
                     </td>
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-gray-900 dark:text-gray-300">
                         {currentPrice ? `${formatNumber(currentPrice)}` : '-'}
                       </div>
                     </td>
@@ -163,7 +163,7 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-center">
                       <button
                         onClick={() => router.push(`/technical-analysis?symbol=${holding.symbol}`)}
-                        className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+                        className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-xs font-medium"
                         title="查看技術分析"
                       >
                         技術分析
@@ -185,13 +185,13 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
           const currentPrice = currentPrices[holding.symbol]
           
           return (
-            <div key={holding.id} className="bg-white rounded-lg shadow p-4">
+            <div key={holding.id} className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-4">
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold text-gray-900">{holding.symbol}</h3>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">{holding.symbol}</h3>
                   <button
                     onClick={() => router.push(`/technical-analysis?symbol=${holding.symbol}`)}
-                    className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+                    className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-xs font-medium"
                     title="查看技術分析"
                   >
                     📊
@@ -206,29 +206,29 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
               
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-gray-500 text-xs">持股數量</p>
-                  <p className="font-medium text-gray-900">{formatNumber(holding.quantity, 4)}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">持股數量</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{formatNumber(holding.quantity, 4)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs">平均成本</p>
-                  <p className="font-medium text-gray-900">${formatNumber(holding.averageCost)}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">平均成本</p>
+                  <p className="font-medium text-gray-900 dark:text-white">${formatNumber(holding.averageCost)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs">總成本</p>
-                  <p className="font-medium text-gray-900">${formatNumber(calculateTotalCost(holding))}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">總成本</p>
+                  <p className="font-medium text-gray-900 dark:text-white">${formatNumber(calculateTotalCost(holding))}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs">目前價格</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">目前價格</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
                     {currentPrice ? `${formatNumber(currentPrice)}` : '-'}
                   </p>
                 </div>
               </div>
               
               {unrealizedPL && (
-                <div className="mt-3 pt-3 border-t border-gray-200">
+                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">未實現損益</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">未實現損益</span>
                     <span className={`text-base font-bold ${getPLColorClass(unrealizedPL)}`}>
                       ${formatNumber(unrealizedPL)}
                     </span>
