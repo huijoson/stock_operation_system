@@ -19,19 +19,19 @@ export function Loading({ size = 'md', text, fullScreen = false }: LoadingProps)
   const spinner = (
     <div className="flex flex-col items-center justify-center gap-3">
       <div
-        className={`${sizeClasses[size]} border-blue-600 border-t-transparent rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin`}
         role="status"
         aria-label="載入中"
       />
       {text && (
-        <p className="text-sm text-gray-600 animate-pulse">{text}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 animate-pulse">{text}</p>
       )}
     </div>
   )
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-white dark:bg-gray-900 bg-opacity-90 dark:bg-opacity-90 flex items-center justify-center z-50">
         {spinner}
       </div>
     )
@@ -46,7 +46,7 @@ export function Loading({ size = 'md', text, fullScreen = false }: LoadingProps)
 export function LoadingSkeleton({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse bg-gray-200 rounded ${className}`}
+      className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`}
       role="status"
       aria-label="載入中"
     />
@@ -58,7 +58,7 @@ export function LoadingSkeleton({ className = '' }: { className?: string }) {
  */
 export function LoadingCard() {
   return (
-    <div className="bg-white rounded-lg shadow p-6 space-y-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-6 space-y-4">
       <LoadingSkeleton className="h-6 w-3/4" />
       <LoadingSkeleton className="h-4 w-full" />
       <LoadingSkeleton className="h-4 w-5/6" />
@@ -75,9 +75,9 @@ export function LoadingCard() {
  */
 export function LoadingTable({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
+      <div className="bg-gray-50 dark:bg-gray-900 px-6 py-3 border-b border-gray-200 dark:border-gray-700">
         <div className="flex gap-4">
           {Array.from({ length: columns }).map((_, i) => (
             <LoadingSkeleton key={i} className="h-4 flex-1" />
@@ -85,7 +85,7 @@ export function LoadingTable({ rows = 5, columns = 4 }: { rows?: number; columns
         </div>
       </div>
       {/* Rows */}
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className="px-6 py-4">
             <div className="flex gap-4">

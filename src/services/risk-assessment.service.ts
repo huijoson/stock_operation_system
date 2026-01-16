@@ -2,6 +2,7 @@ import { PrismaClient, RiskAssessment } from '@prisma/client';
 import Decimal from 'decimal.js';
 import { TechnicalScoreService, MarketData } from './technical-score.service';
 import { SentimentAnalysisService } from './sentiment-analysis.service';
+import { StockService } from './stock.service';
 
 export interface RiskAssessmentResult {
   symbol: string;
@@ -77,11 +78,7 @@ export class RiskAssessmentService {
     const portfolio = await this.prisma.portfolio.findUnique({
       where: { id: portfolioId },
       include: {
-        holdings: {
-          include: {
-            stock: true,
-          },
-        },
+        holdings: true,
       },
     });
 
@@ -94,7 +91,7 @@ export class RiskAssessmentService {
     for (const holding of portfolio.holdings) {
       const assessment = await this.getRiskAssessment(holding.symbol);
       const currentPrice = await this.getCurrentPrice(holding.symbol);
-      const marketValue = new Decimal(holding.shares.toString())
+      const marketValue = new Decimal(holding.quantity.toString())
         .mul(currentPrice)
         .toFixed(2);
 
@@ -229,20 +226,21 @@ export class RiskAssessmentService {
    * 取得市場資料供技術分析使用
    */
   private async getMarketData(symbol: string): Promise<MarketData> {
-    const prices = await this.prisma.stockPrice.findMany({
-      where: { symbol },
-      orderBy: { date: 'desc' },
-      take: 100,
-    });
+    const stockService = new StockService();
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 120); // Get 120 days of data
 
-    if (prices.length < 50) {
+    const ohlcData = await stockService.getHistoricalOHLC(symbol, startDate, endDate);
+
+    if (ohlcData.length < 50) {
       throw new Error(`Insufficient data for ${symbol}. Need at least 50 days of price data.`);
     }
 
-    const currentPrice = new Decimal(prices[0].close.toString());
-    const priceValues = prices.reverse().map(p => new Decimal(p.close.toString()));
-    const highs = prices.map(p => new Decimal(p.high.toString()));
-    const lows = prices.map(p => new Decimal(p.low.toString()));
+    const currentPrice = new Decimal(ohlcData[ohlcData.length - 1].close.toString());
+    const priceValues = ohlcData.map(p => new Decimal(p.close.toString()));
+    const highs = ohlcData.map(p => new Decimal(p.high.toString()));
+    const lows = ohlcData.map(p => new Decimal(p.low.toString()));
 
     const recentHigh = Decimal.max(...highs.slice(-20));
     const recentLow = Decimal.min(...lows.slice(-20));
@@ -283,7 +281,7 @@ export class RiskAssessmentService {
       throw new Error(`No price data found for ${symbol}`);
     }
 
-    return new Decimal(latestPrice.close.toString());
+    return new Decimal(latestPrice.price.toString());
   }
 
   /**

@@ -38,7 +38,7 @@ export class SentimentAnalysisService {
 
   constructor(private prisma: PrismaClient) {}
 
-  analyzeSentiment(headline: string, summary: string): SentimentResult {
+  private analyzeText(headline: string, summary: string): SentimentResult {
     const text = `${headline} ${summary}`.toLowerCase();
     let positiveCount = 0;
     let negativeCount = 0;

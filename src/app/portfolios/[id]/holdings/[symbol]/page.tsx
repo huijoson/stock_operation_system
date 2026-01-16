@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Decimal from 'decimal.js';
 import { RiskAssessmentPanel } from '@/components/portfolio/RiskAssessmentPanel';
@@ -10,15 +10,15 @@ import { DisclaimerNotice } from '@/components/ui/DisclaimerNotice';
 import { InsufficientDataNotice } from '@/components/portfolio/InsufficientDataNotice';
 
 interface HoldingDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
     symbol: string;
-  };
+  }>;
 }
 
 export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
   const router = useRouter();
-  const { id: portfolioId, symbol } = params;
+  const { id: portfolioId, symbol } = use(params);
   const [holding, setHolding] = useState<any>(null);
   const [riskAssessment, setRiskAssessment] = useState<any>(null);
   const [holdingAdvice, setHoldingAdvice] = useState<any>(null);
@@ -137,20 +137,26 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
           {riskAssessment ? (
             <RiskAssessmentPanel assessment={riskAssessment} />
           ) : (
-            <InsufficientDataNotice message="無法取得風險評估資料" />
+            <InsufficientDataNotice symbol={symbol} />
           )}
         </div>
 
         <div>
           {holdingAdvice ? (
             <>
-              <HoldingAdvicePanel advice={holdingAdvice} />
+              <HoldingAdvicePanel 
+                symbol={symbol}
+                adviceType={holdingAdvice.adviceType}
+                reasons={holdingAdvice.reasons}
+                confidence={holdingAdvice.confidence}
+                generatedAt={new Date(holdingAdvice.generatedAt)}
+              />
               <div className="mt-4">
                 <DisclaimerNotice />
               </div>
             </>
           ) : (
-            <InsufficientDataNotice message="無法取得持股建議資料" />
+            <InsufficientDataNotice symbol={symbol} />
           )}
         </div>
       </div>
