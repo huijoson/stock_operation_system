@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import TransactionTable from '@/components/transactions/TransactionTable'
 import TransactionForm from '@/components/transactions/TransactionForm'
@@ -140,6 +140,12 @@ export default function TransactionListPage() {
     }
   }
 
+  // Memoize filtered transactions to avoid duplicate filtering
+  const filteredTransactions = useMemo(() => {
+    if (!symbolFilter) return transactions
+    return transactions.filter(t => t.symbol.toUpperCase().includes(symbolFilter))
+  }, [transactions, symbolFilter])
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -229,7 +235,7 @@ export default function TransactionListPage() {
               {symbolFilter && (
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    顯示 {transactions.filter(t => t.symbol.toUpperCase().includes(symbolFilter)).length} / {transactions.length} 筆交易
+                    顯示 {filteredTransactions.length} / {transactions.length} 筆交易
                   </span>
                   <button
                     onClick={() => setSymbolFilter('')}
@@ -244,7 +250,7 @@ export default function TransactionListPage() {
         </div>
 
         <TransactionTable 
-          transactions={symbolFilter ? transactions.filter(t => t.symbol.toUpperCase().includes(symbolFilter)) : transactions} 
+          transactions={filteredTransactions} 
           onDelete={handleDelete}
           onEdit={handleEdit}
         />
