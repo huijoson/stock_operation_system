@@ -42,9 +42,9 @@ export function NewsList({
 
   if (news.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
         <svg
-          className="mx-auto h-12 w-12 text-gray-400 mb-3"
+          className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-3"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

@@ -45,28 +45,28 @@ export function RiskAssessmentPanel({ assessment }: RiskAssessmentPanelProps) {
   });
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-transparent dark:border-gray-700 p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">風險評估</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">風險評估</h2>
         <RiskBadge riskLevel={assessment.riskLevel} riskScore={assessment.riskScore} size="lg" />
       </div>
 
       <div className="space-y-4">
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">技術分析 ({Math.round(assessment.weights.technical * 100)}%)</h3>
+        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">技術分析 ({Math.round(assessment.weights.technical * 100)}%)</h3>
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">綜合技術分數</span>
-              <span className="text-lg font-bold text-gray-900">{assessment.technicalAnalysis.score}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">綜合技術分數</span>
+              <span className="text-lg font-bold text-gray-900 dark:text-white">{assessment.technicalAnalysis.score}</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div
                 className={`h-2 rounded-full ${
                   assessment.technicalAnalysis.score <= 40
-                    ? 'bg-green-500'
+                    ? 'bg-green-500 dark:bg-green-400'
                     : assessment.technicalAnalysis.score <= 70
-                    ? 'bg-yellow-500'
-                    : 'bg-red-500'
+                    ? 'bg-yellow-500 dark:bg-yellow-400'
+                    : 'bg-red-500 dark:bg-red-400'
                 }`}
                 style={{ width: `${assessment.technicalAnalysis.score}%` }}
                 role="progressbar"
@@ -81,36 +81,36 @@ export function RiskAssessmentPanel({ assessment }: RiskAssessmentPanelProps) {
         </div>
 
         {assessment.newsSentiment && (
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">新聞情緒 ({Math.round(assessment.weights.news * 100)}%)</h3>
+          <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">新聞情緒 ({Math.round(assessment.weights.news * 100)}%)</h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">情緒評分</span>
-                <span className="text-lg font-bold text-gray-900">{assessment.newsSentiment.score}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">情緒評分</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-white">{assessment.newsSentiment.score}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">情緒傾向</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">情緒傾向</span>
                 <span className={`font-medium ${
                   assessment.newsSentiment.sentiment === 'positive'
-                    ? 'text-green-600'
+                    ? 'text-green-600 dark:text-green-400'
                     : assessment.newsSentiment.sentiment === 'negative'
-                    ? 'text-red-600'
-                    : 'text-gray-600'
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-600 dark:text-gray-400'
                 }`}>
                   {assessment.newsSentiment.sentimentLabel}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">分析新聞數</span>
-                <span className="text-gray-900">{assessment.newsSentiment.articleCount} 則</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">分析新聞數</span>
+                <span className="text-gray-900 dark:text-white">{assessment.newsSentiment.articleCount} 則</span>
               </div>
             </div>
           </div>
         )}
 
         {!assessment.newsSentiment && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
               <span className="font-medium">📊 純技術分析</span>
               <br />
               目前風險評估僅基於技術指標，未包含新聞情緒分析。
@@ -119,7 +119,7 @@ export function RiskAssessmentPanel({ assessment }: RiskAssessmentPanelProps) {
         )}
       </div>
 
-      <div className="text-xs text-gray-500 pt-4 border-t">
+      <div className="text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
         評估時間：{calculatedDate}
       </div>
     </div>
