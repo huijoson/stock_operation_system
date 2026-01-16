@@ -7,16 +7,15 @@
   --background-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 0, 0, 0;
-  }
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 17, 24, 39;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Fix input text visibility */
@@ -31,6 +30,18 @@ select {
   background-color: #ffffff !important;
 }
 
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark input[type="date"],
+.dark textarea,
+.dark select {
+  color: #f9fafb !important;
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
 input[type="text"]:disabled,
 input[type="email"]:disabled,
 input[type="password"]:disabled,
@@ -40,4 +51,15 @@ textarea:disabled,
 select:disabled {
   background-color: #f3f4f6 !important;
   color: #6b7280 !important;
+}
+
+.dark input[type="text"]:disabled,
+.dark input[type="email"]:disabled,
+.dark input[type="password"]:disabled,
+.dark input[type="number"]:disabled,
+.dark input[type="date"]:disabled,
+.dark textarea:disabled,
+.dark select:disabled {
+  background-color: #1f2937 !important;
+  color: #9ca3af !important;
 }

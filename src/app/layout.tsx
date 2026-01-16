@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { ToastProvider } from '@/components/ui/ToastProvider'
+import { ThemeProvider } from '@/components/ui/ThemeProvider'
 
 export const metadata: Metadata = {
   title: '股市投資組合管理系統',
@@ -16,10 +17,12 @@ export default function RootLayout({
   return (
     <html lang="zh-TW">
       <body>
-        <ErrorBoundary>
-          {children}
-          <ToastProvider />
-        </ErrorBoundary>
+        <ThemeProvider>
+          <ErrorBoundary>
+            {children}
+            <ToastProvider />
+          </ErrorBoundary>
+        </ThemeProvider>
       </body>
     </html>
   )
