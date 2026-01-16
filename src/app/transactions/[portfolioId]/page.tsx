@@ -7,6 +7,7 @@ import TransactionForm from '@/components/transactions/TransactionForm'
 import ImportDialog from '@/components/transactions/ImportDialog'
 import ExportButton from '@/components/transactions/ExportButton'
 import EditTransactionDialog from '@/components/transactions/EditTransactionDialog'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface Transaction {
   id: string
@@ -140,46 +141,51 @@ export default function TransactionListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">載入中...</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-gray-600 dark:text-gray-300">載入中...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Navigation */}
+        <div className="mb-4 flex items-center justify-between">
+          <button
+            onClick={() => router.push('/portfolios')}
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
+          >
+            ← 返回投資組合
+          </button>
+          <ThemeToggle />
+        </div>
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
           <div className="w-full sm:w-auto">
-            <button
-              onClick={() => router.push('/portfolios')}
-              className="text-blue-600 hover:text-blue-800 mb-2 flex items-center text-sm sm:text-base"
-            >
-              ← 返回投資組合
-            </button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">交易記錄</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">交易記錄</h1>
           </div>
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button
               onClick={() => router.push('/technical-analysis')}
-              className="flex-1 sm:flex-none bg-indigo-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm sm:text-base"
+              className="flex-1 sm:flex-none bg-indigo-600 dark:bg-indigo-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm sm:text-base"
             >
               技術分析
             </button>
             <ExportButton
               portfolioId={portfolioId}
               type="transactions"
-              className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700"
+              className="flex-1 sm:flex-none bg-purple-600 dark:bg-purple-500 hover:bg-purple-700 dark:hover:bg-purple-600"
             />
             <button
               onClick={() => setShowImportDialog(true)}
-              className="flex-1 sm:flex-none bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm sm:text-base"
+              className="flex-1 sm:flex-none bg-green-600 dark:bg-green-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition text-sm sm:text-base"
             >
               匯入 CSV
             </button>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="flex-1 sm:flex-none bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+              className="flex-1 sm:flex-none bg-blue-600 dark:bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition text-sm sm:text-base"
             >
               {showForm ? '取消' : '新增交易'}
             </button>
@@ -187,7 +193,7 @@ export default function TransactionListPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm sm:text-base">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4 text-sm sm:text-base">
             {error}
           </div>
         )}
