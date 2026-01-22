@@ -225,6 +225,10 @@ export class RealizedPLService {
     portfolioId: string
     portfolioName: string
     totalRealizedPL: Decimal
+    shortTermPL: Decimal
+    longTermPL: Decimal
+    periodStart: Date
+    periodEnd: Date
     records: RealizedPL[]
     symbolBreakdown: Array<{ symbol: string; totalPL: Decimal; tradeCount: number }>
   }> {
@@ -265,11 +269,19 @@ export class RealizedPLService {
 
     // Calculate totals
     let totalRealizedPL = new Decimal(0)
+    let shortTermPL = new Decimal(0)
+    let longTermPL = new Decimal(0)
     const symbolTotals: Record<string, { pl: Decimal; count: number }> = {}
 
     const realizedPLRecords: RealizedPL[] = records.map(record => {
       const pl = new Decimal(record.realizedPL.toString())
       totalRealizedPL = totalRealizedPL.plus(pl)
+
+      if (record.holdingPeriod === 'SHORT') {
+        shortTermPL = shortTermPL.plus(pl)
+      } else {
+        longTermPL = longTermPL.plus(pl)
+      }
 
       if (!symbolTotals[record.symbol]) {
         symbolTotals[record.symbol] = { pl: new Decimal(0), count: 0 }
@@ -304,6 +316,10 @@ export class RealizedPLService {
       portfolioId,
       portfolioName: portfolio.name,
       totalRealizedPL,
+      shortTermPL,
+      longTermPL,
+      periodStart: startDate,
+      periodEnd: endDate,
       records: realizedPLRecords,
       symbolBreakdown
     }

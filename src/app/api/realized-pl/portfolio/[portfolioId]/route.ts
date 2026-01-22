@@ -37,6 +37,10 @@ export async function GET(
       portfolioId: result.portfolioId,
       portfolioName: result.portfolioName,
       totalRealizedPL: result.totalRealizedPL.toString(),
+      periodStart: result.periodStart.toISOString().split('T')[0],
+      periodEnd: result.periodEnd.toISOString().split('T')[0],
+      shortTermPL: result.shortTermPL.toString(),
+      longTermPL: result.longTermPL.toString(),
       records: result.records.map(record => ({
         id: record.id,
         symbol: record.symbol,
