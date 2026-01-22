@@ -16,7 +16,8 @@
     "test:coverage": "jest --coverage",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "postinstall": "playwright install --with-deps chromium"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
@@ -32,6 +33,7 @@
     "recharts": "^3.4.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.51.1",
     "@testing-library/jest-dom": "^6.1.0",
     "@testing-library/react": "^14.1.0",
     "@types/jest": "^29.5.0",
