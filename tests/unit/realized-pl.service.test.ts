@@ -330,7 +330,7 @@ describe('RealizedPLService', () => {
       ])
 
       const now = new Date()
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+      const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
 
       mockPrisma.realizedPL.findMany.mockResolvedValue([
         {
