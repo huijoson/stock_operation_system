@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import TransactionTable from '@/components/transactions/TransactionTable'
 import TransactionForm from '@/components/transactions/TransactionForm'
@@ -31,6 +31,7 @@ export default function TransactionListPage() {
   const [showForm, setShowForm] = useState(false)
   const [showImportDialog, setShowImportDialog] = useState(false)
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
+  const [symbolFilter, setSymbolFilter] = useState<string>('')
 
   useEffect(() => {
     if (portfolioId) {
@@ -139,6 +140,12 @@ export default function TransactionListPage() {
     }
   }
 
+  // Memoize filtered transactions to avoid duplicate filtering
+  const filteredTransactions = useMemo(() => {
+    if (!symbolFilter) return transactions
+    return transactions.filter(t => t.symbol.toUpperCase().includes(symbolFilter))
+  }, [transactions, symbolFilter])
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -208,8 +215,42 @@ export default function TransactionListPage() {
           </div>
         )}
 
+        {/* Symbol Filter */}
+        <div className="mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="flex-1">
+                <label htmlFor="symbol-filter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  篩選股票代號
+                </label>
+                <input
+                  id="symbol-filter"
+                  type="text"
+                  placeholder="輸入股票代號 (例如: TSM, AAPL)"
+                  value={symbolFilter}
+                  onChange={(e) => setSymbolFilter(e.target.value.toUpperCase())}
+                  className="w-full sm:w-64 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base"
+                />
+              </div>
+              {symbolFilter && (
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    顯示 {filteredTransactions.length} / {transactions.length} 筆交易
+                  </span>
+                  <button
+                    onClick={() => setSymbolFilter('')}
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 whitespace-nowrap"
+                  >
+                    清除篩選
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
         <TransactionTable 
-          transactions={transactions} 
+          transactions={filteredTransactions} 
           onDelete={handleDelete}
           onEdit={handleEdit}
         />
