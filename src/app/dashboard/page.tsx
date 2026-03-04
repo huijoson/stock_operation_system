@@ -6,6 +6,7 @@ import { Decimal } from 'decimal.js'
 import PieChart from '@/components/charts/PieChart'
 import LineChart from '@/components/charts/LineChart'
 import BarChart from '@/components/charts/BarChart'
+import DashboardNewsWidget from '@/components/news/DashboardNewsWidget'
 import RealizedPLCard from '@/components/portfolio/RealizedPLCard'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
@@ -48,7 +49,10 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         // Check authentication
-        const authResponse = await fetch('/api/auth/me')
+        const authResponse = await fetch('/api/auth/me', {
+          credentials: 'include',
+          cache: 'no-store',
+        })
         
         if (!authResponse.ok) {
           router.push('/login')
@@ -306,6 +310,9 @@ export default function DashboardPage() {
               </svg>
             </div>
           </div>
+
+          {/* Dashboard News */}
+          <DashboardNewsWidget />
 
           {/* Portfolio List */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700">

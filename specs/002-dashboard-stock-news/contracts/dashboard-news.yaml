@@ -1,0 +1,396 @@
+openapi: "3.0.3"
+info:
+  title: Dashboard News API
+  version: "1.0.0"
+  description: |
+    Dashboard 股市消息模組內部 API。
+    資料來源為每小時排程同步的 Alpha Vantage NEWS_SENTIMENT 資料；
+    前端讀取端完全依賴本地資料庫，不直接呼叫外部 API。
+
+paths:
+  /api/dashboard/news:
+    get:
+      summary: 取得 Dashboard 股市消息列表
+      description: |
+        讀取本地資料庫中最新的市場新聞（`DashboardNewsItem`）。
+        支援依分類篩選與游標分頁。
+        即使同步服務失敗，此端點仍可服務最後成功同步的資料（Graceful Degradation）。
+      tags:
+        - 新聞查詢
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - General
+              - Technology
+              - Finance
+              - Earnings
+              - Mergers
+              - Other
+          description: |
+            依正規化分類篩選。省略此參數則回傳全部分類。
+            - General：綜合
+            - Technology：科技
+            - Finance：金融
+            - Earnings：財報
+            - Mergers：併購
+            - Other：其他
+          example: Finance
+
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 5
+          description: 回傳筆數上限（預設 5 筆，最多 50 筆）
+          example: 5
+
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |
+            游標分頁：為上一頁最後一筆的 `publishedAt` ISO 8601 UTC 字串。
+            省略則從最新一筆開始回傳。
+          example: "2024-01-15T10:30:00.000Z"
+
+      responses:
+        "200":
+          description: 成功回傳新聞列表（含空列表時也回傳 200）
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: "public, max-age=300, stale-while-revalidate=3600"
+              description: |
+                快取策略：
+                - `max-age=300`：5 分鐘強快取（CDN / 瀏覽器）
+                - `stale-while-revalidate=3600`：最多 1 小時 stale-while-revalidate
+            X-Data-Staleness-Seconds:
+              schema:
+                type: integer
+              description: 距離最後一次成功同步（`lastSyncedAt`）的秒數，供前端判斷是否顯示「資料可能過時」提示
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsListResponse"
+              examples:
+                有資料:
+                  summary: 正常回傳 5 筆
+                  value:
+                    success: true
+                    data:
+                      items:
+                        - id: "clxyz123abc456"
+                          title: "Fed Signals Rate Cuts as Inflation Cools"
+                          summary: "Federal Reserve officials hinted at possible rate reductions..."
+                          url: "https://reuters.com/article/fed-rate-cuts-2024"
+                          source: "Reuters"
+                          publishedAt: "2024-01-15T10:30:00.000Z"
+                          category: "Finance"
+                        - id: "clxyz456def789"
+                          title: "Apple Launches New AI-Powered iPhone Features"
+                          summary: null
+                          url: "https://techcrunch.com/apple-ai-features"
+                          source: "TechCrunch"
+                          publishedAt: "2024-01-15T09:15:00.000Z"
+                          category: "Technology"
+                      meta:
+                        total: 5
+                        hasMore: true
+                        nextCursor: "2024-01-15T09:15:00.000Z"
+                        lastSyncedAt: "2024-01-15T10:00:00.000Z"
+                        dataStalenessSecs: 1800
+                空資料（尚未同步）:
+                  summary: 從未同步時的空狀態
+                  value:
+                    success: true
+                    data:
+                      items: []
+                      meta:
+                        total: 0
+                        hasMore: false
+                        nextCursor: null
+                        lastSyncedAt: null
+                        dataStalenessSecs: 0
+
+        "500":
+          description: 伺服器內部錯誤（資料庫連線失敗等）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                success: false
+                error: "伺服器暫時無法處理請求，請稍後再試"
+                code: "INTERNAL_SERVER_ERROR"
+
+  /api/sync/dashboard-news:
+    post:
+      summary: 觸發 Dashboard 新聞同步（排程器專用）
+      description: |
+        由 Vercel Cron 或外部排程工具每小時呼叫一次。
+        驗證 `Authorization: Bearer {CRON_SECRET}` 後，依序執行：
+        1. 配額檢查（軟限制 20 次/天）
+        2. 呼叫 Alpha Vantage NEWS_SENTIMENT API
+        3. 正規化並 upsert 至 DashboardNewsItem
+        4. 更新 SyncQuotaLog
+
+        **注意**：此端點僅供排程器呼叫，不供前端使用。
+      tags:
+        - 排程同步
+      security:
+        - cronAuth: []
+      responses:
+        "200":
+          description: 同步成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncSuccessResponse"
+              example:
+                success: true
+                data:
+                  upserted: 48
+                  skipped: 2
+                  quotaUsedToday: 5
+                  quotaRemainingToday: 20
+                  syncedAt: "2024-01-15T11:00:00.000Z"
+
+        "401":
+          description: 缺少或無效的 Authorization 標頭
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                success: false
+                error: "未授權的請求"
+                code: "UNAUTHORIZED"
+
+        "429":
+          description: |
+            今日 Alpha Vantage 配額已達軟限制（20 次），跳過同步。
+            不消耗剩餘配額，等待下一個日曆日重置。
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: 建議重試等待秒數（下一個 UTC 0:00 的剩餘秒數）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                success: false
+                error: "今日 Alpha Vantage API 配額已達上限（20/25），跳過本次同步"
+                code: "QUOTA_EXCEEDED"
+                retryAfter: 43200
+
+        "503":
+          description: |
+            Alpha Vantage API 不可用（5xx 錯誤或逾時）。
+            不重試；系統保留前次同步的資料庫記錄，前端讀取端繼續正常服務舊資料。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                success: false
+                error: "無法連接至 Alpha Vantage API，將使用前次同步資料"
+                code: "UPSTREAM_UNAVAILABLE"
+
+components:
+  securitySchemes:
+    cronAuth:
+      type: http
+      scheme: bearer
+      description: |
+        Bearer token，值須與環境變數 `CRON_SECRET` 相符。
+        Vercel Cron 另外附加 `x-vercel-cron: 1` 標頭（雙重驗證）。
+
+  schemas:
+    NewsItem:
+      type: object
+      required:
+        - id
+        - title
+        - url
+        - source
+        - publishedAt
+        - category
+      properties:
+        id:
+          type: string
+          description: 資料庫內部 ID（cuid 格式）
+          example: "clxyz123abc456"
+        title:
+          type: string
+          description: 新聞標題（最長 500 字元）
+          maxLength: 500
+          example: "Fed Signals Rate Cuts as Inflation Cools"
+        summary:
+          type: string
+          nullable: true
+          description: 新聞摘要（可為 null）
+          example: "Federal Reserve officials hinted at..."
+        url:
+          type: string
+          format: uri
+          description: 原始新聞連結（https://）
+          example: "https://reuters.com/article/fed-rate-cuts-2024"
+        source:
+          type: string
+          description: 來源名稱
+          example: "Reuters"
+        publishedAt:
+          type: string
+          format: date-time
+          description: 原始發布時間（UTC ISO 8601）
+          example: "2024-01-15T10:30:00.000Z"
+        category:
+          type: string
+          enum:
+            - General
+            - Technology
+            - Finance
+            - Earnings
+            - Mergers
+            - Other
+          description: 正規化分類
+
+    NewsListMeta:
+      type: object
+      required:
+        - total
+        - hasMore
+        - nextCursor
+        - lastSyncedAt
+        - dataStalenessSecs
+      properties:
+        total:
+          type: integer
+          description: 本次回傳的項目數量
+          example: 5
+        hasMore:
+          type: boolean
+          description: 是否還有更多舊資料可分頁
+          example: true
+        nextCursor:
+          type: string
+          nullable: true
+          description: |
+            下一頁游標：本頁最後一筆的 `publishedAt` ISO string。
+            `hasMore: false` 時為 null。
+          example: "2024-01-15T09:15:00.000Z"
+        lastSyncedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: |
+            最後一次成功同步的時間（UTC ISO 8601）。
+            從未同步時為 null。
+          example: "2024-01-15T10:00:00.000Z"
+        dataStalenessSecs:
+          type: integer
+          description: |
+            距離 `lastSyncedAt` 的秒數。
+            前端可用於顯示「N 分鐘前更新」，或在超過閾值時顯示「資料可能過時」提示。
+            `lastSyncedAt` 為 null 時回傳 0。
+          example: 1800
+
+    NewsListResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - items
+            - meta
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/NewsItem"
+            meta:
+              $ref: "#/components/schemas/NewsListMeta"
+
+    SyncSuccessResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - upserted
+            - skipped
+            - quotaUsedToday
+            - quotaRemainingToday
+            - syncedAt
+          properties:
+            upserted:
+              type: integer
+              description: 成功 upsert 的記錄數（含新增與更新）
+              example: 48
+            skipped:
+              type: integer
+              description: 因驗證失敗而跳過的記錄數
+              example: 2
+            quotaUsedToday:
+              type: integer
+              description: 今日（含本次）累計 API 呼叫次數
+              example: 5
+            quotaRemainingToday:
+              type: integer
+              description: 今日剩餘可呼叫次數（軟限制 20 - quotaUsedToday）
+              example: 15
+            syncedAt:
+              type: string
+              format: date-time
+              description: 本次同步完成時間
+              example: "2024-01-15T11:00:00.000Z"
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: 人類可讀的錯誤訊息（zh-TW）
+          example: "伺服器暫時無法處理請求，請稍後再試"
+        code:
+          type: string
+          description: 機器可讀的錯誤代碼
+          enum:
+            - UNAUTHORIZED
+            - QUOTA_EXCEEDED
+            - UPSTREAM_UNAVAILABLE
+            - INTERNAL_SERVER_ERROR
+          example: "QUOTA_EXCEEDED"
+        retryAfter:
+          type: integer
+          description: 建議重試等待秒數（僅 QUOTA_EXCEEDED 時回傳）
+          example: 43200
