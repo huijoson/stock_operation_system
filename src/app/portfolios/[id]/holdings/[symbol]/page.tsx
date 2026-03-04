@@ -60,7 +60,7 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
 
         if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
           const data = await newsRes.value.json();
-          setNews(data.news || []);
+          setNews(data.data?.news || []);
         }
       } catch (err) {
         console.error('Error fetching holding details:', err);

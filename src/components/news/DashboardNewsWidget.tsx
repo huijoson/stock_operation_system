@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { NewsErrorState } from '@/components/news/NewsErrorState'
 import { NewsLoadingState } from '@/components/news/NewsLoadingState'
 import {
@@ -73,7 +73,7 @@ export default function DashboardNewsWidget() {
     return `/api/dashboard/news?${params.toString()}`
   }, [selectedCategory])
 
-  const fetchNews = async () => {
+  const fetchNews = useCallback(async () => {
     setLoading(true)
     setError(null)
 
@@ -99,11 +99,15 @@ export default function DashboardNewsWidget() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [newsApiUrl])
 
   useEffect(() => {
     fetchNews()
-  }, [newsApiUrl])
+
+    // Auto-refresh every 5 minutes to keep news up-to-date
+    const intervalId = setInterval(fetchNews, 5 * 60 * 1000)
+    return () => clearInterval(intervalId)
+  }, [fetchNews])
 
   return (
     <section className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700">

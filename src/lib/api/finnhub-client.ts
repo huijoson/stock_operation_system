@@ -34,11 +34,7 @@ export class FinnhubClient {
 
     const url = `${this.baseUrl}/company-news?symbol=${symbol}&from=${fromDate}&to=${toDate}`;
 
-    const response = await fetch(url, {
-      headers: {
-        'X-Finnhub-Token': this.apiKey,
-      },
-    });
+    const response = await this.fetchWithTlsHandling(url);
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -57,11 +53,7 @@ export class FinnhubClient {
 
     const url = `${this.baseUrl}/news?category=${category}`;
 
-    const response = await fetch(url, {
-      headers: {
-        'X-Finnhub-Token': this.apiKey,
-      },
-    });
+    const response = await this.fetchWithTlsHandling(url);
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -73,6 +65,30 @@ export class FinnhubClient {
 
     const data = await response.json();
     return data;
+  }
+
+  private async fetchWithTlsHandling(url: string): Promise<Response> {
+    try {
+      return await fetch(url, {
+        headers: {
+          'X-Finnhub-Token': this.apiKey,
+        },
+      });
+    } catch (error: unknown) {
+      if (
+        error instanceof TypeError &&
+        error.message === 'fetch failed' &&
+        (error as { cause?: { code?: string } }).cause?.code ===
+          'SELF_SIGNED_CERT_IN_CHAIN'
+      ) {
+        throw new Error(
+          'Finnhub API TLS 錯誤：偵測到自簽憑證。' +
+            '請設定環境變數 NODE_TLS_REJECT_UNAUTHORIZED=0（開發環境）' +
+            '或 NODE_EXTRA_CA_CERTS 指向 CA 憑證檔案。'
+        );
+      }
+      throw error;
+    }
   }
 
   private getDateDaysAgo(days: number): string {
