@@ -327,6 +327,7 @@ export class RealizedPLService {
 
   /**
    * Calculate date range based on period
+   * Uses UTC dates to avoid timezone issues
    */
   private getDateRange(period: 'month' | 'quarter' | 'year' | 'all'): { startDate: Date; endDate: Date } {
     const now = new Date()
@@ -336,18 +337,22 @@ export class RealizedPLService {
 
     switch (period) {
       case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+        // Start of current month in UTC
+        startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
         break
       case 'quarter':
-        const currentQuarter = Math.floor(now.getMonth() / 3)
-        startDate = new Date(now.getFullYear(), currentQuarter * 3, 1)
+        // Start of current quarter in UTC
+        const currentQuarter = Math.floor(now.getUTCMonth() / 3)
+        startDate = new Date(Date.UTC(now.getUTCFullYear(), currentQuarter * 3, 1, 0, 0, 0, 0))
         break
       case 'year':
-        startDate = new Date(now.getFullYear(), 0, 1)
+        // Start of current year in UTC
+        startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0))
         break
       case 'all':
       default:
-        startDate = new Date(2000, 0, 1)
+        // A date far in the past
+        startDate = new Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0))
         break
     }
 
@@ -367,17 +372,17 @@ export class RealizedPLService {
     
     switch (period) {
       case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+        startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
         break
       case 'quarter':
-        const currentQuarter = Math.floor(now.getMonth() / 3)
-        startDate = new Date(now.getFullYear(), currentQuarter * 3, 1)
+        const currentQuarter = Math.floor(now.getUTCMonth() / 3)
+        startDate = new Date(Date.UTC(now.getUTCFullYear(), currentQuarter * 3, 1, 0, 0, 0, 0))
         break
       case 'year':
-        startDate = new Date(now.getFullYear(), 0, 1)
+        startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0))
         break
       case 'all':
-        startDate = new Date(0)
+        startDate = new Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0))
         break
     }
     

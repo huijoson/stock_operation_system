@@ -1,6 +1,7 @@
 /**
  * Date filtering utilities for time period selection
  * Supports: 本月 (month), 本季 (quarter), 本年 (year), 全部 (all)
+ * Uses UTC dates to avoid timezone issues
  */
 
 export type TimePeriod = 'month' | 'quarter' | 'year' | 'all'
@@ -11,7 +12,7 @@ export interface DateRange {
 }
 
 /**
- * Get date range for the specified time period
+ * Get date range for the specified time period (in UTC)
  */
 export function getDateRangeForPeriod(period: TimePeriod = 'all'): DateRange {
   const now = new Date()
@@ -19,24 +20,24 @@ export function getDateRangeForPeriod(period: TimePeriod = 'all'): DateRange {
 
   switch (period) {
     case 'month': {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1)
+      const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
       return { start, end }
     }
 
     case 'quarter': {
-      const currentMonth = now.getMonth()
+      const currentMonth = now.getUTCMonth()
       const quarterStartMonth = Math.floor(currentMonth / 3) * 3
-      const start = new Date(now.getFullYear(), quarterStartMonth, 1)
+      const start = new Date(Date.UTC(now.getUTCFullYear(), quarterStartMonth, 1, 0, 0, 0, 0))
       return { start, end }
     }
 
     case 'year': {
-      const start = new Date(now.getFullYear(), 0, 1)
+      const start = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0))
       return { start, end }
     }
 
     case 'all': {
-      const start = new Date(0)
+      const start = new Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0))
       return { start, end }
     }
 

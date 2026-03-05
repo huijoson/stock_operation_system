@@ -213,7 +213,7 @@ describe('Realized P/L API Integration Tests', () => {
 
       const data = await response.json()
       const now = new Date()
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+      const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
 
       expect(new Date(data.periodStart).getTime()).toBeGreaterThanOrEqual(
         monthStart.getTime()
@@ -251,7 +251,7 @@ describe('Realized P/L API Integration Tests', () => {
 
       const data = await response.json()
       const now = new Date()
-      const yearStart = new Date(now.getFullYear(), 0, 1)
+      const yearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0))
 
       expect(new Date(data.periodStart).getTime()).toBeGreaterThanOrEqual(
         yearStart.getTime()
