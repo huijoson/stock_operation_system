@@ -132,12 +132,10 @@ describe('DashboardNewsQueryService', () => {
         hasMore: false,
         nextCursor: null,
         lastSyncedAt: null,
-        dataStalenessSecs: 0,
+        dataStalenessSecs: null,
       });
     });
   });
-
-  // ── Limit clamping ───────────────────────────────────────────────
 
   describe('limit clamping (1-50)', () => {
     beforeEach(() => {
@@ -518,13 +516,13 @@ describe('DashboardNewsQueryService', () => {
       jest.useRealTimers();
     });
 
-    it('should return dataStalenessSecs=0 when lastSyncedAt is null', async () => {
+    it('should return dataStalenessSecs=null when lastSyncedAt is null', async () => {
       mockPrisma.syncQuotaLog.findFirst.mockResolvedValue(null);
       mockPrisma.dashboardNewsItem.findMany.mockResolvedValue([]);
 
       const result = await service.query({});
 
-      expect(result.data.meta.dataStalenessSecs).toBe(0);
+      expect(result.data.meta.dataStalenessSecs).toBeNull();
     });
 
     it('should query SyncQuotaLog ordered by lastSyncAt DESC to get most recent sync', async () => {

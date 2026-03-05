@@ -119,7 +119,7 @@ export class DashboardNewsQueryService {
     // ── 7. Calculate dataStalenessSecs ─────────────────────────────
     const dataStalenessSecs = lastSyncedAt
       ? Math.floor((Date.now() - lastSyncedAt.getTime()) / 1000)
-      : 0;
+      : null;
 
     // ── 8. Assemble response ───────────────────────────────────────
     return {

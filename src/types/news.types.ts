@@ -54,7 +54,7 @@ export interface NewsListResponse {
       hasMore: boolean
       nextCursor: string | null
       lastSyncedAt: string | null
-      dataStalenessSecs: number
+      dataStalenessSecs: number | null
     }
   }
 }

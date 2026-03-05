@@ -73,7 +73,7 @@ describe('GET /api/dashboard/news (T010/T011)', () => {
           hasMore: false,
           nextCursor: null,
           lastSyncedAt: null,
-          dataStalenessSecs: 0,
+          dataStalenessSecs: null,
         },
       },
     });
@@ -93,7 +93,7 @@ describe('GET /api/dashboard/news (T010/T011)', () => {
           hasMore: false,
           nextCursor: null,
           lastSyncedAt: null,
-          dataStalenessSecs: 0,
+          dataStalenessSecs: null,
         },
       },
     });
@@ -109,7 +109,7 @@ describe('GET /api/dashboard/news (T010/T011)', () => {
           hasMore: false,
           nextCursor: null,
           lastSyncedAt: null,
-          dataStalenessSecs: 0,
+          dataStalenessSecs: null,
         },
       },
     });

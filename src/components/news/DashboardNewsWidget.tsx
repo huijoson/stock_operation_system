@@ -38,7 +38,11 @@ function formatPublishedTime(isoString: string): string {
   })
 }
 
-function formatStaleness(seconds: number): string {
+function formatStaleness(seconds: number | null): string {
+  if (seconds === null) {
+    return '尚未同步'
+  }
+
   if (seconds <= 0) {
     return '剛剛更新'
   }
@@ -61,7 +65,16 @@ export default function DashboardNewsWidget() {
   const [selectedCategory, setSelectedCategory] = useState<FilterValue>('ALL')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [dataStalenessSecs, setDataStalenessSecs] = useState(0)
+  const [dataStalenessSecs, setDataStalenessSecs] = useState<number | null>(null)
+
+  // Tick staleness counter every 60s between API refreshes
+  useEffect(() => {
+    if (dataStalenessSecs === null) return
+    const tickId = setInterval(() => {
+      setDataStalenessSecs((prev) => (prev !== null ? prev + 60 : null))
+    }, 60_000)
+    return () => clearInterval(tickId)
+  }, [dataStalenessSecs])
 
   const newsApiUrl = useMemo(() => {
     const params = new URLSearchParams({ limit: '5' })
@@ -115,8 +128,14 @@ export default function DashboardNewsWidget() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">股市消息</h3>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+            <p className={`text-xs sm:text-sm ${
+              dataStalenessSecs !== null && dataStalenessSecs > 7200
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-gray-500 dark:text-gray-400'
+            }`}>
               {formatStaleness(dataStalenessSecs)}
+              {dataStalenessSecs !== null && dataStalenessSecs > 7200 && ' ⚠'}
+              <span className="ml-2 text-gray-400 dark:text-gray-500">來源：Alpha Vantage</span>
             </p>
           </div>
 

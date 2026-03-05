@@ -11,21 +11,21 @@ export function CredibilityBadge({ credibility, size = 'md' }: CredibilityBadgeP
   const config = {
     official: {
       label: '🏛️ 官方來源',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-800',
-      borderColor: 'border-green-300',
+      bgColor: 'bg-green-100 dark:bg-green-900/40',
+      textColor: 'text-green-800 dark:text-green-200',
+      borderColor: 'border-green-300 dark:border-green-700',
     },
     mainstream: {
       label: '📰 主流媒體',
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-800',
-      borderColor: 'border-blue-300',
+      bgColor: 'bg-blue-100 dark:bg-blue-900/40',
+      textColor: 'text-blue-800 dark:text-blue-200',
+      borderColor: 'border-blue-300 dark:border-blue-700',
     },
     unverified: {
       label: '⚠️ 未驗證',
-      bgColor: 'bg-gray-100',
-      textColor: 'text-gray-700',
-      borderColor: 'border-gray-300',
+      bgColor: 'bg-gray-100 dark:bg-gray-700',
+      textColor: 'text-gray-700 dark:text-gray-300',
+      borderColor: 'border-gray-300 dark:border-gray-600',
     },
   };
 

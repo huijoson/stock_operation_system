@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Decimal from 'decimal.js';
 import { RiskAssessmentPanel } from '@/components/portfolio/RiskAssessmentPanel';
@@ -23,19 +23,45 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
   const [riskAssessment, setRiskAssessment] = useState<any>(null);
   const [holdingAdvice, setHoldingAdvice] = useState<any>(null);
   const [news, setNews] = useState<any[]>([]);
+  const [newsError, setNewsError] = useState<string | null>(null);
+  const [newsLoading, setNewsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const fetchNews = useCallback(async () => {
+    setNewsLoading(true);
+    setNewsError(null);
+    try {
+      const res = await fetch(`/api/news/${symbol}`);
+      if (res.ok) {
+        const data = await res.json();
+        setNews(data.data?.news || []);
+      } else {
+        const errData = await res.json().catch(() => null);
+        if (res.status === 500 && errData?.error?.includes('API Key')) {
+          setNewsError('Finnhub API Key 未設定，無法載入個股新聞');
+        } else if (res.status === 503) {
+          setNewsError('新聞服務暫時不可用，請稍後再試');
+        } else {
+          setNewsError('載入 Finnhub 新聞失敗');
+        }
+      }
+    } catch {
+      setNewsError('載入 Finnhub 新聞失敗');
+    } finally {
+      setNewsLoading(false);
+    }
+  }, [symbol]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        const [holdingRes, riskRes, adviceRes, newsRes] = await Promise.allSettled([
+        const [holdingRes, riskRes, adviceRes] = await Promise.allSettled([
           fetch(`/api/portfolios/${portfolioId}/holdings`),
           fetch(`/api/risk-assessment/${symbol}`),
           fetch(`/api/holding-advice/${symbol}`),
-          fetch(`/api/news/${symbol}`),
         ]);
 
         if (holdingRes.status === 'fulfilled' && holdingRes.value.ok) {
@@ -55,12 +81,7 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
 
         if (adviceRes.status === 'fulfilled' && adviceRes.value.ok) {
           const data = await adviceRes.value.json();
-          setHoldingAdvice(data);
-        }
-
-        if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
-          const data = await newsRes.value.json();
-          setNews(data.data?.news || []);
+          setHoldingAdvice(data.data ?? null);
         }
       } catch (err) {
         console.error('Error fetching holding details:', err);
@@ -71,7 +92,8 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
     };
 
     fetchData();
-  }, [portfolioId, symbol]);
+    fetchNews();
+  }, [portfolioId, symbol, fetchNews]);
 
   if (loading) {
     return (
@@ -162,8 +184,26 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-transparent dark:border-gray-700 p-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">相關新聞</h2>
-        {news.length > 0 ? (
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">相關新聞</h2>
+          <span className="text-xs text-gray-400 dark:text-gray-500">來源：Finnhub</span>
+        </div>
+        {newsLoading ? (
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">載入新聞中…</p>
+          </div>
+        ) : newsError ? (
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
+            <p className="text-sm text-yellow-800 dark:text-yellow-300">{newsError}</p>
+            <button
+              onClick={fetchNews}
+              className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+            >
+              重試
+            </button>
+          </div>
+        ) : news.length > 0 ? (
           <NewsList news={news} />
         ) : (
           <p className="text-gray-600 dark:text-gray-400 text-center py-8">目前沒有相關新聞</p>
