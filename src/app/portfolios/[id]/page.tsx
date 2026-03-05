@@ -157,7 +157,10 @@ export default function PortfolioDetailPage() {
         {/* Holdings Section */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">持股明細</h2>
+            <div>
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">持股明細</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">點擊「持股明細」可查看 Finnhub 新聞與詳細資訊</p>
+            </div>
             <ExportButton
               portfolioId={portfolioId}
               type="holdings"

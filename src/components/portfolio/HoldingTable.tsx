@@ -160,7 +160,14 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
                         {plPercentage ? `${formatNumber(plPercentage)}%` : '-'}
                       </div>
                     </td>
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-center">
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-center space-x-2">
+                      <button
+                        onClick={() => router.push(`/portfolios/${holding.portfolioId}/holdings/${holding.symbol}`)}
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium"
+                        title="查看持股明細與新聞"
+                      >
+                        持股明細
+                      </button>
                       <button
                         onClick={() => router.push(`/technical-analysis?symbol=${holding.symbol}`)}
                         className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-xs font-medium"
@@ -189,6 +196,13 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white">{holding.symbol}</h3>
+                  <button
+                    onClick={() => router.push(`/portfolios/${holding.portfolioId}/holdings/${holding.symbol}`)}
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium"
+                    title="查看持股明細與新聞"
+                  >
+                    📰
+                  </button>
                   <button
                     onClick={() => router.push(`/technical-analysis?symbol=${holding.symbol}`)}
                     className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-xs font-medium"

@@ -12,21 +12,21 @@ export function SentimentBadge({ sentimentLabel, score, size = 'md' }: Sentiment
   const config = {
     positive: {
       label: '😊 正面',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-800',
-      borderColor: 'border-green-300',
+      bgColor: 'bg-green-100 dark:bg-green-900/40',
+      textColor: 'text-green-800 dark:text-green-200',
+      borderColor: 'border-green-300 dark:border-green-700',
     },
     neutral: {
       label: '😐 中性',
-      bgColor: 'bg-gray-100',
-      textColor: 'text-gray-800',
-      borderColor: 'border-gray-300',
+      bgColor: 'bg-gray-100 dark:bg-gray-700',
+      textColor: 'text-gray-800 dark:text-gray-300',
+      borderColor: 'border-gray-300 dark:border-gray-600',
     },
     negative: {
       label: '😞 負面',
-      bgColor: 'bg-red-100',
-      textColor: 'text-red-800',
-      borderColor: 'border-red-300',
+      bgColor: 'bg-red-100 dark:bg-red-900/40',
+      textColor: 'text-red-800 dark:text-red-200',
+      borderColor: 'border-red-300 dark:border-red-700',
     },
   };
 

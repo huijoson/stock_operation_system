@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AuthService } from '@/services/auth.service'
+import { ApplicationError } from '@/types/errors'
 
 /**
  * POST /api/auth/login
@@ -33,21 +34,28 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
 
+    const isHttpsRequest = false
+
     // Set session cookie
     response.cookies.set('session_token', session.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      // Temporary fix: force non-Secure to support HTTP LAN access.
+      // Revisit and make this environment-driven when HTTPS is enabled.
+      secure: isHttpsRequest,
       sameSite: 'lax',
       expires: session.expiresAt,
       path: '/',
     })
 
+    response.headers.set('x-auth-cookie-secure', String(isHttpsRequest))
+    response.headers.set('x-auth-request-protocol', request.nextUrl.protocol)
+
     return response
-  } catch (error: any) {
-    if (error.message === 'Invalid credentials') {
+  } catch (error: unknown) {
+    if (error instanceof ApplicationError) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
+        { error: error.message },
+        { status: error.statusCode }
       )
     }
 

@@ -2,6 +2,20 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 
+const CHUNK_RELOAD_KEY = 'chunk-reload-attempted'
+const CHUNK_RELOAD_MAX_AGE_MS = 10_000 // 10 seconds guard window
+
+/**
+ * Detect webpack / Next.js chunk load failures
+ */
+function isChunkLoadError(error: Error): boolean {
+  return (
+    error.name === 'ChunkLoadError' ||
+    /loading chunk [\w-]+ failed/i.test(error.message) ||
+    /failed to fetch dynamically imported module/i.test(error.message)
+  )
+}
+
 interface Props {
   children: ReactNode
   fallback?: ReactNode
@@ -13,7 +27,9 @@ interface State {
 }
 
 /**
- * Error Boundary component to catch and handle React errors
+ * Error Boundary component to catch and handle React errors.
+ * Includes automatic single-reload recovery for ChunkLoadError
+ * with a sessionStorage guard to prevent infinite reload loops.
  */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -29,9 +45,23 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to console or error reporting service
     console.error('Error Boundary caught an error:', error, errorInfo)
-    
-    // You can also log to an error reporting service here
-    // e.g., Sentry.captureException(error)
+
+    // Auto-reload once for chunk load failures (e.g. after a new deployment)
+    if (isChunkLoadError(error) && typeof window !== 'undefined') {
+      try {
+        const prev = sessionStorage.getItem(CHUNK_RELOAD_KEY)
+        const now = Date.now()
+
+        if (!prev || now - Number(prev) > CHUNK_RELOAD_MAX_AGE_MS) {
+          sessionStorage.setItem(CHUNK_RELOAD_KEY, String(now))
+          window.location.reload()
+          return
+        }
+        // Already reloaded recently — fall through to show error UI
+      } catch {
+        // sessionStorage unavailable (e.g. private browsing) — fall through
+      }
+    }
   }
 
   render() {

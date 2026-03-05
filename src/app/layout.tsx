@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { ChunkErrorRecovery } from '@/components/ui/ChunkErrorRecovery'
 import { ToastProvider } from '@/components/ui/ToastProvider'
 import { ThemeProvider } from '@/components/ui/ThemeProvider'
 
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <ErrorBoundary>
+            <ChunkErrorRecovery />
             {children}
             <ToastProvider />
           </ErrorBoundary>

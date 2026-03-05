@@ -245,6 +245,37 @@ model HoldingAdvice {
   @@index([symbol, expiresAt])
 }
 
+model DashboardNewsItem {
+  id          String   @id @default(cuid())
+  externalId  String   @unique
+  title       String
+  summary     String?  @db.Text
+  url         String
+  source      String
+  publishedAt DateTime
+  category    String
+  rawTopics   String[]
+  syncedAt    DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([publishedAt(sort: Desc)])
+  @@index([category, publishedAt(sort: Desc)])
+  @@index([syncedAt])
+}
+
+model SyncQuotaLog {
+  id         String   @id @default(cuid())
+  date       String
+  service    String
+  callCount  Int      @default(0)
+  lastSyncAt DateTime?
+  lastError  String?
+  updatedAt  DateTime @updatedAt
+
+  @@unique([date, service])
+  @@index([date])
+}
+
 model StockNews {
   id                  String   @id @default(cuid())
   symbol              String
