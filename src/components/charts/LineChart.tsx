@@ -1,5 +1,3 @@
-'use client'
-
 import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 interface LineChartData {

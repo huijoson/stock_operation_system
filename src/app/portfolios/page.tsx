@@ -1,7 +1,5 @@
-'use client'
-
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 import PortfolioCard from '@/components/portfolio/PortfolioCard'
 import PortfolioForm from '@/components/portfolio/PortfolioForm'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
@@ -15,7 +13,7 @@ interface Portfolio {
 }
 
 export default function PortfolioListPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [portfolios, setPortfolios] = useState<Portfolio[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +29,7 @@ export default function PortfolioListPage() {
       const response = await fetch('/api/portfolios')
       
       if (response.status === 401) {
-        router.push('/login')
+        navigate('/login')
         return
       }
 
@@ -102,7 +100,7 @@ export default function PortfolioListPage() {
         {/* Navigation */}
         <div className="mb-4 flex items-center justify-between">
           <button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
           >
             ← 返回儀表板
@@ -114,7 +112,7 @@ export default function PortfolioListPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">我的投資組合</h1>
           <div className="flex gap-2 w-full sm:w-auto">
             <button
-              onClick={() => router.push('/technical-analysis')}
+              onClick={() => navigate('/technical-analysis')}
               className="flex-1 sm:flex-none bg-purple-600 dark:bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition text-sm sm:text-base"
             >
               技術分析

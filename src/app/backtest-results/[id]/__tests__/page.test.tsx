@@ -11,13 +11,13 @@
  */
 
 import { render, screen, waitFor } from '@testing-library/react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useNavigate } from 'react-router-dom'
 import BacktestResultsPage from '../page'
 
-// Mock next/navigation
-jest.mock('next/navigation', () => ({
+// Mock react-router-dom
+jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
-  useRouter: jest.fn(),
+  useNavigate: jest.fn(),
 }))
 
 // Mock IndicatorChart component
@@ -33,12 +33,12 @@ jest.mock('@/components/ui/Loading', () => ({
 }))
 
 describe('BacktestResultsPage', () => {
-  const mockPush = jest.fn()
+  const mockNavigate = jest.fn()
   
   beforeEach(() => {
     jest.clearAllMocks()
     ;(useParams as jest.Mock).mockReturnValue({ id: 'strategy-1' })
-    ;(useRouter as jest.Mock).mockReturnValue({ push: mockPush })
+    ;(useNavigate as jest.Mock).mockReturnValue(mockNavigate)
     
     // Mock fetch
     global.fetch = jest.fn()

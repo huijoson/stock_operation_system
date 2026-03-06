@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 
 export default function Home() {
   return (
@@ -43,13 +43,13 @@ export default function Home() {
         {/* CTA Buttons */}
         <div className="flex gap-4 justify-center items-center">
           <Link
-            href="/login"
+            to="/login"
             className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors shadow-md"
           >
             登入
           </Link>
           <Link
-            href="/register"
+            to="/register"
             className="px-8 py-3 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-500 rounded-lg font-semibold hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
           >
             註冊新帳號

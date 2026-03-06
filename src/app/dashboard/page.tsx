@@ -1,7 +1,5 @@
-'use client'
-
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 import { Decimal } from 'decimal.js'
 import PieChart from '@/components/charts/PieChart'
 import LineChart from '@/components/charts/LineChart'
@@ -36,7 +34,7 @@ interface PortfolioSummary {
 }
 
 export default function DashboardPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [user, setUser] = useState<any>(null)
   const [portfolios, setPortfolios] = useState<Portfolio[]>([])
   const [allHoldings, setAllHoldings] = useState<Holding[]>([])
@@ -55,7 +53,7 @@ export default function DashboardPage() {
         })
         
         if (!authResponse.ok) {
-          router.push('/login')
+          navigate('/login')
           return
         }
 
@@ -99,14 +97,14 @@ export default function DashboardPage() {
         calculateSummary(allHoldingsData, prices)
       } catch (error) {
         console.error('Error fetching data:', error)
-        router.push('/login')
+        navigate('/login')
       } finally {
         setLoading(false)
       }
     }
 
     fetchData()
-  }, [router])
+  }, [navigate])
 
   const calculateSummary = (holdings: Holding[], prices: Record<string, Decimal>) => {
     let totalCost = new Decimal(0)
@@ -157,7 +155,7 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
-      router.push('/login')
+      navigate('/login')
     } catch (error) {
       console.error('Logout error:', error)
     }
@@ -184,13 +182,13 @@ export default function DashboardPage() {
             <div className="flex items-center space-x-2 sm:space-x-4">
               <ThemeToggle />
               <button
-                onClick={() => router.push('/portfolios')}
+                onClick={() => navigate('/portfolios')}
                 className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
                 投資組合
               </button>
               <button
-                onClick={() => router.push('/technical-analysis')}
+                onClick={() => navigate('/technical-analysis')}
                 className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
                 技術分析
@@ -286,19 +284,19 @@ export default function DashboardPage() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => router.push('/technical-analysis')}
+                    onClick={() => navigate('/technical-analysis')}
                     className="px-3 py-1.5 text-xs sm:text-sm font-medium text-white bg-purple-600 dark:bg-purple-500 rounded-md hover:bg-purple-700 dark:hover:bg-purple-600"
                   >
                     技術分析
                   </button>
                   <button
-                    onClick={() => router.push('/fibonacci-tool')}
+                    onClick={() => navigate('/fibonacci-tool')}
                     className="px-3 py-1.5 text-xs sm:text-sm font-medium text-purple-700 dark:text-purple-300 bg-white dark:bg-gray-800 border border-purple-300 dark:border-purple-600 rounded-md hover:bg-purple-50 dark:hover:bg-gray-700"
                   >
                     費波那契工具
                   </button>
                   <button
-                    onClick={() => router.push('/strategy-builder')}
+                    onClick={() => navigate('/strategy-builder')}
                     className="px-3 py-1.5 text-xs sm:text-sm font-medium text-purple-700 dark:text-purple-300 bg-white dark:bg-gray-800 border border-purple-300 dark:border-purple-600 rounded-md hover:bg-purple-50 dark:hover:bg-gray-700"
                   >
                     策略建立器
@@ -320,7 +318,7 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">我的投資組合</h3>
                 <button
-                  onClick={() => router.push('/portfolios')}
+                  onClick={() => navigate('/portfolios')}
                   className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600"
                 >
                   管理投資組合
@@ -332,7 +330,7 @@ export default function DashboardPage() {
                 <div className="text-center py-8">
                   <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-4">您還沒有建立任何投資組合</p>
                   <button
-                    onClick={() => router.push('/portfolios')}
+                    onClick={() => navigate('/portfolios')}
                     className="text-sm sm:text-base text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
                   >
                     立即建立 →
@@ -347,7 +345,7 @@ export default function DashboardPage() {
                     return (
                       <div
                         key={portfolio.id}
-                        onClick={() => router.push(`/portfolios/${portfolio.id}`)}
+                        onClick={() => navigate(`/portfolios/${portfolio.id}`)}
                         className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition cursor-pointer bg-white dark:bg-gray-700"
                       >
                         <h4 className="font-semibold text-gray-900 dark:text-white mb-2 truncate">{portfolio.name}</h4>

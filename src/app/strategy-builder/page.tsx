@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import StrategyConditionBuilder, { Condition, LogicOperator } from '@/components/charts/StrategyConditionBuilder'
 import { Loading } from '@/components/ui/Loading'

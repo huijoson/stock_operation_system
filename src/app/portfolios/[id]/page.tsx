@@ -1,7 +1,5 @@
-'use client'
-
 import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useNavigate, useParams } from 'react-router-dom'
 import HoldingTable from '@/components/portfolio/HoldingTable'
 import ExportButton from '@/components/transactions/ExportButton'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
@@ -26,7 +24,7 @@ interface Portfolio {
 }
 
 export default function PortfolioDetailPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
   const portfolioId = params.id as string
 
@@ -104,7 +102,7 @@ export default function PortfolioDetailPage() {
             <p className="text-red-800 dark:text-red-300">{error}</p>
           </div>
           <button
-            onClick={() => router.push('/portfolios')}
+            onClick={() => navigate('/portfolios')}
             className="mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
           >
             ← 返回投資組合列表
@@ -121,7 +119,7 @@ export default function PortfolioDetailPage() {
         <div className="mb-6 sm:mb-8">
           <div className="flex justify-between items-center mb-4">
             <button
-              onClick={() => router.push('/portfolios')}
+              onClick={() => navigate('/portfolios')}
               className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
             >
               ← 返回投資組合列表
@@ -139,13 +137,13 @@ export default function PortfolioDetailPage() {
             </div>
             <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
               <button
-                onClick={() => router.push('/technical-analysis')}
+                onClick={() => navigate('/technical-analysis')}
                 className="flex-1 sm:flex-none bg-purple-600 dark:bg-purple-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition text-sm sm:text-base"
               >
                 技術分析
               </button>
               <button
-                onClick={() => router.push(`/transactions/${portfolioId}`)}
+                onClick={() => navigate(`/transactions/${portfolioId}`)}
                 className="flex-1 sm:flex-none bg-blue-600 dark:bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition text-sm sm:text-base"
               >
                 交易記錄

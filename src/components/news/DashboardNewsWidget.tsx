@@ -1,5 +1,3 @@
-'use client'
-
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { NewsErrorState } from '@/components/news/NewsErrorState'
 import { NewsLoadingState } from '@/components/news/NewsLoadingState'

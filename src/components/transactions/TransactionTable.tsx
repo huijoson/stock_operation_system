@@ -1,5 +1,3 @@
-'use client'
-
 interface Transaction {
   id: string
   portfolioId: string

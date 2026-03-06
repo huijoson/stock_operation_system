@@ -1,7 +1,5 @@
-'use client';
-
-import { use, useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Decimal from 'decimal.js';
 import { RiskAssessmentPanel } from '@/components/portfolio/RiskAssessmentPanel';
 import { HoldingAdvicePanel } from '@/components/portfolio/HoldingAdvicePanel';
@@ -9,16 +7,11 @@ import { NewsList } from '@/components/news/NewsList';
 import { DisclaimerNotice } from '@/components/ui/DisclaimerNotice';
 import { InsufficientDataNotice } from '@/components/portfolio/InsufficientDataNotice';
 
-interface HoldingDetailPageProps {
-  params: Promise<{
-    id: string;
-    symbol: string;
-  }>;
-}
-
-export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
-  const router = useRouter();
-  const { id: portfolioId, symbol } = use(params);
+export default function HoldingDetailPage() {
+  const navigate = useNavigate();
+  const params = useParams<{ id: string; symbol: string }>();
+  const portfolioId = params.id!;
+  const symbol = params.symbol!;
   const [holding, setHolding] = useState<any>(null);
   const [riskAssessment, setRiskAssessment] = useState<any>(null);
   const [holdingAdvice, setHoldingAdvice] = useState<any>(null);
@@ -112,7 +105,7 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
         <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6">
           <p className="text-red-800 dark:text-red-300">{error || '找不到持股資料'}</p>
           <button
-            onClick={() => router.push(`/portfolios/${portfolioId}`)}
+            onClick={() => navigate(`/portfolios/${portfolioId}`)}
             className="mt-4 px-4 py-2 bg-red-600 dark:bg-red-500 text-white rounded hover:bg-red-700 dark:hover:bg-red-600"
           >
             返回投資組合
@@ -129,7 +122,7 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl bg-gray-50 dark:bg-gray-900 min-h-screen">
       <button
-        onClick={() => router.push(`/portfolios/${portfolioId}`)}
+        onClick={() => navigate(`/portfolios/${portfolioId}`)}
         className="mb-6 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
       >
         <span>←</span>

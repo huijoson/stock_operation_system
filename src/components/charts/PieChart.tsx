@@ -1,5 +1,3 @@
-'use client'
-
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 
 interface PieChartData {

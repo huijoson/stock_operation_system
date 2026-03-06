@@ -1,11 +1,8 @@
-'use client'
-
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function LoginPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -35,7 +32,7 @@ export default function LoginPage() {
       }
 
       // Redirect to dashboard on success
-      router.push('/dashboard')
+      navigate('/dashboard')
     } catch (err) {
       setError('An error occurred. Please try again.')
       setLoading(false)
@@ -51,7 +48,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             或{' '}
-            <Link href="/register" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
+            <Link to="/register" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
               建立新帳號
             </Link>
           </p>

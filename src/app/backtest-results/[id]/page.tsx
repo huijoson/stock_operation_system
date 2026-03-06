@@ -1,7 +1,5 @@
-'use client'
-
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useNavigate } from 'react-router-dom'
 import IndicatorChart from '@/components/charts/IndicatorChart'
 import { Loading } from '@/components/ui/Loading'
 
@@ -33,7 +31,7 @@ interface BacktestResult {
 
 export default function BacktestResultsPage() {
   const params = useParams()
-  const router = useRouter()
+  const navigate = useNavigate()
   const strategyId = params.id as string
 
   const [loading, setLoading] = useState(false)
@@ -151,7 +149,7 @@ export default function BacktestResultsPage() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <button
-              onClick={() => router.push('/strategy-builder')}
+              onClick={() => navigate('/strategy-builder')}
               className="text-blue-600 hover:text-blue-700 mb-2 flex items-center gap-1"
             >
               ← 返回策略列表

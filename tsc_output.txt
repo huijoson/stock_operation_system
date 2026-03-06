@@ -1,0 +1,214 @@
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(73,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(85,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(96,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(115,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(131,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(147,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(163,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(179,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(194,58): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(207,58): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/__tests__/strategy-id-route.test.ts(220,58): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(84,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(95,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(106,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(117,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(128,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(139,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(150,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(161,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(172,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+src/app/api/strategies/[id]/backtest/__tests__/backtest-route.test.ts(190,55): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Promise<{ id: string; }>'.
+tests/integration/realized-pl-date-range.test.ts(14,7): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+tests/integration/realized-pl.api.test.ts(13,7): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+tests/property/auth.property.test.ts(4,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(5,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(6,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(7,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/auth.property.test.ts(8,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(9,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(10,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(11,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/auth.property.test.ts(12,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(13,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(14,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/auth.property.test.ts(15,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(16,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(17,10): error TS2300: Duplicate identifier 'it'.
+tests/property/auth.property.test.ts(18,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/auth.property.test.ts(156,51): error TS2345: Argument of type '(args: any) => Promise<{ id: string; email: string; password: string | undefined; createdAt: Date; updatedAt: Date; }>' is not assignable to parameter of type '<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<DefaultArgs>>) => Prisma__UserClient<GetFindResult<$UserPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+  Type 'Promise<{ id: string; email: string; password: string | undefined; createdAt: Date; updatedAt: Date; }>' is missing the following properties from type 'Prisma__UserClient<GetFindResult<$UserPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>': portfolios, sessions, strategies
+tests/property/csv-import.property.test.ts(576,60): error TS2345: Argument of type '() => Promise<any>' is not assignable to parameter of type '<T extends HoldingFindUniqueArgs>(args: SelectSubset<T, HoldingFindUniqueArgs<DefaultArgs>>) => Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions> | null, null, DefaultArgs, PrismaClientOptions>'.
+  Property 'portfolio' is missing in type 'Promise<any>' but required in type 'Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions> | null, null, DefaultArgs, PrismaClientOptions>'.
+tests/property/csv-import.property.test.ts(580,56): error TS2345: Argument of type '(args: any) => Promise<any>' is not assignable to parameter of type '<T extends HoldingCreateArgs>(args: SelectSubset<T, HoldingCreateArgs<DefaultArgs>>) => Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+  Property 'portfolio' is missing in type 'Promise<any>' but required in type 'Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+tests/property/csv-import.property.test.ts(593,56): error TS2345: Argument of type '(args: any) => Promise<any>' is not assignable to parameter of type '<T extends HoldingUpdateArgs>(args: SelectSubset<T, HoldingUpdateArgs<DefaultArgs>>) => Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+  Property 'portfolio' is missing in type 'Promise<any>' but required in type 'Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+tests/property/csv-import.property.test.ts(661,60): error TS2345: Argument of type '() => Promise<any>' is not assignable to parameter of type '<T extends HoldingFindUniqueArgs>(args: SelectSubset<T, HoldingFindUniqueArgs<DefaultArgs>>) => Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions> | null, null, DefaultArgs, PrismaClientOptions>'.
+  Property 'portfolio' is missing in type 'Promise<any>' but required in type 'Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions> | null, null, DefaultArgs, PrismaClientOptions>'.
+tests/property/csv-import.property.test.ts(665,56): error TS2345: Argument of type '(args: any) => Promise<any>' is not assignable to parameter of type '<T extends HoldingCreateArgs>(args: SelectSubset<T, HoldingCreateArgs<DefaultArgs>>) => Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+  Property 'portfolio' is missing in type 'Promise<any>' but required in type 'Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+tests/property/csv-import.property.test.ts(678,56): error TS2345: Argument of type '(args: any) => Promise<any>' is not assignable to parameter of type '<T extends HoldingUpdateArgs>(args: SelectSubset<T, HoldingUpdateArgs<DefaultArgs>>) => Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+  Property 'portfolio' is missing in type 'Promise<any>' but required in type 'Prisma__HoldingClient<GetFindResult<$HoldingPayload<DefaultArgs>, T, PrismaClientOptions>, never, DefaultArgs, PrismaClientOptions>'.
+tests/property/news-sentiment.property.test.ts(2,20): error TS2307: Cannot find module '@fast-check/jest' or its corresponding type declarations.
+tests/property/news-sentiment.property.test.ts(56,6): error TS2339: Property 'prop' does not exist on type 'ItConcurrent'.
+tests/property/news-sentiment.property.test.ts(58,6): error TS7006: Parameter 'headline' implicitly has an 'any' type.
+tests/property/news-sentiment.property.test.ts(58,16): error TS7006: Parameter 'summary' implicitly has an 'any' type.
+tests/property/news-sentiment.property.test.ts(65,6): error TS2339: Property 'prop' does not exist on type 'ItConcurrent'.
+tests/property/news-sentiment.property.test.ts(67,6): error TS7006: Parameter 'headline' implicitly has an 'any' type.
+tests/property/news-sentiment.property.test.ts(67,16): error TS7006: Parameter 'summary' implicitly has an 'any' type.
+tests/property/news-sentiment.property.test.ts(73,6): error TS2339: Property 'prop' does not exist on type 'ItConcurrent'.
+tests/property/news-sentiment.property.test.ts(75,6): error TS7006: Parameter 'headline' implicitly has an 'any' type.
+tests/property/news-sentiment.property.test.ts(75,16): error TS7006: Parameter 'summary' implicitly has an 'any' type.
+tests/property/news-sentiment.property.test.ts(108,6): error TS2339: Property 'prop' does not exist on type 'ItConcurrent'.
+tests/property/news-sentiment.property.test.ts(110,6): error TS7006: Parameter 'headline' implicitly has an 'any' type.
+tests/property/news-sentiment.property.test.ts(110,16): error TS7006: Parameter 'summary' implicitly has an 'any' type.
+tests/property/stock.property.test.ts(5,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(6,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(7,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(8,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/stock.property.test.ts(9,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(10,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(11,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(12,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/stock.property.test.ts(13,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(14,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(15,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(16,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/stock.property.test.ts(17,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(18,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(19,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(20,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(21,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(22,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/stock.property.test.ts(23,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(24,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(25,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(26,10): error TS2300: Duplicate identifier 'it'.
+tests/property/stock.property.test.ts(27,10): error TS2300: Duplicate identifier 'describe'.
+tests/property/stock.property.test.ts(297,18): error TS18048: 'upsertCall.where.symbol_date' is possibly 'undefined'.
+tests/property/stock.property.test.ts(370,53): error TS2559: Type '() => Promise<void>' has no properties in common with type 'TestOptions'.
+tests/property/stock.property.test.ts(442,70): error TS2559: Type '() => Promise<void>' has no properties in common with type 'TestOptions'.
+tests/property/stock.property.test.ts(475,70): error TS2559: Type '() => Promise<void>' has no properties in common with type 'TestOptions'.
+tests/property/transaction.property.test.ts(174,54): error TS2345: Argument of type '{ portfolioId: string; symbol: string; type: string; quantity: Decimal; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(184,18): error TS18048: 'lastCall.where.portfolioId_symbol' is possibly 'undefined'.
+tests/property/transaction.property.test.ts(185,18): error TS18048: 'lastCall.where.portfolioId_symbol' is possibly 'undefined'.
+tests/property/transaction.property.test.ts(187,47): error TS18048: 'lastCall.data.quantity' is possibly 'undefined'.
+tests/property/transaction.property.test.ts(188,46): error TS18048: 'lastCall.data.averageCost' is possibly 'undefined'.
+tests/property/transaction.property.test.ts(239,54): error TS2345: Argument of type '{ portfolioId: string; symbol: string; type: string; quantity: Decimal; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(312,54): error TS2345: Argument of type '{ portfolioId: string; symbol: string; type: string; quantity: Decimal; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(317,46): error TS18048: 'lastCall.data.averageCost' is possibly 'undefined'.
+tests/property/transaction.property.test.ts(393,54): error TS2345: Argument of type '{ quantity: Decimal; portfolioId: string; symbol: string; type: string; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(400,47): error TS18048: 'lastCall.data.quantity' is possibly 'undefined'.
+tests/property/transaction.property.test.ts(462,69): error TS2345: Argument of type '{ quantity: Decimal; portfolioId: string; symbol: string; type: string; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(512,54): error TS2345: Argument of type '{ quantity: Decimal; portfolioId: string; symbol: string; type: string; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(578,50): error TS2345: Argument of type '{ quantity: Decimal; portfolioId: string; symbol: string; type: string; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(605,50): error TS2345: Argument of type '{ portfolioId: string; symbol: string; type: string; quantity: Decimal; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(894,50): error TS2345: Argument of type '{ quantity: Decimal; portfolioId: string; symbol: string; type: string; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(921,50): error TS2345: Argument of type '{ quantity: Decimal; portfolioId: string; symbol: string; type: string; price: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(947,50): error TS2345: Argument of type '{ price: Decimal; portfolioId: string; symbol: string; type: string; quantity: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/property/transaction.property.test.ts(974,50): error TS2345: Argument of type '{ price: Decimal; portfolioId: string; symbol: string; type: string; quantity: Decimal; date: Date; }' is not assignable to parameter of type 'TransactionInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"SELL" | "BUY"'.
+tests/unit/api/dashboard/dashboard-news-route.test.ts(21,10): error TS2352: Conversion of type '(request: NextRequest) => Promise<NextResponse<unknown>>' to type '(req: Request) => Promise<Response>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of parameters 'request' and 'req' are incompatible.
+    Type 'Request' is missing the following properties from type 'NextRequest': cookies, nextUrl, page, ua
+tests/unit/api/dashboard/dashboard-news-route.test.ts(31,33): error TS2345: Argument of type '{ success: boolean; data: { items: { id: string; title: string; summary: null; url: string; source: string; publishedAt: string; category: string; }[]; meta: { total: number; hasMore: boolean; nextCursor: null; lastSyncedAt: string; dataStalenessSecs: number; }; }; }' is not assignable to parameter of type 'never'.
+tests/unit/api/dashboard/dashboard-news-route.test.ts(67,33): error TS2345: Argument of type '{ success: boolean; data: { items: never[]; meta: { total: number; hasMore: boolean; nextCursor: null; lastSyncedAt: null; dataStalenessSecs: null; }; }; }' is not assignable to parameter of type 'never'.
+tests/unit/api/dashboard/dashboard-news-route.test.ts(103,33): error TS2345: Argument of type '{ success: boolean; data: { items: never[]; meta: { total: number; hasMore: boolean; nextCursor: null; lastSyncedAt: null; dataStalenessSecs: null; }; }; }' is not assignable to parameter of type 'never'.
+tests/unit/api/dashboard/dashboard-news-route.test.ts(125,33): error TS2345: Argument of type '{ success: boolean; data: { items: never[]; meta: { total: number; hasMore: boolean; nextCursor: string; lastSyncedAt: string; dataStalenessSecs: number; }; }; }' is not assignable to parameter of type 'never'.
+tests/unit/api/sync/dashboard-news-route-contract.test.ts(14,10): error TS2352: Conversion of type '(request: NextRequest) => Promise<NextResponse<unknown>>' to type '(req: Request) => Promise<Response>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of parameters 'request' and 'req' are incompatible.
+    Type 'Request' is missing the following properties from type 'NextRequest': cookies, nextUrl, page, ua
+tests/unit/api/sync/dashboard-news-route-contract.test.ts(39,31): error TS2345: Argument of type '{ status: string; upserted: number; skipped: number; quotaUsedToday: number; quotaRemainingToday: number; syncedAt: string; }' is not assignable to parameter of type 'never'.
+tests/unit/api/sync/dashboard-news-route-contract.test.ts(66,31): error TS2345: Argument of type '{ status: string; upserted: number; skipped: number; quotaUsedToday: number; quotaRemainingToday: number; syncedAt: string; }' is not assignable to parameter of type 'never'.
+tests/unit/api/sync/dashboard-news-route-contract.test.ts(88,31): error TS2345: Argument of type '{ status: string; upserted: number; skipped: number; quotaUsedToday: number; quotaRemainingToday: number; syncedAt: string; }' is not assignable to parameter of type 'never'.
+tests/unit/api/sync/dashboard-news-route-contract.test.ts(107,31): error TS2345: Argument of type '{ status: string; upserted: number; skipped: number; quotaUsedToday: number; quotaRemainingToday: number; syncedAt: string; }' is not assignable to parameter of type 'never'.
+tests/unit/credibility.service.test.ts(24,77): error TS2345: Argument of type '{ sourceName: string; credibilityLevel: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/credibility.service.test.ts(33,77): error TS2345: Argument of type '{ sourceName: string; credibilityLevel: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/credibility.service.test.ts(42,77): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+tests/unit/credibility.service.test.ts(49,77): error TS2345: Argument of type '{ sourceName: string; credibilityLevel: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/credibility.service.test.ts(81,77): error TS2345: Argument of type '{ id: string; sourceName: string; credibilityLevel: string; description: string; isActive: boolean; createdAt: Date; updatedAt: Date; }[]' is not assignable to parameter of type 'never'.
+tests/unit/credibility.service.test.ts(92,75): error TS2345: Argument of type '{ id: string; sourceName: string; credibilityLevel: string; description: null; isActive: boolean; createdAt: Date; updatedAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/finnhub-client.test.ts(4,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+tests/unit/finnhub-client.test.ts(30,53): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ category: string; datetime: number; headline: string; id: number; image: string; related: string; source: string; summary: string; url: string; }[]>; }' is not assignable to parameter of type 'never'.
+tests/unit/finnhub-client.test.ts(50,53): error TS2345: Argument of type '{ ok: boolean; status: number; statusText: string; }' is not assignable to parameter of type 'never'.
+tests/unit/finnhub-client.test.ts(60,53): error TS2345: Argument of type '{ ok: boolean; status: number; statusText: string; headers: { get: (header: string) => "60" | null; }; }' is not assignable to parameter of type 'never'.
+tests/unit/finnhub-client.test.ts(89,53): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ category: string; datetime: number; headline: string; id: number; image: string; related: string; source: string; summary: string; url: string; }[]>; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(49,77): error TS2345: Argument of type '{ id: string; symbol: string; riskScore: number; riskLevel: string; technicalScore: number; rsiScore: number; macdScore: number; bollingerScore: number; fibonacciScore: number; newsScore: null; ... 6 more ...; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(50,72): error TS2345: Argument of type '{ id: string; symbol: string; adviceType: string; reasons: string[]; confidence: number; riskAssessmentId: string; generatedAt: Date; expiresAt: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(91,77): error TS2345: Argument of type '{ id: string; symbol: string; riskScore: number; riskLevel: string; technicalScore: number; rsiScore: number; macdScore: number; bollingerScore: number; fibonacciScore: number; newsScore: null; ... 6 more ...; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(92,72): error TS2345: Argument of type '{ id: string; symbol: string; adviceType: string; reasons: string[]; confidence: number; riskAssessmentId: string; generatedAt: Date; expiresAt: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(132,77): error TS2345: Argument of type '{ id: string; symbol: string; riskScore: number; riskLevel: string; technicalScore: number; rsiScore: number; macdScore: number; bollingerScore: number; fibonacciScore: number; newsScore: number; ... 6 more ...; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(133,72): error TS2345: Argument of type '{ id: string; symbol: string; adviceType: string; reasons: string[]; confidence: number; riskAssessmentId: string; generatedAt: Date; expiresAt: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(152,77): error TS2345: Argument of type 'null' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(170,76): error TS2345: Argument of type '{ id: string; symbol: string; adviceType: string; reasons: string[]; confidence: number; riskAssessmentId: string; generatedAt: Date; expiresAt: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(184,32): error TS2345: Argument of type '{ id: string; symbol: string; riskScore: number; riskLevel: string; technicalScore: number; rsiScore: number; macdScore: number; bollingerScore: number; fibonacciScore: number; newsScore: null; ... 6 more ...; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(203,32): error TS2345: Argument of type '{ id: string; symbol: string; riskScore: number; riskLevel: string; technicalScore: number; rsiScore: number; macdScore: number; bollingerScore: number; fibonacciScore: number; newsScore: null; ... 6 more ...; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(222,32): error TS2345: Argument of type '{ id: string; symbol: string; riskScore: number; riskLevel: string; technicalScore: number; rsiScore: number; macdScore: number; bollingerScore: number; fibonacciScore: number; newsScore: null; ... 6 more ...; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(243,32): error TS2345: Argument of type '{ id: string; symbol: string; adviceType: string; reasons: string[]; confidence: number; riskAssessmentId: string; generatedAt: Date; expiresAt: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(254,32): error TS2345: Argument of type '{ id: string; symbol: string; adviceType: string; reasons: string[]; confidence: number; riskAssessmentId: string; generatedAt: Date; expiresAt: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/holding-advice.service.test.ts(265,32): error TS2345: Argument of type '{ id: string; symbol: string; adviceType: string; reasons: string[]; confidence: number; riskAssessmentId: string; generatedAt: Date; expiresAt: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/unit/lib/alpha-vantage-client.test.ts(8,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | Request | URL, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+tests/unit/lib/alpha-vantage-client.test.ts(16,51): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ feed: { title: string; url: string; summary: string; source: string; time_published: string; topics: { topic: string; }[]; }[]; }>; }' is not assignable to parameter of type 'never'.
+tests/unit/lib/alpha-vantage-client.test.ts(60,51): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+tests/unit/lib/alpha-vantage-client.test.ts(71,51): error TS2345: Argument of type '{ ok: boolean; status: number; statusText: string; text: () => Promise<string>; }' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(57,70): error TS2345: Argument of type '{ id: string; symbol: string; externalId: string; headline: string; summary: string; url: string; imageUrl: null; source: string; publishedAt: Date; credibility: string; sentimentScore: number; ... 4 more ...; createdAt: Date; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(67,70): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(83,73): error TS2345: Argument of type '{ id: number; datetime: number; headline: string; summary: string; url: string; image: string; source: string; category: string; related: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(84,77): error TS2345: Argument of type '{ sourceName: string; credibilityLevel: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(87,72): error TS2345: Argument of type '{ count: number; }' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(88,70): error TS2345: Argument of type '{ id: string; symbol: string; externalId: string; headline: string; summary: string; url: string; imageUrl: string; source: string; publishedAt: Date; credibility: string; sentimentScore: number; ... 4 more ...; createdAt: Date; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(117,70): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(144,73): error TS2345: Argument of type '{ id: number; datetime: number; headline: string; summary: string; url: string; image: string; source: string; category: string; related: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(145,77): error TS2345: Argument of type '{ sourceName: string; credibilityLevel: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(148,72): error TS2345: Argument of type '{ count: number; }' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(149,70): error TS2345: Argument of type '{ id: string; symbol: string; externalId: string; headline: string; summary: string; url: string; imageUrl: string; source: string; publishedAt: Date; credibility: string; sentimentScore: number; ... 4 more ...; createdAt: Date; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(198,32): error TS2345: Argument of type '{ id: string; symbol: string; externalId: string; headline: string; summary: string; url: string; imageUrl: null; source: string; publishedAt: Date; credibility: string; sentimentScore: number; ... 4 more ...; createdAt: Date; }[]' is not assignable to parameter of type 'never'.
+tests/unit/news.service.test.ts(218,32): error TS2345: Argument of type '{ id: string; symbol: string; externalId: string; headline: string; summary: string; url: string; imageUrl: null; source: string; publishedAt: Date; credibility: string; sentimentScore: number; ... 4 more ...; createdAt: Date; }[]' is not assignable to parameter of type 'never'.
+tests/unit/realized-pl.service.test.ts(73,25): error TS2339: Property 'consumeLots' does not exist on type 'MockedObject<TaxLotService>'.
+tests/unit/realized-pl.service.test.ts(102,32): error TS2339: Property 'consumeLots' does not exist on type 'MockedObject<TaxLotService>'.
+tests/unit/realized-pl.service.test.ts(134,25): error TS2339: Property 'consumeLots' does not exist on type 'MockedObject<TaxLotService>'.
+tests/unit/realized-pl.service.test.ts(204,25): error TS2339: Property 'consumeLots' does not exist on type 'MockedObject<TaxLotService>'.
+tests/unit/risk-assessment.service.test.ts(127,8): error TS2552: Cannot find name 'technicalScoreService'. Did you mean 'technicalScore'?
+tests/unit/risk-assessment.service.test.ts(175,8): error TS2552: Cannot find name 'technicalScoreService'. Did you mean 'technicalScore'?
+tests/unit/risk-assessment.service.test.ts(284,14): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'PortfolioRiskSummary'.
+  Property '0' does not exist on type 'PortfolioRiskSummary'.
+tests/unit/risk-assessment.service.test.ts(285,14): error TS7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'PortfolioRiskSummary'.
+  Property '1' does not exist on type 'PortfolioRiskSummary'.
+tests/unit/risk-assessment.service.test.ts(302,8): error TS2304: Cannot find name 'technicalScoreService'.
+tests/unit/risk-assessment.service.test.ts(330,14): error TS2304: Cannot find name 'technicalScoreService'.
+tests/unit/sentiment-analysis.service.test.ts(25,9): error TS2554: Expected 1 arguments, but got 2.
+tests/unit/sentiment-analysis.service.test.ts(28,21): error TS2339: Property 'label' does not exist on type 'Promise<SentimentAnalysisResult | null>'.
+tests/unit/sentiment-analysis.service.test.ts(29,21): error TS2339: Property 'score' does not exist on type 'Promise<SentimentAnalysisResult | null>'.
+tests/unit/sentiment-analysis.service.test.ts(35,9): error TS2554: Expected 1 arguments, but got 2.
+tests/unit/sentiment-analysis.service.test.ts(38,21): error TS2339: Property 'label' does not exist on type 'Promise<SentimentAnalysisResult | null>'.
+tests/unit/sentiment-analysis.service.test.ts(39,21): error TS2339: Property 'score' does not exist on type 'Promise<SentimentAnalysisResult | null>'.
+tests/unit/sentiment-analysis.service.test.ts(45,9): error TS2554: Expected 1 arguments, but got 2.
+tests/unit/sentiment-analysis.service.test.ts(48,21): error TS2339: Property 'label' does not exist on type 'Promise<SentimentAnalysisResult | null>'.
+tests/unit/sentiment-analysis.service.test.ts(54,70): error TS2345: Argument of type '{ headline: string; summary: string; sentimentScore: number; sentimentLabel: string; }[]' is not assignable to parameter of type 'never'.
+tests/unit/sentiment-analysis.service.test.ts(76,70): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.

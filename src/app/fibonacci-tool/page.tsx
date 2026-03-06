@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import StockSearchBar from '@/components/stocks/StockSearchBar'
 import FibonacciDrawingTool, { FibonacciLevel } from '@/components/charts/FibonacciDrawingTool'

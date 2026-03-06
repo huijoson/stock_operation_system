@@ -1,7 +1,5 @@
-'use client'
-
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useNavigate, useParams } from 'react-router-dom'
 import TransactionTable from '@/components/transactions/TransactionTable'
 import TransactionForm from '@/components/transactions/TransactionForm'
 import ImportDialog from '@/components/transactions/ImportDialog'
@@ -21,7 +19,7 @@ interface Transaction {
 }
 
 export default function TransactionListPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
   const portfolioId = params.portfolioId as string
 
@@ -45,7 +43,7 @@ export default function TransactionListPage() {
       const response = await fetch(`/api/portfolios/${portfolioId}/transactions`)
       
       if (response.status === 401) {
-        router.push('/login')
+        navigate('/login')
         return
       }
 
@@ -160,7 +158,7 @@ export default function TransactionListPage() {
         {/* Navigation */}
         <div className="mb-4 flex items-center justify-between">
           <button
-            onClick={() => router.push('/portfolios')}
+            onClick={() => navigate('/portfolios')}
             className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
           >
             ← 返回投資組合
@@ -174,7 +172,7 @@ export default function TransactionListPage() {
           </div>
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button
-              onClick={() => router.push('/technical-analysis')}
+              onClick={() => navigate('/technical-analysis')}
               className="flex-1 sm:flex-none bg-indigo-600 dark:bg-indigo-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm sm:text-base"
             >
               技術分析

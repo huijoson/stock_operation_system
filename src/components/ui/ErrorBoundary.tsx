@@ -1,5 +1,3 @@
-'use client'
-
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 
 const CHUNK_RELOAD_KEY = 'chunk-reload-attempted'
