@@ -2,6 +2,7 @@
 
 import { Decimal } from 'decimal.js'
 import { useRouter } from 'next/navigation'
+import { useMemo, useState } from 'react'
 
 interface Holding {
   id: string
@@ -18,8 +19,13 @@ interface HoldingTableProps {
   currentPrices?: Record<string, Decimal>
 }
 
+type SortKey = 'symbol' | 'quantity' | 'averageCost' | 'totalCost' | 'currentPrice' | 'unrealizedPL' | 'plPercentage'
+type SortDirection = 'asc' | 'desc'
+
 export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTableProps) {
   const router = useRouter()
+  const [sortKey, setSortKey] = useState<SortKey>('symbol')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
   // Calculate total cost for a holding
   const calculateTotalCost = (holding: Holding): string => {
@@ -74,6 +80,54 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
     return 'text-gray-900 dark:text-white'
   }
 
+  const getSortValue = (holding: Holding, key: SortKey): string | Decimal => {
+    switch (key) {
+      case 'symbol':
+        return holding.symbol
+      case 'quantity':
+        return new Decimal(holding.quantity.toString())
+      case 'averageCost':
+        return new Decimal(holding.averageCost.toString())
+      case 'totalCost':
+        return new Decimal(holding.quantity.toString()).times(new Decimal(holding.averageCost.toString()))
+      case 'currentPrice':
+        return currentPrices[holding.symbol] ?? new Decimal(-Infinity)
+      case 'unrealizedPL':
+        return calculateUnrealizedPL(holding) ?? new Decimal(-Infinity)
+      case 'plPercentage':
+        return calculatePLPercentage(holding) ?? new Decimal(-Infinity)
+    }
+  }
+
+  const sortedHoldings = useMemo(() => {
+    return [...holdings].sort((a, b) => {
+      const aVal = getSortValue(a, sortKey)
+      const bVal = getSortValue(b, sortKey)
+      let cmp: number
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        cmp = aVal.localeCompare(bVal)
+      } else {
+        cmp = new Decimal(aVal.toString()).comparedTo(new Decimal(bVal.toString()))
+      }
+      return sortDirection === 'asc' ? cmp : -cmp
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [holdings, currentPrices, sortKey, sortDirection])
+
+  const handleSort = (key: SortKey): void => {
+    if (key === sortKey) {
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortKey(key)
+      setSortDirection('asc')
+    }
+  }
+
+  const renderSortIndicator = (key: SortKey): string => {
+    if (sortKey !== key) return ''
+    return sortDirection === 'asc' ? ' ↑' : ' ↓'
+  }
+
   if (holdings.length === 0) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-8 text-center">
@@ -91,34 +145,30 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  股票代號
-                </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  持股數量
-                </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  平均成本
-                </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  總成本
-                </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  目前價格
-                </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  未實現損益
-                </th>
-                <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  報酬率
-                </th>
+                {([
+                  { key: 'symbol' as SortKey, label: '股票代號', align: 'text-left' },
+                  { key: 'quantity' as SortKey, label: '持股數量', align: 'text-right' },
+                  { key: 'averageCost' as SortKey, label: '平均成本', align: 'text-right' },
+                  { key: 'totalCost' as SortKey, label: '總成本', align: 'text-right' },
+                  { key: 'currentPrice' as SortKey, label: '目前價格', align: 'text-right' },
+                  { key: 'unrealizedPL' as SortKey, label: '未實現損益', align: 'text-right' },
+                  { key: 'plPercentage' as SortKey, label: '報酬率', align: 'text-right' },
+                ]).map(({ key, label, align }) => (
+                  <th
+                    key={key}
+                    onClick={() => handleSort(key)}
+                    className={`px-4 lg:px-6 py-3 ${align} text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700 dark:hover:text-gray-200 transition-colors`}
+                  >
+                    {label}{renderSortIndicator(key)}
+                  </th>
+                ))}
                 <th className="px-4 lg:px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   操作
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {holdings.map((holding) => {
+              {sortedHoldings.map((holding) => {
                 const unrealizedPL = calculateUnrealizedPL(holding)
                 const plPercentage = calculatePLPercentage(holding)
                 const currentPrice = currentPrices[holding.symbol]
@@ -186,7 +236,7 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
 
       {/* Mobile Card View */}
       <div className="sm:hidden space-y-4">
-        {holdings.map((holding) => {
+        {sortedHoldings.map((holding) => {
           const unrealizedPL = calculateUnrealizedPL(holding)
           const plPercentage = calculatePLPercentage(holding)
           const currentPrice = currentPrices[holding.symbol]
