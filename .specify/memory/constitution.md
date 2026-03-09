@@ -116,7 +116,7 @@ Native language documentation reduces friction and improves comprehension for th
 ## Technology Stack
 
 **Runtime & Framework**:
-- Next.js 15 with App Router architecture
+- Vite 6 with React Router v7 (React SPA) + Express backend
 - React 18 with TypeScript
 - Node.js (LTS version)
 

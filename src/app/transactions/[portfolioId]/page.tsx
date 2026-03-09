@@ -6,6 +6,8 @@ import ImportDialog from '@/components/transactions/ImportDialog'
 import ExportButton from '@/components/transactions/ExportButton'
 import EditTransactionDialog from '@/components/transactions/EditTransactionDialog'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { PortfolioApi } from '@/services/portfolio.api'
+import { TransactionApi } from '@/services/transaction.api'
 
 interface Transaction {
   id: string
@@ -40,21 +42,14 @@ export default function TransactionListPage() {
   const fetchTransactions = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/portfolios/${portfolioId}/transactions`)
-      
-      if (response.status === 401) {
+      const data = await PortfolioApi.getTransactions<{ transactions: Transaction[] }>(portfolioId)
+      setTransactions(data.transactions)
+    } catch (err: any) {
+      if (err.response?.status === 401) {
         navigate('/login')
         return
       }
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch transactions')
-      }
-
-      const data = await response.json()
-      setTransactions(data.transactions)
-    } catch (err: any) {
-      setError(err.message)
+      setError(err.response?.data?.error || err.message)
     } finally {
       setLoading(false)
     }
@@ -68,19 +63,10 @@ export default function TransactionListPage() {
     date: string
   }) => {
     try {
-      const response = await fetch('/api/transactions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          portfolioId,
-          ...transaction,
-        }),
+      await TransactionApi.create({
+        portfolioId,
+        ...transaction,
       })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to create transaction')
-      }
 
       await fetchTransactions()
       setShowForm(false)
@@ -100,16 +86,7 @@ export default function TransactionListPage() {
     date: string
   }) => {
     try {
-      const response = await fetch(`/api/transactions/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to update transaction')
-      }
+      await TransactionApi.update(id, data)
 
       await fetchTransactions()
       setEditingTransaction(null)
@@ -124,14 +101,7 @@ export default function TransactionListPage() {
     }
 
     try {
-      const response = await fetch(`/api/transactions/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete transaction')
-      }
-
+      await TransactionApi.delete(id)
       await fetchTransactions()
     } catch (err: any) {
       alert(err.message)

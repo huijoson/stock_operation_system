@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PortfolioForm from './PortfolioForm'
+import { PortfolioApi } from '@/services/portfolio.api'
 
 interface Portfolio {
   id: string
@@ -21,21 +22,11 @@ export default function PortfolioCard({ portfolio, onDelete }: PortfolioCardProp
 
   const handleUpdate = async (name: string) => {
     try {
-      const response = await fetch(`/api/portfolios/${portfolio.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to update portfolio')
-      }
-
+      await PortfolioApi.update(portfolio.id, { name })
       setIsEditing(false)
       window.location.reload()
     } catch (err: any) {
-      alert(err.message)
+      alert(err.response?.data?.error || err.message)
     }
   }
 

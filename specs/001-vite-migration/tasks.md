@@ -139,7 +139,7 @@
 
 - [x] T038 [US4] Create frontend API client (axios wrapper with base URL from VITE_API_URL, cookie credentials, error interceptor) in src/services/api-client.ts
 - [x] T039 [US4] Create frontend service wrappers calling API client for all domains (portfolio.api.ts, transaction.api.ts, stock.api.ts, news.api.ts, strategy.api.ts, risk-assessment.api.ts, auth.api.ts, etc.) in src/services/
-- [ ] T040 [US4] Update all component imports (~20 components) to use new frontend API service wrappers instead of direct Prisma service calls
+- [x] T040 [US4] Update all component imports (~20 components) to use new frontend API service wrappers instead of direct Prisma service calls
 - [x] T041 [US4] Remove src/lib/db/ directory (Prisma client) from frontend and remove @prisma/client + prisma from root package.json dependencies
 
 ### Tests & Documentation
@@ -194,8 +194,8 @@
 - [x] T054 [P] Create backend/README.md with API documentation, setup guide, and endpoint reference
 - [x] T055 Update .specify/memory/constitution.md Technology Stack: "Next.js 15 with App Router" → "Vite 6 with React Router v7 (React SPA) + Express backend"
 - [x] T056 Delete backend/next-api-legacy/ directory after confirming all handlers migrated and tests passing
-- [ ] T057 Run quickstart.md full validation checklist (zero next/ imports, zero 'use client', build success, tsc passes, all tests pass, dev server < 5s startup)
-- [ ] T058 Verify all 8 success criteria from specs/001-vite-migration/spec.md: SC-001 (build < 60s), SC-002 (12 routes work), SC-003 (zero next/ imports), SC-004 (zero directives), SC-005 (inventory complete), SC-006 (tests pass), SC-007 (dev < 5s), SC-008 (bundle < +10%)
+- [x] T057 Run quickstart.md full validation checklist (zero next/ imports, zero 'use client', build success, tsc passes, all tests pass, dev server < 5s startup)
+- [x] T058 Verify all 8 success criteria from specs/001-vite-migration/spec.md: SC-001 (build < 60s), SC-002 (12 routes work), SC-003 (zero next/ imports), SC-004 (zero directives), SC-005 (inventory complete), SC-006 (tests pass), SC-007 (dev < 5s), SC-008 (bundle < +10%)
 
 ---
 

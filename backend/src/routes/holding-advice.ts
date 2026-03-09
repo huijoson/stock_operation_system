@@ -1,0 +1,82 @@
+import { Router, Request, Response } from 'express'
+import { PrismaClient } from '@prisma/client'
+import { HoldingAdviceService } from '../services/holding-advice.service'
+
+const router = Router()
+const prisma = new PrismaClient()
+
+router.get('/:symbol', async (req: Request, res: Response) => {
+  try {
+    const symbol = req.params.symbol.toUpperCase()
+
+    const service = new HoldingAdviceService(prisma)
+    const advice = await service.generateAdvice(symbol)
+
+    return res.json({
+      success: true,
+      data: advice,
+    })
+  } catch (error) {
+    if (error instanceof Error && error.message === '風險評估不存在') {
+      return res.status(404).json({
+        success: false,
+        error: '風險評估不存在，請先進行風險評估',
+        code: 'RISK_ASSESSMENT_NOT_FOUND',
+      })
+    }
+
+    console.error('取得持股建議失敗:', error)
+    return res.status(500).json({
+      success: false,
+      error: '取得持股建議失敗',
+    })
+  }
+})
+
+router.get('/portfolio/:portfolioId', async (req: Request, res: Response) => {
+  try {
+    const { portfolioId } = req.params
+
+    const portfolio = await prisma.portfolio.findUnique({
+      where: { id: portfolioId },
+      include: {
+        holdings: {
+          where: {
+            quantity: { gt: 0 },
+          },
+          select: {
+            symbol: true,
+          },
+        },
+      },
+    })
+
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        error: '投資組合不存在',
+      })
+    }
+
+    const symbols = portfolio.holdings.map((h) => h.symbol)
+
+    const service = new HoldingAdviceService(prisma)
+    const advices = await service.getAdviceForPortfolio(symbols)
+
+    return res.json({
+      success: true,
+      data: {
+        portfolioId,
+        advices,
+      },
+    })
+  } catch (error) {
+    console.error('取得投資組合持股建議失敗:', error)
+    return res.status(500).json({
+      success: false,
+      error: '取得投資組合持股建議失敗',
+    })
+  }
+})
+
+export { router }

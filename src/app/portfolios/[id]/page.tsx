@@ -4,6 +4,8 @@ import HoldingTable from '@/components/portfolio/HoldingTable'
 import ExportButton from '@/components/transactions/ExportButton'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Decimal } from 'decimal.js'
+import { PortfolioApi } from '@/services/portfolio.api'
+import { StockApi } from '@/services/stock.api'
 
 interface Holding {
   id: string
@@ -41,37 +43,26 @@ export default function PortfolioDetailPage() {
         setError(null)
 
         // Fetch portfolio details
-        const portfolioResponse = await fetch(`/api/portfolios/${portfolioId}`)
-        if (!portfolioResponse.ok) {
-          throw new Error('Failed to fetch portfolio')
-        }
-        const portfolioData = await portfolioResponse.json()
+        const portfolioData = await PortfolioApi.getById<{ portfolio: Portfolio }>(portfolioId)
         setPortfolio(portfolioData.portfolio)
 
         // Fetch holdings
-        const holdingsResponse = await fetch(`/api/portfolios/${portfolioId}/holdings`)
-        if (!holdingsResponse.ok) {
-          throw new Error('Failed to fetch holdings')
-        }
-        const holdingsData = await holdingsResponse.json()
+        const holdingsData = await PortfolioApi.getHoldings<{ holdings: Holding[] }>(portfolioId)
         setHoldings(holdingsData.holdings)
 
         // Fetch current prices for all holdings
         const prices: Record<string, Decimal> = {}
         for (const holding of holdingsData.holdings) {
           try {
-            const priceResponse = await fetch(`/api/stocks/${holding.symbol}/price`)
-            if (priceResponse.ok) {
-              const priceData = await priceResponse.json()
-              prices[holding.symbol] = new Decimal(priceData.price)
-            }
+            const priceData = await StockApi.getPrice<{ price: number }>(holding.symbol)
+            prices[holding.symbol] = new Decimal(priceData.price)
           } catch (err) {
             console.warn(`Failed to fetch price for ${holding.symbol}:`, err)
           }
         }
         setCurrentPrices(prices)
       } catch (err: any) {
-        setError(err.message)
+        setError(err.response?.data?.error || err.message)
       } finally {
         setLoading(false)
       }

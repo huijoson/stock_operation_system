@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { AuthApi } from '@/services/auth.api'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -39,26 +40,11 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || 'Registration failed')
-        setLoading(false)
-        return
-      }
-
+      await AuthApi.register(email, password)
       // Redirect to login on success
       navigate('/login?registered=true')
-    } catch (err) {
-      setError('An error occurred. Please try again.')
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'An error occurred. Please try again.')
       setLoading(false)
     }
   }

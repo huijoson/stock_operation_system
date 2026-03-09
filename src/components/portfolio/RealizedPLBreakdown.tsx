@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { RealizedPlApi } from '@/services/realized-pl.api'
 
 interface SymbolBreakdown {
   symbol: string
@@ -48,21 +49,20 @@ export default function RealizedPLBreakdown({ portfolioId, className = '' }: Rea
       setLoading(true)
       setError(null)
 
-      const url = selectedSymbol
-        ? `/api/realized-pl/portfolio/${portfolioId}?period=${period}&symbol=${selectedSymbol}`
-        : `/api/realized-pl/portfolio/${portfolioId}?period=${period}`
-
-      const response = await fetch(url)
-
-      if (!response.ok) {
-        throw new Error('無法載入損益明細')
+      const params: Record<string, string> = { period }
+      if (selectedSymbol) {
+        params.symbol = selectedSymbol
       }
 
-      const result = await response.json()
+      const result = await RealizedPlApi.getByPortfolio<{
+        symbolBreakdown?: SymbolBreakdown[]
+        records?: RealizedPLRecord[]
+      }>(portfolioId, params)
+
       setSymbolBreakdown(result.symbolBreakdown || [])
       setRecords(result.records || [])
     } catch (err: any) {
-      setError(err.message)
+      setError(err.response?.data?.error || err.message || '無法載入損益明細')
     } finally {
       setLoading(false)
     }

@@ -7,8 +7,6 @@
  * Requirements: 7.4, 7.5, 7.6
  */
 
-'use client'
-
 import { useState, useEffect } from 'react'
 import SupportResistanceLines, { PriceLevel } from './SupportResistanceLines'
 import Decimal from 'decimal.js'

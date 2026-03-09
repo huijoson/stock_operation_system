@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { RealizedPlApi } from '@/services/realized-pl.api'
 
 interface RealizedPLData {
   totalRealizedPL: string
@@ -37,20 +38,13 @@ export default function RealizedPLCard({ portfolioId, className = '' }: Realized
       setLoading(true)
       setError(null)
 
-      const url = portfolioId
-        ? `/api/realized-pl/portfolio/${portfolioId}?period=${period}`
-        : `/api/realized-pl?period=${period}`
+      const result = portfolioId
+        ? await RealizedPlApi.getByPortfolio<RealizedPLData>(portfolioId, { period })
+        : await RealizedPlApi.query<RealizedPLData>({ period })
 
-      const response = await fetch(url)
-
-      if (!response.ok) {
-        throw new Error('無法載入已實現損益資料')
-      }
-
-      const result = await response.json()
       setData(result)
     } catch (err: any) {
-      setError(err.message)
+      setError(err.response?.data?.error || err.message || '無法載入已實現損益資料')
     } finally {
       setLoading(false)
     }

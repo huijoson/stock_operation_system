@@ -13,7 +13,7 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
-    '/backend/next-api-legacy/',
+    '/backend/',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',

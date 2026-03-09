@@ -8,6 +8,7 @@ import CandlestickPatternMarker from '@/components/charts/CandlestickPatternMark
 import SupportResistanceLines from '@/components/charts/SupportResistanceLines'
 import IndicatorChart from '@/components/charts/IndicatorChart'
 import { Loading } from '@/components/ui/Loading'
+import { IndicatorApi } from '@/services/indicator.api'
 
 interface IndicatorSettings {
   rsi: { enabled: boolean; period: number }
@@ -65,8 +66,7 @@ export default function TechnicalAnalysisPage() {
       // Fetch RSI
       if (settings.rsi.enabled) {
         promises.push(
-          fetch(`/api/indicators/rsi?symbol=${selectedStock.symbol}&period=${settings.rsi.period}`)
-            .then((res) => res.json())
+          IndicatorApi.getRSI(selectedStock.symbol, settings.rsi.period)
             .then((data) => setRsiData(data))
             .catch((err) => console.error('RSI fetch error:', err))
         )
@@ -75,10 +75,12 @@ export default function TechnicalAnalysisPage() {
       // Fetch MACD
       if (settings.macd.enabled) {
         promises.push(
-          fetch(
-            `/api/indicators/macd?symbol=${selectedStock.symbol}&fastPeriod=${settings.macd.fastPeriod}&slowPeriod=${settings.macd.slowPeriod}&signalPeriod=${settings.macd.signalPeriod}`
+          IndicatorApi.getMACD(
+            selectedStock.symbol,
+            settings.macd.fastPeriod,
+            settings.macd.slowPeriod,
+            settings.macd.signalPeriod
           )
-            .then((res) => res.json())
             .then((data) => setMacdData(data))
             .catch((err) => console.error('MACD fetch error:', err))
         )
@@ -87,10 +89,11 @@ export default function TechnicalAnalysisPage() {
       // Fetch Bollinger Bands
       if (settings.bollinger.enabled) {
         promises.push(
-          fetch(
-            `/api/indicators/bollinger?symbol=${selectedStock.symbol}&period=${settings.bollinger.period}&stdDev=${settings.bollinger.stdDev}`
+          IndicatorApi.getBollinger(
+            selectedStock.symbol,
+            settings.bollinger.period,
+            settings.bollinger.stdDev
           )
-            .then((res) => res.json())
             .then((data) => setBollingerData(data))
             .catch((err) => console.error('Bollinger fetch error:', err))
         )
@@ -99,8 +102,7 @@ export default function TechnicalAnalysisPage() {
       // Fetch ATR
       if (settings.atr.enabled) {
         promises.push(
-          fetch(`/api/indicators/atr?symbol=${selectedStock.symbol}&period=${settings.atr.period}`)
-            .then((res) => res.json())
+          IndicatorApi.getATR(selectedStock.symbol, settings.atr.period)
             .then((data) => setAtrData(data))
             .catch((err) => console.error('ATR fetch error:', err))
         )
@@ -109,8 +111,7 @@ export default function TechnicalAnalysisPage() {
       // Fetch Technical Score
       if (settings.technicalScore.enabled) {
         promises.push(
-          fetch(`/api/indicators/technical-score?symbol=${selectedStock.symbol}`)
-            .then((res) => res.json())
+          IndicatorApi.getTechnicalScore(selectedStock.symbol)
             .then((data) => setTechnicalScore(data))
             .catch((err) => console.error('Technical Score fetch error:', err))
         )
@@ -119,8 +120,7 @@ export default function TechnicalAnalysisPage() {
       // Fetch Candlestick Patterns
       if (settings.candlestickPatterns.enabled) {
         promises.push(
-          fetch(`/api/indicators/candlestick-patterns?symbol=${selectedStock.symbol}`)
-            .then((res) => res.json())
+          IndicatorApi.getCandlestickPatterns(selectedStock.symbol)
             .then((data) => setCandlestickPatterns(data))
             .catch((err) => console.error('Candlestick Patterns fetch error:', err))
         )
@@ -129,8 +129,7 @@ export default function TechnicalAnalysisPage() {
       // Fetch Support/Resistance
       if (settings.supportResistance.enabled) {
         promises.push(
-          fetch(`/api/indicators/support-resistance?symbol=${selectedStock.symbol}`)
-            .then((res) => res.json())
+          IndicatorApi.getSupportResistance(selectedStock.symbol)
             .then((data) => setSupportResistance(data))
             .catch((err) => console.error('Support/Resistance fetch error:', err))
         )

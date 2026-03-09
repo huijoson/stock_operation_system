@@ -7,6 +7,9 @@ import BarChart from '@/components/charts/BarChart'
 import DashboardNewsWidget from '@/components/news/DashboardNewsWidget'
 import RealizedPLCard from '@/components/portfolio/RealizedPLCard'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { AuthApi } from '@/services/auth.api'
+import { PortfolioApi } from '@/services/portfolio.api'
+import { StockApi } from '@/services/stock.api'
 
 interface Portfolio {
   id: string
@@ -47,30 +50,16 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         // Check authentication
-        const authResponse = await fetch('/api/auth/me', {
-          credentials: 'include',
-          cache: 'no-store',
-        })
-        
-        if (!authResponse.ok) {
-          navigate('/login')
-          return
-        }
-
-        const authData = await authResponse.json()
+        const authData = await AuthApi.getCurrentUser<{ user: any }>()
         setUser(authData.user)
 
         // Fetch all portfolios
-        const portfoliosResponse = await fetch('/api/portfolios')
-        if (!portfoliosResponse.ok) {
-          throw new Error('Failed to fetch portfolios')
-        }
-        const portfoliosData = await portfoliosResponse.json()
+        const portfoliosData = await PortfolioApi.getAll<{ portfolios: Portfolio[] }>()
         setPortfolios(portfoliosData.portfolios)
 
         // Fetch holdings for all portfolios
         const holdingsPromises = portfoliosData.portfolios.map((p: Portfolio) =>
-          fetch(`/api/portfolios/${p.id}/holdings`).then(res => res.json())
+          PortfolioApi.getHoldings<{ holdings: Holding[] }>(p.id)
         )
         const holdingsResults = await Promise.all(holdingsPromises)
         const allHoldingsData = holdingsResults.flatMap(result => result.holdings)
@@ -82,11 +71,8 @@ export default function DashboardPage() {
         
         for (const symbol of uniqueSymbols) {
           try {
-            const priceResponse = await fetch(`/api/stocks/${symbol}/price`)
-            if (priceResponse.ok) {
-              const priceData = await priceResponse.json()
-              prices[symbol] = new Decimal(priceData.price)
-            }
+            const priceData = await StockApi.getPrice<{ price: number }>(symbol)
+            prices[symbol] = new Decimal(priceData.price)
           } catch (err) {
             console.warn(`Failed to fetch price for ${symbol}:`, err)
           }
@@ -154,7 +140,7 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' })
+      await AuthApi.logout()
       navigate('/login')
     } catch (error) {
       console.error('Logout error:', error)

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { AuthApi } from '@/services/auth.api'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -14,27 +15,11 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || 'Login failed')
-        setLoading(false)
-        return
-      }
-
+      await AuthApi.login(email, password)
       // Redirect to dashboard on success
       navigate('/dashboard')
-    } catch (err) {
-      setError('An error occurred. Please try again.')
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'An error occurred. Please try again.')
       setLoading(false)
     }
   }

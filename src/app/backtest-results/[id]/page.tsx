@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import IndicatorChart from '@/components/charts/IndicatorChart'
 import { Loading } from '@/components/ui/Loading'
+import { StrategyApi } from '@/services/strategy.api'
 
 interface Trade {
   date: string
@@ -53,11 +54,7 @@ export default function BacktestResultsPage() {
 
   const fetchStrategy = async () => {
     try {
-      const response = await fetch(`/api/strategies/${strategyId}`)
-      if (!response.ok) {
-        throw new Error('無法載入策略資訊')
-      }
-      const data = await response.json()
+      const data = await StrategyApi.getById(strategyId)
       setStrategy(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : '載入策略時發生錯誤')
@@ -75,15 +72,12 @@ export default function BacktestResultsPage() {
     setError(null)
 
     try {
-      const response = await fetch(
-        `/api/strategies/${strategyId}/backtest?startDate=${startDate}&endDate=${endDate}&symbol=${symbol}&initialCapital=${initialCapital}`
-      )
-
-      if (!response.ok) {
-        throw new Error('回測執行失敗')
-      }
-
-      const data = await response.json()
+      const data = await StrategyApi.runBacktest<BacktestResult>(strategyId, {
+        startDate,
+        endDate,
+        symbol,
+        initialCapital,
+      })
       setBacktestResult(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : '回測時發生錯誤')

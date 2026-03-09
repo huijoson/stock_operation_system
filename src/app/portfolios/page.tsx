@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PortfolioCard from '@/components/portfolio/PortfolioCard'
 import PortfolioForm from '@/components/portfolio/PortfolioForm'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { PortfolioApi } from '@/services/portfolio.api'
 
 interface Portfolio {
   id: string
@@ -26,21 +27,14 @@ export default function PortfolioListPage() {
   const fetchPortfolios = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/portfolios')
-      
-      if (response.status === 401) {
+      const data = await PortfolioApi.getAll<{ portfolios: Portfolio[] }>()
+      setPortfolios(data.portfolios)
+    } catch (err: any) {
+      if (err.response?.status === 401) {
         navigate('/login')
         return
       }
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch portfolios')
-      }
-
-      const data = await response.json()
-      setPortfolios(data.portfolios)
-    } catch (err: any) {
-      setError(err.message)
+      setError(err.response?.data?.error || err.message)
     } finally {
       setLoading(false)
     }
@@ -48,21 +42,11 @@ export default function PortfolioListPage() {
 
   const handleCreate = async (name: string) => {
     try {
-      const response = await fetch('/api/portfolios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to create portfolio')
-      }
-
+      await PortfolioApi.create({ name })
       await fetchPortfolios()
       setShowForm(false)
     } catch (err: any) {
-      alert(err.message)
+      alert(err.response?.data?.error || err.message)
     }
   }
 
@@ -72,17 +56,10 @@ export default function PortfolioListPage() {
     }
 
     try {
-      const response = await fetch(`/api/portfolios/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete portfolio')
-      }
-
+      await PortfolioApi.delete(id)
       await fetchPortfolios()
     } catch (err: any) {
-      alert(err.message)
+      alert(err.response?.data?.error || err.message)
     }
   }
 

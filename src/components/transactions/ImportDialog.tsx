@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TransactionApi } from '@/services/transaction.api'
 
 interface ImportDialogProps {
   portfolioId: string
@@ -37,22 +38,12 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
     setResult(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('portfolioId', portfolioId)
-      formData.append('format', format)
-
-      const response = await fetch('/api/transactions/import', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to import CSV')
-      }
+      const data = await TransactionApi.importCsv<{
+        successCount: number
+        errorCount: number
+        skippedCount: number
+        errors: Array<{ row: number; message: string }>
+      }>(file, format, portfolioId)
 
       setResult(data)
       

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { StockApi } from '@/services/stock.api'
 
 interface Stock {
   id: string
@@ -59,13 +60,7 @@ export default function StockSearchBar({
       setError(null)
 
       try {
-        const response = await fetch(`/api/stocks/search?q=${encodeURIComponent(keyword)}`)
-        
-        if (!response.ok) {
-          throw new Error('搜尋失敗')
-        }
-
-        const data = await response.json()
+        const data = await StockApi.search<{ stocks: Stock[] }>(keyword)
         setResults(data.stocks || [])
         setIsOpen(true)
       } catch (err) {

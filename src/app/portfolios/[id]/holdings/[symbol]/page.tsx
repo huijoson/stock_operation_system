@@ -6,6 +6,10 @@ import { HoldingAdvicePanel } from '@/components/portfolio/HoldingAdvicePanel';
 import { NewsList } from '@/components/news/NewsList';
 import { DisclaimerNotice } from '@/components/ui/DisclaimerNotice';
 import { InsufficientDataNotice } from '@/components/portfolio/InsufficientDataNotice';
+import { NewsApi } from '@/services/news.api';
+import { PortfolioApi } from '@/services/portfolio.api';
+import { RiskAssessmentApi } from '@/services/risk-assessment.api';
+import { HoldingAdviceApi } from '@/services/holding-advice.api';
 
 export default function HoldingDetailPage() {
   const navigate = useNavigate();
@@ -25,22 +29,16 @@ export default function HoldingDetailPage() {
     setNewsLoading(true);
     setNewsError(null);
     try {
-      const res = await fetch(`/api/news/${symbol}`);
-      if (res.ok) {
-        const data = await res.json();
-        setNews(data.data?.news || []);
+      const data = await NewsApi.getBySymbol<{ data?: { news: any[] } }>(symbol);
+      setNews(data.data?.news || []);
+    } catch (err: any) {
+      if (err.response?.status === 500 && err.response?.data?.error?.includes('API Key')) {
+        setNewsError('Finnhub API Key 未設定，無法載入個股新聞');
+      } else if (err.response?.status === 503) {
+        setNewsError('新聞服務暫時不可用，請稍後再試');
       } else {
-        const errData = await res.json().catch(() => null);
-        if (res.status === 500 && errData?.error?.includes('API Key')) {
-          setNewsError('Finnhub API Key 未設定，無法載入個股新聞');
-        } else if (res.status === 503) {
-          setNewsError('新聞服務暫時不可用，請稍後再試');
-        } else {
-          setNewsError('載入 Finnhub 新聞失敗');
-        }
+        setNewsError('載入 Finnhub 新聞失敗');
       }
-    } catch {
-      setNewsError('載入 Finnhub 新聞失敗');
     } finally {
       setNewsLoading(false);
     }
@@ -52,14 +50,13 @@ export default function HoldingDetailPage() {
         setLoading(true);
 
         const [holdingRes, riskRes, adviceRes] = await Promise.allSettled([
-          fetch(`/api/portfolios/${portfolioId}/holdings`),
-          fetch(`/api/risk-assessment/${symbol}`),
-          fetch(`/api/holding-advice/${symbol}`),
+          PortfolioApi.getHoldings<{ holdings: any[] }>(portfolioId),
+          RiskAssessmentApi.getBySymbol(symbol),
+          HoldingAdviceApi.getBySymbol<{ data?: any }>(symbol),
         ]);
 
-        if (holdingRes.status === 'fulfilled' && holdingRes.value.ok) {
-          const data = await holdingRes.value.json();
-          const foundHolding = data.holdings?.find((h: any) => h.symbol === symbol);
+        if (holdingRes.status === 'fulfilled') {
+          const foundHolding = holdingRes.value.holdings?.find((h: any) => h.symbol === symbol);
           if (foundHolding) {
             setHolding(foundHolding);
           } else {
@@ -67,14 +64,12 @@ export default function HoldingDetailPage() {
           }
         }
 
-        if (riskRes.status === 'fulfilled' && riskRes.value.ok) {
-          const data = await riskRes.value.json();
-          setRiskAssessment(data);
+        if (riskRes.status === 'fulfilled') {
+          setRiskAssessment(riskRes.value);
         }
 
-        if (adviceRes.status === 'fulfilled' && adviceRes.value.ok) {
-          const data = await adviceRes.value.json();
-          setHoldingAdvice(data.data ?? null);
+        if (adviceRes.status === 'fulfilled') {
+          setHoldingAdvice((adviceRes.value as any).data ?? null);
         }
       } catch (err) {
         console.error('Error fetching holding details:', err);

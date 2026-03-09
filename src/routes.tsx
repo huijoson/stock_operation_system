@@ -13,6 +13,7 @@ import FibonacciToolPage from '@/app/fibonacci-tool/page'
 import BacktestResultsPage from '@/app/backtest-results/[id]/page'
 import LoginPage from '@/app/(auth)/login/page'
 import RegisterPage from '@/app/(auth)/register/page'
+import NotFoundPage from '@/app/not-found/page'
 
 export const routes: RouteObject[] = [
   {
@@ -30,6 +31,7 @@ export const routes: RouteObject[] = [
       { path: '/backtest-results/:id', element: <BacktestResultsPage /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ]
