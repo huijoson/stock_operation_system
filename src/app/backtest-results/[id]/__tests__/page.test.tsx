@@ -12,12 +12,24 @@
 
 import { render, screen, waitFor } from '@testing-library/react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { StrategyApi } from '@/services/strategy.api'
 import BacktestResultsPage from '../page'
 
 // Mock react-router-dom
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
   useNavigate: jest.fn(),
+}))
+
+// Mock strategy API to avoid import.meta.env in api-client.ts
+jest.mock('@/services/strategy.api', () => ({
+  StrategyApi: {
+    getAll: jest.fn(),
+    getById: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
 }))
 
 // Mock IndicatorChart component
@@ -39,9 +51,7 @@ describe('BacktestResultsPage', () => {
     jest.clearAllMocks()
     ;(useParams as jest.Mock).mockReturnValue({ id: 'strategy-1' })
     ;(useNavigate as jest.Mock).mockReturnValue(mockNavigate)
-    
-    // Mock fetch
-    global.fetch = jest.fn()
+    ;(StrategyApi.getById as jest.Mock).mockRejectedValue(new Error('not configured'))
   })
 
   it('should render backtest parameters form', () => {
@@ -57,14 +67,11 @@ describe('BacktestResultsPage', () => {
   })
 
   it('should display strategy name when loaded', async () => {
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        id: 'strategy-1',
-        name: 'Test Strategy',
-        conditions: [],
-        logic: 'AND',
-      }),
+    ;(StrategyApi.getById as jest.Mock).mockResolvedValueOnce({
+      id: 'strategy-1',
+      name: 'Test Strategy',
+      conditions: [],
+      logic: 'AND',
     })
 
     render(<BacktestResultsPage />)

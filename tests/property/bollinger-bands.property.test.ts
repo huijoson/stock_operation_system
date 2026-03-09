@@ -127,10 +127,11 @@ describe('Bollinger Bands Service - Property-Based Tests', () => {
             // Act
             const result = service.calculateBands(prices, period, stdDevMultiplier)
 
-            // Assert: For all points, upper > middle > lower
+            // Assert: For all points, upper >= middle >= lower
+            // When all prices in a window are identical, stddev=0 so bands converge
             for (let i = 0; i < result.middle.length; i++) {
-              expect(result.upper[i].greaterThan(result.middle[i])).toBe(true)
-              expect(result.middle[i].greaterThan(result.lower[i])).toBe(true)
+              expect(result.upper[i].greaterThanOrEqualTo(result.middle[i])).toBe(true)
+              expect(result.middle[i].greaterThanOrEqualTo(result.lower[i])).toBe(true)
             }
           }
         ),
@@ -439,7 +440,7 @@ describe('Bollinger Bands Service - Property-Based Tests', () => {
             const percentageWithin = withinBands / totalPoints
             
             // This is a statistical property, so we allow some variance
-            expect(percentageWithin).toBeGreaterThan(0.5) // At least 50% should be within
+            expect(percentageWithin).toBeGreaterThanOrEqual(0.5) // At least 50% should be within
           }
         ),
         { numRuns: 100 }
