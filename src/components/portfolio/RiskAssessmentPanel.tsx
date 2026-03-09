@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { RiskBadge } from './RiskBadge';
 import { TechnicalIndicatorBreakdown } from './TechnicalIndicatorBreakdown';

@@ -1,5 +1,3 @@
-'use client'
-
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 
 const CHUNK_RELOAD_KEY = 'chunk-reload-attempted'
@@ -96,7 +94,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="mt-2 text-sm text-center text-gray-600">
               很抱歉，應用程式發生了一些問題。請重新整理頁面或稍後再試。
             </p>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <div className="mt-4 p-3 bg-gray-100 rounded text-xs text-gray-700 overflow-auto">
                 <p className="font-semibold">錯誤訊息：</p>
                 <p className="mt-1">{this.state.error.message}</p>

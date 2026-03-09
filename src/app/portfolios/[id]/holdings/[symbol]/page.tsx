@@ -1,24 +1,21 @@
-'use client';
-
-import { use, useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Decimal from 'decimal.js';
 import { RiskAssessmentPanel } from '@/components/portfolio/RiskAssessmentPanel';
 import { HoldingAdvicePanel } from '@/components/portfolio/HoldingAdvicePanel';
 import { NewsList } from '@/components/news/NewsList';
 import { DisclaimerNotice } from '@/components/ui/DisclaimerNotice';
 import { InsufficientDataNotice } from '@/components/portfolio/InsufficientDataNotice';
+import { NewsApi } from '@/services/news.api';
+import { PortfolioApi } from '@/services/portfolio.api';
+import { RiskAssessmentApi } from '@/services/risk-assessment.api';
+import { HoldingAdviceApi } from '@/services/holding-advice.api';
 
-interface HoldingDetailPageProps {
-  params: Promise<{
-    id: string;
-    symbol: string;
-  }>;
-}
-
-export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
-  const router = useRouter();
-  const { id: portfolioId, symbol } = use(params);
+export default function HoldingDetailPage() {
+  const navigate = useNavigate();
+  const params = useParams<{ id: string; symbol: string }>();
+  const portfolioId = params.id!;
+  const symbol = params.symbol!;
   const [holding, setHolding] = useState<any>(null);
   const [riskAssessment, setRiskAssessment] = useState<any>(null);
   const [holdingAdvice, setHoldingAdvice] = useState<any>(null);
@@ -32,22 +29,16 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
     setNewsLoading(true);
     setNewsError(null);
     try {
-      const res = await fetch(`/api/news/${symbol}`);
-      if (res.ok) {
-        const data = await res.json();
-        setNews(data.data?.news || []);
+      const data = await NewsApi.getBySymbol<{ data?: { news: any[] } }>(symbol);
+      setNews(data.data?.news || []);
+    } catch (err: any) {
+      if (err.response?.status === 500 && err.response?.data?.error?.includes('API Key')) {
+        setNewsError('Finnhub API Key 未設定，無法載入個股新聞');
+      } else if (err.response?.status === 503) {
+        setNewsError('新聞服務暫時不可用，請稍後再試');
       } else {
-        const errData = await res.json().catch(() => null);
-        if (res.status === 500 && errData?.error?.includes('API Key')) {
-          setNewsError('Finnhub API Key 未設定，無法載入個股新聞');
-        } else if (res.status === 503) {
-          setNewsError('新聞服務暫時不可用，請稍後再試');
-        } else {
-          setNewsError('載入 Finnhub 新聞失敗');
-        }
+        setNewsError('載入 Finnhub 新聞失敗');
       }
-    } catch {
-      setNewsError('載入 Finnhub 新聞失敗');
     } finally {
       setNewsLoading(false);
     }
@@ -59,14 +50,13 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
         setLoading(true);
 
         const [holdingRes, riskRes, adviceRes] = await Promise.allSettled([
-          fetch(`/api/portfolios/${portfolioId}/holdings`),
-          fetch(`/api/risk-assessment/${symbol}`),
-          fetch(`/api/holding-advice/${symbol}`),
+          PortfolioApi.getHoldings<{ holdings: any[] }>(portfolioId),
+          RiskAssessmentApi.getBySymbol(symbol),
+          HoldingAdviceApi.getBySymbol<{ data?: any }>(symbol),
         ]);
 
-        if (holdingRes.status === 'fulfilled' && holdingRes.value.ok) {
-          const data = await holdingRes.value.json();
-          const foundHolding = data.holdings?.find((h: any) => h.symbol === symbol);
+        if (holdingRes.status === 'fulfilled') {
+          const foundHolding = holdingRes.value.holdings?.find((h: any) => h.symbol === symbol);
           if (foundHolding) {
             setHolding(foundHolding);
           } else {
@@ -74,14 +64,12 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
           }
         }
 
-        if (riskRes.status === 'fulfilled' && riskRes.value.ok) {
-          const data = await riskRes.value.json();
-          setRiskAssessment(data);
+        if (riskRes.status === 'fulfilled') {
+          setRiskAssessment(riskRes.value);
         }
 
-        if (adviceRes.status === 'fulfilled' && adviceRes.value.ok) {
-          const data = await adviceRes.value.json();
-          setHoldingAdvice(data.data ?? null);
+        if (adviceRes.status === 'fulfilled') {
+          setHoldingAdvice((adviceRes.value as any).data ?? null);
         }
       } catch (err) {
         console.error('Error fetching holding details:', err);
@@ -112,7 +100,7 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
         <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6">
           <p className="text-red-800 dark:text-red-300">{error || '找不到持股資料'}</p>
           <button
-            onClick={() => router.push(`/portfolios/${portfolioId}`)}
+            onClick={() => navigate(`/portfolios/${portfolioId}`)}
             className="mt-4 px-4 py-2 bg-red-600 dark:bg-red-500 text-white rounded hover:bg-red-700 dark:hover:bg-red-600"
           >
             返回投資組合
@@ -129,7 +117,7 @@ export default function HoldingDetailPage({ params }: HoldingDetailPageProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl bg-gray-50 dark:bg-gray-900 min-h-screen">
       <button
-        onClick={() => router.push(`/portfolios/${portfolioId}`)}
+        onClick={() => navigate(`/portfolios/${portfolioId}`)}
         className="mb-6 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
       >
         <span>←</span>

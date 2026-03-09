@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "vite",
+    "dev:full": "concurrently \"npm run dev\" \"npm run backend:dev\"",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
     "test": "jest",
@@ -14,26 +15,31 @@
     "test:unit": "jest --testPathPattern=unit",
     "test:property": "jest --testPathPattern=property",
     "test:coverage": "jest --coverage",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate": "node scripts/db-migrate.mjs",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "postinstall": "playwright install --with-deps chromium"
+    "backend:dev": "npx prisma generate --no-hints && cd backend && ts-node --transpile-only --project tsconfig.json src/server.ts",
+    "backend:build": "cd backend && tsc",
+    "backend:start": "cd backend && node dist/server.js",
+    "backend:test": "cd backend && jest",
+    "postinstall": "prisma generate --no-hints & playwright install --with-deps chromium"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.0",
     "@types/bcrypt": "^6.0.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "decimal.js": "^10.4.3",
-    "next": "^15.0.0",
     "papaparse": "^5.5.3",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-hot-toast": "^2.6.0",
+    "react-router-dom": "^7.6.0",
     "recharts": "^3.4.1"
   },
   "devDependencies": {
+    "@fast-check/jest": "^2.2.0",
     "@playwright/test": "^1.51.1",
+    "@prisma/client": "^6.19.0",
     "@testing-library/jest-dom": "^6.1.0",
     "@testing-library/react": "^14.1.0",
     "@types/jest": "^29.5.0",
@@ -41,9 +47,13 @@
     "@types/papaparse": "^5.5.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "@vitejs/plugin-react": "^4.3.0",
     "autoprefixer": "^10.4.0",
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.3.1",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^15.0.0",
     "fast-check": "^3.15.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
@@ -54,9 +64,7 @@
     "tailwindcss": "^3.4.0",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.0"
-  },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "typescript": "^5.7.3",
+    "vite": "^6.3.0"
   }
 }

@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { NewsCard } from './NewsCard';
 import { NewsLoadingState } from './NewsLoadingState';

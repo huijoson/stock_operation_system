@@ -1,13 +1,13 @@
-'use client'
-
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useNavigate, useParams } from 'react-router-dom'
 import TransactionTable from '@/components/transactions/TransactionTable'
 import TransactionForm from '@/components/transactions/TransactionForm'
 import ImportDialog from '@/components/transactions/ImportDialog'
 import ExportButton from '@/components/transactions/ExportButton'
 import EditTransactionDialog from '@/components/transactions/EditTransactionDialog'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { PortfolioApi } from '@/services/portfolio.api'
+import { TransactionApi } from '@/services/transaction.api'
 
 interface Transaction {
   id: string
@@ -21,7 +21,7 @@ interface Transaction {
 }
 
 export default function TransactionListPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
   const portfolioId = params.portfolioId as string
 
@@ -42,21 +42,14 @@ export default function TransactionListPage() {
   const fetchTransactions = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/portfolios/${portfolioId}/transactions`)
-      
-      if (response.status === 401) {
-        router.push('/login')
-        return
-      }
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch transactions')
-      }
-
-      const data = await response.json()
+      const data = await PortfolioApi.getTransactions<{ transactions: Transaction[] }>(portfolioId)
       setTransactions(data.transactions)
     } catch (err: any) {
-      setError(err.message)
+      if (err.response?.status === 401) {
+        navigate('/login')
+        return
+      }
+      setError(err.response?.data?.error || err.message)
     } finally {
       setLoading(false)
     }
@@ -70,19 +63,10 @@ export default function TransactionListPage() {
     date: string
   }) => {
     try {
-      const response = await fetch('/api/transactions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          portfolioId,
-          ...transaction,
-        }),
+      await TransactionApi.create({
+        portfolioId,
+        ...transaction,
       })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to create transaction')
-      }
 
       await fetchTransactions()
       setShowForm(false)
@@ -102,16 +86,7 @@ export default function TransactionListPage() {
     date: string
   }) => {
     try {
-      const response = await fetch(`/api/transactions/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to update transaction')
-      }
+      await TransactionApi.update(id, data)
 
       await fetchTransactions()
       setEditingTransaction(null)
@@ -126,14 +101,7 @@ export default function TransactionListPage() {
     }
 
     try {
-      const response = await fetch(`/api/transactions/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete transaction')
-      }
-
+      await TransactionApi.delete(id)
       await fetchTransactions()
     } catch (err: any) {
       alert(err.message)
@@ -160,7 +128,7 @@ export default function TransactionListPage() {
         {/* Navigation */}
         <div className="mb-4 flex items-center justify-between">
           <button
-            onClick={() => router.push('/portfolios')}
+            onClick={() => navigate('/portfolios')}
             className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
           >
             ← 返回投資組合
@@ -174,7 +142,7 @@ export default function TransactionListPage() {
           </div>
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button
-              onClick={() => router.push('/technical-analysis')}
+              onClick={() => navigate('/technical-analysis')}
               className="flex-1 sm:flex-none bg-indigo-600 dark:bg-indigo-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm sm:text-base"
             >
               技術分析

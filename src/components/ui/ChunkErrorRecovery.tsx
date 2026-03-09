@@ -1,5 +1,3 @@
-'use client'
-
 import { useEffect } from 'react'
 
 const CHUNK_RELOAD_KEY = 'chunk-reload-attempted'

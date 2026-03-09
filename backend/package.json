@@ -1,0 +1,35 @@
+{
+  "name": "stock-portfolio-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node --transpile-only --project tsconfig.json src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "jest --config jest.config.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "decimal.js": "^10.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "papaparse": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@types/papaparse": "^5.5.0",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.0"
+  }
+}

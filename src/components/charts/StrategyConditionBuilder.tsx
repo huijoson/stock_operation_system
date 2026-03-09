@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 
 export type IndicatorType = 'RSI' | 'MACD' | 'BOLLINGER' | 'FIBONACCI' | 'ATR' | 'TECHNICAL_SCORE'

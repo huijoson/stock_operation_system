@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import StrategyConditionBuilder, { Condition, LogicOperator } from './StrategyConditionBuilder'
 

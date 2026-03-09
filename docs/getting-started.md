@@ -33,8 +33,8 @@ DATABASE_URL="postgresql://使用者名稱:密碼@localhost:5432/資料庫名稱
 # 測試資料庫（選用）
 DATABASE_URL_TEST="postgresql://使用者名稱:密碼@localhost:5432/測試資料庫名稱"
 
-# Next.js 設定
-NEXT_PUBLIC_API_URL="http://localhost:3000"
+# Vite 設定
+VITE_API_URL="http://localhost:3000"
 
 # Finnhub API Key（投資組合洞察功能必填）
 FINNHUB_API_KEY="your_finnhub_api_key_here"

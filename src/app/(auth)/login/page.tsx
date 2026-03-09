@@ -1,11 +1,9 @@
-'use client'
-
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useNavigate, Link } from 'react-router-dom'
+import { AuthApi } from '@/services/auth.api'
 
 export default function LoginPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -17,27 +15,11 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || 'Login failed')
-        setLoading(false)
-        return
-      }
-
+      await AuthApi.login(email, password)
       // Redirect to dashboard on success
-      router.push('/dashboard')
-    } catch (err) {
-      setError('An error occurred. Please try again.')
+      navigate('/dashboard')
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'An error occurred. Please try again.')
       setLoading(false)
     }
   }
@@ -51,7 +33,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             或{' '}
-            <Link href="/register" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
+            <Link to="/register" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
               建立新帳號
             </Link>
           </p>

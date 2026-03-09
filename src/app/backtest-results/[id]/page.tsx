@@ -1,9 +1,8 @@
-'use client'
-
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useNavigate } from 'react-router-dom'
 import IndicatorChart from '@/components/charts/IndicatorChart'
 import { Loading } from '@/components/ui/Loading'
+import { StrategyApi } from '@/services/strategy.api'
 
 interface Trade {
   date: string
@@ -33,7 +32,7 @@ interface BacktestResult {
 
 export default function BacktestResultsPage() {
   const params = useParams()
-  const router = useRouter()
+  const navigate = useNavigate()
   const strategyId = params.id as string
 
   const [loading, setLoading] = useState(false)
@@ -55,11 +54,7 @@ export default function BacktestResultsPage() {
 
   const fetchStrategy = async () => {
     try {
-      const response = await fetch(`/api/strategies/${strategyId}`)
-      if (!response.ok) {
-        throw new Error('無法載入策略資訊')
-      }
-      const data = await response.json()
+      const data = await StrategyApi.getById(strategyId)
       setStrategy(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : '載入策略時發生錯誤')
@@ -77,15 +72,12 @@ export default function BacktestResultsPage() {
     setError(null)
 
     try {
-      const response = await fetch(
-        `/api/strategies/${strategyId}/backtest?startDate=${startDate}&endDate=${endDate}&symbol=${symbol}&initialCapital=${initialCapital}`
-      )
-
-      if (!response.ok) {
-        throw new Error('回測執行失敗')
-      }
-
-      const data = await response.json()
+      const data = await StrategyApi.runBacktest<BacktestResult>(strategyId, {
+        startDate,
+        endDate,
+        symbol,
+        initialCapital,
+      })
       setBacktestResult(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : '回測時發生錯誤')
@@ -151,7 +143,7 @@ export default function BacktestResultsPage() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <button
-              onClick={() => router.push('/strategy-builder')}
+              onClick={() => navigate('/strategy-builder')}
               className="text-blue-600 hover:text-blue-700 mb-2 flex items-center gap-1"
             >
               ← 返回策略列表

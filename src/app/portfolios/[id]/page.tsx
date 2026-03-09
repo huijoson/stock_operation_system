@@ -1,11 +1,11 @@
-'use client'
-
 import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useNavigate, useParams } from 'react-router-dom'
 import HoldingTable from '@/components/portfolio/HoldingTable'
 import ExportButton from '@/components/transactions/ExportButton'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Decimal } from 'decimal.js'
+import { PortfolioApi } from '@/services/portfolio.api'
+import { StockApi } from '@/services/stock.api'
 
 interface Holding {
   id: string
@@ -26,7 +26,7 @@ interface Portfolio {
 }
 
 export default function PortfolioDetailPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
   const portfolioId = params.id as string
 
@@ -43,37 +43,26 @@ export default function PortfolioDetailPage() {
         setError(null)
 
         // Fetch portfolio details
-        const portfolioResponse = await fetch(`/api/portfolios/${portfolioId}`)
-        if (!portfolioResponse.ok) {
-          throw new Error('Failed to fetch portfolio')
-        }
-        const portfolioData = await portfolioResponse.json()
+        const portfolioData = await PortfolioApi.getById<{ portfolio: Portfolio }>(portfolioId)
         setPortfolio(portfolioData.portfolio)
 
         // Fetch holdings
-        const holdingsResponse = await fetch(`/api/portfolios/${portfolioId}/holdings`)
-        if (!holdingsResponse.ok) {
-          throw new Error('Failed to fetch holdings')
-        }
-        const holdingsData = await holdingsResponse.json()
+        const holdingsData = await PortfolioApi.getHoldings<{ holdings: Holding[] }>(portfolioId)
         setHoldings(holdingsData.holdings)
 
         // Fetch current prices for all holdings
         const prices: Record<string, Decimal> = {}
         for (const holding of holdingsData.holdings) {
           try {
-            const priceResponse = await fetch(`/api/stocks/${holding.symbol}/price`)
-            if (priceResponse.ok) {
-              const priceData = await priceResponse.json()
-              prices[holding.symbol] = new Decimal(priceData.price)
-            }
+            const priceData = await StockApi.getPrice<{ price: number }>(holding.symbol)
+            prices[holding.symbol] = new Decimal(priceData.price)
           } catch (err) {
             console.warn(`Failed to fetch price for ${holding.symbol}:`, err)
           }
         }
         setCurrentPrices(prices)
       } catch (err: any) {
-        setError(err.message)
+        setError(err.response?.data?.error || err.message)
       } finally {
         setLoading(false)
       }
@@ -104,7 +93,7 @@ export default function PortfolioDetailPage() {
             <p className="text-red-800 dark:text-red-300">{error}</p>
           </div>
           <button
-            onClick={() => router.push('/portfolios')}
+            onClick={() => navigate('/portfolios')}
             className="mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
           >
             ← 返回投資組合列表
@@ -121,7 +110,7 @@ export default function PortfolioDetailPage() {
         <div className="mb-6 sm:mb-8">
           <div className="flex justify-between items-center mb-4">
             <button
-              onClick={() => router.push('/portfolios')}
+              onClick={() => navigate('/portfolios')}
               className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
             >
               ← 返回投資組合列表
@@ -139,13 +128,13 @@ export default function PortfolioDetailPage() {
             </div>
             <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
               <button
-                onClick={() => router.push('/technical-analysis')}
+                onClick={() => navigate('/technical-analysis')}
                 className="flex-1 sm:flex-none bg-purple-600 dark:bg-purple-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition text-sm sm:text-base"
               >
                 技術分析
               </button>
               <button
-                onClick={() => router.push(`/transactions/${portfolioId}`)}
+                onClick={() => navigate(`/transactions/${portfolioId}`)}
                 className="flex-1 sm:flex-none bg-blue-600 dark:bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition text-sm sm:text-base"
               >
                 交易記錄

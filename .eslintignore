@@ -3,3 +3,6 @@ dist/
 build/
 coverage/
 *.min.js
+.next/
+public/
+prisma/migrations/

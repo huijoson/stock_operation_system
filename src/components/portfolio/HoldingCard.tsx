@@ -1,7 +1,5 @@
-'use client';
-
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import Decimal from 'decimal.js';
 import { RiskBadge } from './RiskBadge';
 
@@ -19,7 +17,7 @@ interface HoldingCardProps {
 }
 
 export function HoldingCard({ holding, currentPrice, riskLevel, riskScore }: HoldingCardProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   
   const quantity = new Decimal(holding.quantity.toString());
   const averageCost = new Decimal(holding.averageCost.toString());
@@ -36,7 +34,7 @@ export function HoldingCard({ holding, currentPrice, riskLevel, riskScore }: Hol
   }
 
   const handleClick = () => {
-    router.push(`/portfolios/${holding.portfolioId}/holdings/${holding.symbol}`);
+    navigate(`/portfolios/${holding.portfolioId}/holdings/${holding.symbol}`);
   };
 
   return (

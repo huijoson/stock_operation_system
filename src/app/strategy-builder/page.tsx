@@ -1,8 +1,7 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import StrategyConditionBuilder, { Condition, LogicOperator } from '@/components/charts/StrategyConditionBuilder'
 import { Loading } from '@/components/ui/Loading'
+import { StrategyApi } from '@/services/strategy.api'
 
 interface Strategy {
   id: string
@@ -37,11 +36,7 @@ export default function StrategyBuilderPage() {
     setError(null)
 
     try {
-      const response = await fetch('/api/strategies')
-      if (!response.ok) {
-        throw new Error('無法載入策略列表')
-      }
-      const data = await response.json()
+      const data = await StrategyApi.getAll<Strategy[]>()
       setStrategies(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : '載入策略時發生錯誤')
@@ -71,24 +66,13 @@ export default function StrategyBuilderPage() {
     setError(null)
 
     try {
-      const response = await fetch('/api/strategies', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: strategyName,
-          description: strategyDescription,
-          conditions,
-          logic,
-        }),
+      const newStrategy = await StrategyApi.create<Strategy>({
+        name: strategyName,
+        description: strategyDescription,
+        conditions,
+        logic,
       })
 
-      if (!response.ok) {
-        throw new Error('建立策略失敗')
-      }
-
-      const newStrategy = await response.json()
       setStrategies([newStrategy, ...strategies])
 
       // Reset form
@@ -122,24 +106,13 @@ export default function StrategyBuilderPage() {
     setError(null)
 
     try {
-      const response = await fetch(`/api/strategies/${editingStrategy.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: strategyName,
-          description: strategyDescription,
-          conditions,
-          logic,
-        }),
+      const updatedStrategy = await StrategyApi.update<Strategy>(editingStrategy.id, {
+        name: strategyName,
+        description: strategyDescription,
+        conditions,
+        logic,
       })
 
-      if (!response.ok) {
-        throw new Error('更新策略失敗')
-      }
-
-      const updatedStrategy = await response.json()
       setStrategies(strategies.map((s) => (s.id === updatedStrategy.id ? updatedStrategy : s)))
 
       // Reset form
@@ -164,14 +137,7 @@ export default function StrategyBuilderPage() {
     setError(null)
 
     try {
-      const response = await fetch(`/api/strategies/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) {
-        throw new Error('刪除策略失敗')
-      }
-
+      await StrategyApi.delete(id)
       setStrategies(strategies.filter((s) => s.id !== id))
     } catch (err) {
       setError(err instanceof Error ? err.message : '刪除策略時發生錯誤')
@@ -201,19 +167,7 @@ export default function StrategyBuilderPage() {
 
   const toggleStrategyActive = async (id: string, isActive: boolean) => {
     try {
-      const response = await fetch(`/api/strategies/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ isActive: !isActive }),
-      })
-
-      if (!response.ok) {
-        throw new Error('更新策略狀態失敗')
-      }
-
-      const updatedStrategy = await response.json()
+      const updatedStrategy = await StrategyApi.update<Strategy>(id, { isActive: !isActive })
       setStrategies(strategies.map((s) => (s.id === updatedStrategy.id ? updatedStrategy : s)))
     } catch (err) {
       setError(err instanceof Error ? err.message : '更新策略狀態時發生錯誤')

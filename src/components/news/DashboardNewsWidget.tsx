@@ -1,6 +1,4 @@
-'use client'
-
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { NewsErrorState } from '@/components/news/NewsErrorState'
 import { NewsLoadingState } from '@/components/news/NewsLoadingState'
 import {
@@ -9,6 +7,7 @@ import {
   type NewsItemResponse,
   type NewsListResponse,
 } from '@/types/news.types'
+import { DashboardNewsApi } from '@/services/dashboard-news.api'
 
 type FilterValue = 'ALL' | NewsCategory
 
@@ -76,43 +75,33 @@ export default function DashboardNewsWidget() {
     return () => clearInterval(tickId)
   }, [dataStalenessSecs])
 
-  const newsApiUrl = useMemo(() => {
-    const params = new URLSearchParams({ limit: '5' })
-
-    if (selectedCategory !== 'ALL') {
-      params.set('category', selectedCategory)
-    }
-
-    return `/api/dashboard/news?${params.toString()}`
-  }, [selectedCategory])
-
   const fetchNews = useCallback(async () => {
     setLoading(true)
     setError(null)
 
     try {
-      const response = await fetch(newsApiUrl, {
-        credentials: 'include',
-        cache: 'no-store',
-      })
+      const params: { limit: number; category?: string } = { limit: 5 }
+      if (selectedCategory !== 'ALL') {
+        params.category = selectedCategory
+      }
 
-      const payload = (await response.json()) as NewsListResponse | ErrorResponse
+      const payload = await DashboardNewsApi.getDashboardNews<NewsListResponse | ErrorResponse>(params)
 
-      if (!response.ok || !('success' in payload) || payload.success === false) {
+      if (!('success' in payload) || payload.success === false) {
         setError('新聞載入失敗，請稍後再試')
         setItems([])
         return
       }
 
-      setItems(payload.data.items)
-      setDataStalenessSecs(payload.data.meta.dataStalenessSecs)
+      setItems((payload as NewsListResponse).data.items)
+      setDataStalenessSecs((payload as NewsListResponse).data.meta.dataStalenessSecs)
     } catch (err) {
       setError('新聞載入失敗，請稍後再試')
       setItems([])
     } finally {
       setLoading(false)
     }
-  }, [newsApiUrl])
+  }, [selectedCategory])
 
   useEffect(() => {
     fetchNews()

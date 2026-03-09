@@ -1,8 +1,7 @@
-'use client'
-
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 import PortfolioForm from './PortfolioForm'
+import { PortfolioApi } from '@/services/portfolio.api'
 
 interface Portfolio {
   id: string
@@ -18,31 +17,21 @@ interface PortfolioCardProps {
 }
 
 export default function PortfolioCard({ portfolio, onDelete }: PortfolioCardProps) {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [isEditing, setIsEditing] = useState(false)
 
   const handleUpdate = async (name: string) => {
     try {
-      const response = await fetch(`/api/portfolios/${portfolio.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to update portfolio')
-      }
-
+      await PortfolioApi.update(portfolio.id, { name })
       setIsEditing(false)
       window.location.reload()
     } catch (err: any) {
-      alert(err.message)
+      alert(err.response?.data?.error || err.message)
     }
   }
 
   const handleView = () => {
-    router.push(`/portfolios/${portfolio.id}`)
+    navigate(`/portfolios/${portfolio.id}`)
   }
 
   if (isEditing) {
@@ -89,7 +78,7 @@ export default function PortfolioCard({ portfolio, onDelete }: PortfolioCardProp
           查看詳情
         </button>
         <button
-          onClick={() => router.push(`/transactions/${portfolio.id}`)}
+          onClick={() => navigate(`/transactions/${portfolio.id}`)}
           className="flex-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 py-2 rounded hover:bg-green-100 dark:hover:bg-green-900/50 transition"
         >
           交易記錄

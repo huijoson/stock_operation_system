@@ -1,0 +1,918 @@
+{
+  "generatedAt": "2026-03-06T03:30:38.097Z",
+  "description": "API route inventory - handlers moved to backend/next-api-legacy/",
+  "totalRoutes": 43,
+  "totalTests": 12,
+  "routes": [
+    {
+      "originalPath": "src/app/api/auth/login/route.ts",
+      "backendPath": "backend/next-api-legacy/auth/login/handler.ts",
+      "stubPath": "src/app/api/auth/login/route.ts",
+      "apiEndpoint": "/api/auth/login",
+      "httpMethods": [
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/auth.service",
+        "@/types/errors"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/auth.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/auth/logout/route.ts",
+      "backendPath": "backend/next-api-legacy/auth/logout/handler.ts",
+      "stubPath": "src/app/api/auth/logout/route.ts",
+      "apiEndpoint": "/api/auth/logout",
+      "httpMethods": [
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/auth.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/auth.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/auth/me/route.ts",
+      "backendPath": "backend/next-api-legacy/auth/me/handler.ts",
+      "stubPath": "src/app/api/auth/me/route.ts",
+      "apiEndpoint": "/api/auth/me",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/auth/register/route.ts",
+      "backendPath": "backend/next-api-legacy/auth/register/handler.ts",
+      "stubPath": "src/app/api/auth/register/route.ts",
+      "apiEndpoint": "/api/auth/register",
+      "httpMethods": [],
+      "imports": [
+        "next/server",
+        "@/services/auth.service",
+        "@/lib/api/error-handler",
+        "@/types/errors"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/auth.service",
+        "@/lib/api/error-handler"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/dashboard/news/route.ts",
+      "backendPath": "backend/next-api-legacy/dashboard/news/handler.ts",
+      "stubPath": "src/app/api/dashboard/news/route.ts",
+      "apiEndpoint": "/api/dashboard/news",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/dashboard-news.service",
+        "@/services/dashboard-news-sync.service",
+        "@/types/news.types"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/dashboard-news.service",
+        "@/services/dashboard-news-sync.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/holding-advice/portfolio/[portfolioId]/route.ts",
+      "backendPath": "backend/next-api-legacy/holding-advice/portfolio/[portfolioId]/handler.ts",
+      "stubPath": "src/app/api/holding-advice/portfolio/[portfolioId]/route.ts",
+      "apiEndpoint": "/api/holding-advice/portfolio/:portfolioId",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client",
+        "@/services/holding-advice.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/holding-advice.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/holding-advice/[symbol]/route.ts",
+      "backendPath": "backend/next-api-legacy/holding-advice/[symbol]/handler.ts",
+      "stubPath": "src/app/api/holding-advice/[symbol]/route.ts",
+      "apiEndpoint": "/api/holding-advice/:symbol",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client",
+        "@/services/holding-advice.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/holding-advice.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/holdings/export/route.ts",
+      "backendPath": "backend/next-api-legacy/holdings/export/handler.ts",
+      "stubPath": "src/app/api/holdings/export/route.ts",
+      "apiEndpoint": "/api/holdings/export",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/transaction.service",
+        "@/lib/db/prisma"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/transaction.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/atr/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/atr/handler.ts",
+      "stubPath": "src/app/api/indicators/atr/route.ts",
+      "apiEndpoint": "/api/indicators/atr",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/atr.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "@/lib/db/prisma",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/atr.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/bollinger/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/bollinger/handler.ts",
+      "stubPath": "src/app/api/indicators/bollinger/route.ts",
+      "apiEndpoint": "/api/indicators/bollinger",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/bollinger-bands.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "@/lib/db/prisma"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/bollinger-bands.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/cache/clear/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/cache/clear/handler.ts",
+      "stubPath": "src/app/api/indicators/cache/clear/route.ts",
+      "apiEndpoint": "/api/indicators/cache/clear",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/indicator-cache.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/indicator-cache.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/candlestick-patterns/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/candlestick-patterns/handler.ts",
+      "stubPath": "src/app/api/indicators/candlestick-patterns/route.ts",
+      "apiEndpoint": "/api/indicators/candlestick-patterns",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/candlestick-pattern.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "@/lib/db/prisma",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/candlestick-pattern.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/fibonacci/extension/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/fibonacci/extension/handler.ts",
+      "stubPath": "src/app/api/indicators/fibonacci/extension/route.ts",
+      "apiEndpoint": "/api/indicators/fibonacci/extension",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/fibonacci.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/fibonacci.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/fibonacci/retracement/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/fibonacci/retracement/handler.ts",
+      "stubPath": "src/app/api/indicators/fibonacci/retracement/route.ts",
+      "apiEndpoint": "/api/indicators/fibonacci/retracement",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/fibonacci.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/fibonacci.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/macd/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/macd/handler.ts",
+      "stubPath": "src/app/api/indicators/macd/route.ts",
+      "apiEndpoint": "/api/indicators/macd",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/macd.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "@/lib/db/prisma",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/macd.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/rsi/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/rsi/handler.ts",
+      "stubPath": "src/app/api/indicators/rsi/route.ts",
+      "apiEndpoint": "/api/indicators/rsi",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/rsi.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "@/lib/db/prisma",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/rsi.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/support-resistance/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/support-resistance/handler.ts",
+      "stubPath": "src/app/api/indicators/support-resistance/route.ts",
+      "apiEndpoint": "/api/indicators/support-resistance",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/support-resistance.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "@/lib/db/prisma",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/support-resistance.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/indicators/technical-score/route.ts",
+      "backendPath": "backend/next-api-legacy/indicators/technical-score/handler.ts",
+      "stubPath": "src/app/api/indicators/technical-score/route.ts",
+      "apiEndpoint": "/api/indicators/technical-score",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/technical-score.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service",
+        "@/lib/db/prisma"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/technical-score.service",
+        "@/services/stock.service",
+        "@/services/indicator-cache.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/news/portfolio/[portfolioId]/route.ts",
+      "backendPath": "backend/next-api-legacy/news/portfolio/[portfolioId]/handler.ts",
+      "stubPath": "src/app/api/news/portfolio/[portfolioId]/route.ts",
+      "apiEndpoint": "/api/news/portfolio/:portfolioId",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client",
+        "@/services/news.service",
+        "@/lib/api/finnhub-client"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/news.service",
+        "@/lib/api/finnhub-client"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/news/sentiment/[symbol]/route.ts",
+      "backendPath": "backend/next-api-legacy/news/sentiment/[symbol]/handler.ts",
+      "stubPath": "src/app/api/news/sentiment/[symbol]/route.ts",
+      "apiEndpoint": "/api/news/sentiment/:symbol",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client",
+        "@/services/sentiment-analysis.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/sentiment-analysis.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/news/sources/route.ts",
+      "backendPath": "backend/next-api-legacy/news/sources/handler.ts",
+      "stubPath": "src/app/api/news/sources/route.ts",
+      "apiEndpoint": "/api/news/sources",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client",
+        "@/services/credibility.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/credibility.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/news/[symbol]/route.ts",
+      "backendPath": "backend/next-api-legacy/news/[symbol]/handler.ts",
+      "stubPath": "src/app/api/news/[symbol]/route.ts",
+      "apiEndpoint": "/api/news/:symbol",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client",
+        "@/services/news.service",
+        "@/lib/api/finnhub-client"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/news.service",
+        "@/lib/api/finnhub-client"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/portfolios/route.ts",
+      "backendPath": "backend/next-api-legacy/portfolios/handler.ts",
+      "stubPath": "src/app/api/portfolios/route.ts",
+      "apiEndpoint": "/api/portfolios",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/portfolio.service",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/portfolio.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/portfolios/[id]/holdings/route.ts",
+      "backendPath": "backend/next-api-legacy/portfolios/[id]/holdings/handler.ts",
+      "stubPath": "src/app/api/portfolios/[id]/holdings/route.ts",
+      "apiEndpoint": "/api/portfolios/:id/holdings",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/portfolio.service",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/portfolio.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/portfolios/[id]/route.ts",
+      "backendPath": "backend/next-api-legacy/portfolios/[id]/handler.ts",
+      "stubPath": "src/app/api/portfolios/[id]/route.ts",
+      "apiEndpoint": "/api/portfolios/:id",
+      "httpMethods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/portfolio.service",
+        "@/lib/auth/middleware",
+        "@prisma/client"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/lib/auth/middleware",
+        "@/services/portfolio.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/portfolios/[id]/transactions/route.ts",
+      "backendPath": "backend/next-api-legacy/portfolios/[id]/transactions/handler.ts",
+      "stubPath": "src/app/api/portfolios/[id]/transactions/route.ts",
+      "apiEndpoint": "/api/portfolios/:id/transactions",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/transaction.service",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/transaction.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/query-tsm/route.ts",
+      "backendPath": "backend/next-api-legacy/query-tsm/handler.ts",
+      "stubPath": "src/app/api/query-tsm/route.ts",
+      "apiEndpoint": "/api/query-tsm",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/realized-pl/portfolio/[portfolioId]/route.ts",
+      "backendPath": "backend/next-api-legacy/realized-pl/portfolio/[portfolioId]/handler.ts",
+      "stubPath": "src/app/api/realized-pl/portfolio/[portfolioId]/route.ts",
+      "apiEndpoint": "/api/realized-pl/portfolio/:portfolioId",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/realized-pl.service",
+        "@/lib/auth/middleware",
+        "@/lib/utils/date-filters"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/realized-pl.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/realized-pl/route.ts",
+      "backendPath": "backend/next-api-legacy/realized-pl/handler.ts",
+      "stubPath": "src/app/api/realized-pl/route.ts",
+      "apiEndpoint": "/api/realized-pl",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/realized-pl.service",
+        "@/lib/auth/middleware",
+        "@/lib/utils/date-filters"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/realized-pl.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/risk-assessment/batch/route.ts",
+      "backendPath": "backend/next-api-legacy/risk-assessment/batch/handler.ts",
+      "stubPath": "src/app/api/risk-assessment/batch/route.ts",
+      "apiEndpoint": "/api/risk-assessment/batch",
+      "httpMethods": [
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/lib/auth/middleware",
+        "@/lib/db",
+        "@/services/risk-assessment.service",
+        "@/services/sentiment-analysis.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db",
+        "@/lib/auth/middleware",
+        "@/services/risk-assessment.service",
+        "@/services/sentiment-analysis.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/risk-assessment/portfolio/[portfolioId]/route.ts",
+      "backendPath": "backend/next-api-legacy/risk-assessment/portfolio/[portfolioId]/handler.ts",
+      "stubPath": "src/app/api/risk-assessment/portfolio/[portfolioId]/route.ts",
+      "apiEndpoint": "/api/risk-assessment/portfolio/:portfolioId",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/lib/auth/middleware",
+        "@/lib/db",
+        "@/services/risk-assessment.service",
+        "@/services/sentiment-analysis.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db",
+        "@/lib/auth/middleware",
+        "@/services/risk-assessment.service",
+        "@/services/sentiment-analysis.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/risk-assessment/[symbol]/route.ts",
+      "backendPath": "backend/next-api-legacy/risk-assessment/[symbol]/handler.ts",
+      "stubPath": "src/app/api/risk-assessment/[symbol]/route.ts",
+      "apiEndpoint": "/api/risk-assessment/:symbol",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/lib/auth/middleware",
+        "@/lib/db",
+        "@/services/risk-assessment.service",
+        "@/services/sentiment-analysis.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db",
+        "@/lib/auth/middleware",
+        "@/services/risk-assessment.service",
+        "@/services/sentiment-analysis.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/stocks/search/route.ts",
+      "backendPath": "backend/next-api-legacy/stocks/search/handler.ts",
+      "stubPath": "src/app/api/stocks/search/route.ts",
+      "apiEndpoint": "/api/stocks/search",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/stock.service",
+        "@prisma/client"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/stock.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/stocks/[symbol]/history/route.ts",
+      "backendPath": "backend/next-api-legacy/stocks/[symbol]/history/handler.ts",
+      "stubPath": "src/app/api/stocks/[symbol]/history/route.ts",
+      "apiEndpoint": "/api/stocks/:symbol/history",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/stock.service",
+        "@prisma/client"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/stock.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/stocks/[symbol]/price/route.ts",
+      "backendPath": "backend/next-api-legacy/stocks/[symbol]/price/handler.ts",
+      "stubPath": "src/app/api/stocks/[symbol]/price/route.ts",
+      "apiEndpoint": "/api/stocks/:symbol/price",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/stock.service",
+        "@/lib/db/prisma"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/stock.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/strategies/route.ts",
+      "backendPath": "backend/next-api-legacy/strategies/handler.ts",
+      "stubPath": "src/app/api/strategies/route.ts",
+      "apiEndpoint": "/api/strategies",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/strategy.service",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/strategy.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/strategies/[id]/backtest/route.ts",
+      "backendPath": "backend/next-api-legacy/strategies/[id]/backtest/handler.ts",
+      "stubPath": "src/app/api/strategies/[id]/backtest/route.ts",
+      "apiEndpoint": "/api/strategies/:id/backtest",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/strategy.service",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/strategy.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/strategies/[id]/route.ts",
+      "backendPath": "backend/next-api-legacy/strategies/[id]/handler.ts",
+      "stubPath": "src/app/api/strategies/[id]/route.ts",
+      "apiEndpoint": "/api/strategies/:id",
+      "httpMethods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/strategy.service",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/strategy.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/sync/dashboard-news/route.ts",
+      "backendPath": "backend/next-api-legacy/sync/dashboard-news/handler.ts",
+      "stubPath": "src/app/api/sync/dashboard-news/route.ts",
+      "apiEndpoint": "/api/sync/dashboard-news",
+      "httpMethods": [
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/dashboard-news-sync.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/services/dashboard-news-sync.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/transactions/export/route.ts",
+      "backendPath": "backend/next-api-legacy/transactions/export/handler.ts",
+      "stubPath": "src/app/api/transactions/export/route.ts",
+      "apiEndpoint": "/api/transactions/export",
+      "httpMethods": [
+        "GET"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/transaction.service",
+        "@/lib/db/prisma"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/db/prisma",
+        "@/services/transaction.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/transactions/import/route.ts",
+      "backendPath": "backend/next-api-legacy/transactions/import/handler.ts",
+      "stubPath": "src/app/api/transactions/import/route.ts",
+      "apiEndpoint": "/api/transactions/import",
+      "httpMethods": [
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@prisma/client",
+        "@/services/transaction.service"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@prisma/client",
+        "@/services/transaction.service"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/transactions/route.ts",
+      "backendPath": "backend/next-api-legacy/transactions/handler.ts",
+      "stubPath": "src/app/api/transactions/route.ts",
+      "apiEndpoint": "/api/transactions",
+      "httpMethods": [
+        "POST"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/transaction.service",
+        "@/lib/auth/middleware",
+        "decimal.js"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/transaction.service",
+        "decimal.js"
+      ]
+    },
+    {
+      "originalPath": "src/app/api/transactions/[id]/route.ts",
+      "backendPath": "backend/next-api-legacy/transactions/[id]/handler.ts",
+      "stubPath": "src/app/api/transactions/[id]/route.ts",
+      "apiEndpoint": "/api/transactions/:id",
+      "httpMethods": [
+        "PUT",
+        "DELETE"
+      ],
+      "imports": [
+        "next/server",
+        "@/services/transaction.service",
+        "@/lib/auth/middleware"
+      ],
+      "serverOnlyDeps": [
+        "next/server (NextRequest/NextResponse)",
+        "@/lib/auth/middleware",
+        "@/services/transaction.service"
+      ]
+    }
+  ],
+  "allServerDeps": [
+    "@/lib/api/error-handler",
+    "@/lib/api/finnhub-client",
+    "@/lib/auth/middleware",
+    "@/lib/db",
+    "@/lib/db/prisma",
+    "@/services/atr.service",
+    "@/services/auth.service",
+    "@/services/bollinger-bands.service",
+    "@/services/candlestick-pattern.service",
+    "@/services/credibility.service",
+    "@/services/dashboard-news-sync.service",
+    "@/services/dashboard-news.service",
+    "@/services/fibonacci.service",
+    "@/services/holding-advice.service",
+    "@/services/indicator-cache.service",
+    "@/services/macd.service",
+    "@/services/news.service",
+    "@/services/portfolio.service",
+    "@/services/realized-pl.service",
+    "@/services/risk-assessment.service",
+    "@/services/rsi.service",
+    "@/services/sentiment-analysis.service",
+    "@/services/stock.service",
+    "@/services/strategy.service",
+    "@/services/support-resistance.service",
+    "@/services/technical-score.service",
+    "@/services/transaction.service",
+    "@prisma/client",
+    "decimal.js",
+    "next/server (NextRequest/NextResponse)"
+  ]
+}

@@ -1,5 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
-import { fc } from '@fast-check/jest';
+import * as fc from 'fast-check';
 
 const analyzeSentiment = (headline: string, summary: string): {
   score: number;
@@ -53,30 +52,36 @@ const analyzeSentiment = (headline: string, summary: string): {
 };
 
 describe('News Sentiment Analysis - Property-based Tests', () => {
-  it.prop([fc.string(), fc.string()])(
-    '應該總是返回 -1 到 1 之間的分數',
-    (headline, summary) => {
-      const result = analyzeSentiment(headline, summary);
-      expect(result.score).toBeGreaterThanOrEqual(-1);
-      expect(result.score).toBeLessThanOrEqual(1);
-    }
-  );
+  it('應該總是返回 -1 到 1 之間的分數', () => {
+    fc.assert(
+      fc.property(fc.string(), fc.string(), (headline, summary) => {
+        const result = analyzeSentiment(headline, summary);
+        expect(result.score).toBeGreaterThanOrEqual(-1);
+        expect(result.score).toBeLessThanOrEqual(1);
+      }),
+      { numRuns: 100 }
+    );
+  });
 
-  it.prop([fc.string(), fc.string()])(
-    '應該總是返回有效的標籤',
-    (headline, summary) => {
-      const result = analyzeSentiment(headline, summary);
-      expect(['positive', 'neutral', 'negative']).toContain(result.label);
-    }
-  );
+  it('應該總是返回有效的標籤', () => {
+    fc.assert(
+      fc.property(fc.string(), fc.string(), (headline, summary) => {
+        const result = analyzeSentiment(headline, summary);
+        expect(['positive', 'neutral', 'negative']).toContain(result.label);
+      }),
+      { numRuns: 100 }
+    );
+  });
 
-  it.prop([fc.string(), fc.string()])(
-    '應該總是返回有效的信心度',
-    (headline, summary) => {
-      const result = analyzeSentiment(headline, summary);
-      expect(['low', 'medium', 'high']).toContain(result.confidence);
-    }
-  );
+  it('應該總是返回有效的信心度', () => {
+    fc.assert(
+      fc.property(fc.string(), fc.string(), (headline, summary) => {
+        const result = analyzeSentiment(headline, summary);
+        expect(['low', 'medium', 'high']).toContain(result.confidence);
+      }),
+      { numRuns: 100 }
+    );
+  });
 
   it('應該對正面新聞返回正面情緒', () => {
     const result = analyzeSentiment(
@@ -105,14 +110,20 @@ describe('News Sentiment Analysis - Property-based Tests', () => {
     expect(Math.abs(result.score)).toBeLessThan(0.3);
   });
 
-  it.prop([fc.constant('surge gain profit'), fc.constant('excellent news')])(
-    '應該對多個正面關鍵字增加信心度',
-    (headline, summary) => {
-      const result = analyzeSentiment(headline, summary);
-      expect(result.confidence).not.toBe('low');
-      expect(result.label).toBe('positive');
-    }
-  );
+  it('應該對多個正面關鍵字增加信心度', () => {
+    fc.assert(
+      fc.property(
+        fc.constant('surge gain profit'),
+        fc.constant('excellent news'),
+        (headline, summary) => {
+          const result = analyzeSentiment(headline, summary);
+          expect(result.confidence).not.toBe('low');
+          expect(result.label).toBe('positive');
+        }
+      ),
+      { numRuns: 1 }
+    );
+  });
 
   it('應該不區分大小寫', () => {
     const result1 = analyzeSentiment('SURGE', 'PROFIT');

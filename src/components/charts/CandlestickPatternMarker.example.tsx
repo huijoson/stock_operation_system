@@ -1,5 +1,3 @@
-'use client'
-
 import CandlestickPatternMarker, { CandleData, PatternMarker } from './CandlestickPatternMarker'
 
 /**

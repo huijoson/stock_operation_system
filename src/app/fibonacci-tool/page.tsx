@@ -1,9 +1,9 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import StockSearchBar from '@/components/stocks/StockSearchBar'
 import FibonacciDrawingTool, { FibonacciLevel } from '@/components/charts/FibonacciDrawingTool'
 import { Loading } from '@/components/ui/Loading'
+import { StockApi } from '@/services/stock.api'
+import { IndicatorApi } from '@/services/indicator.api'
 
 interface FibonacciCalculation {
   type: 'retracement' | 'extension'
@@ -35,11 +35,7 @@ export default function FibonacciToolPage() {
 
     try {
       // Fetch historical price data
-      const historyResponse = await fetch(`/api/stocks/${selectedStock.symbol}/history?days=90`)
-      if (!historyResponse.ok) {
-        throw new Error('無法載入歷史價格資料')
-      }
-      const historyData = await historyResponse.json()
+      const historyData = await StockApi.getHistoryByDays<any[]>(selectedStock.symbol, 90)
 
       // Transform data for chart
       const chartData = historyData.map((item: any) => ({
@@ -52,10 +48,11 @@ export default function FibonacciToolPage() {
       setPriceData(chartData)
 
       // Fetch current price
-      const priceResponse = await fetch(`/api/stocks/${selectedStock.symbol}/price`)
-      if (priceResponse.ok) {
-        const priceData = await priceResponse.json()
+      try {
+        const priceData = await StockApi.getPrice<{ price: number }>(selectedStock.symbol)
         setCurrentPrice(priceData.price)
+      } catch {
+        // Price fetch is non-critical
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : '載入資料時發生錯誤')
@@ -90,15 +87,9 @@ export default function FibonacciToolPage() {
       const high = Math.max(...prices)
       const low = Math.min(...prices)
 
-      const response = await fetch(
-        `/api/indicators/fibonacci/retracement?high=${high}&low=${low}&isUptrend=${isUptrend}`
+      const data = await IndicatorApi.getFibonacciRetracement<{ levels: FibonacciLevel[] }>(
+        high, low, isUptrend
       )
-
-      if (!response.ok) {
-        throw new Error('計算回撤水平失敗')
-      }
-
-      const data = await response.json()
       handleLevelsCalculated(data.levels)
     } catch (err) {
       setError(err instanceof Error ? err.message : '計算失敗')
@@ -114,15 +105,9 @@ export default function FibonacciToolPage() {
       const retracement = priceData[Math.floor(priceData.length / 2)].price
       const breakout = priceData[priceData.length - 1].price
 
-      const response = await fetch(
-        `/api/indicators/fibonacci/extension?start=${start}&retracement=${retracement}&breakout=${breakout}`
+      const data = await IndicatorApi.getFibonacciExtension<{ levels: FibonacciLevel[] }>(
+        start, retracement, breakout
       )
-
-      if (!response.ok) {
-        throw new Error('計算擴展目標失敗')
-      }
-
-      const data = await response.json()
       handleLevelsCalculated(data.levels)
     } catch (err) {
       setError(err instanceof Error ? err.message : '計算失敗')

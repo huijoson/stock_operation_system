@@ -1,6 +1,6 @@
-'use client'
-
 import { useState } from 'react'
+import { TransactionApi } from '@/services/transaction.api'
+import { PortfolioApi } from '@/services/portfolio.api'
 
 interface ExportButtonProps {
   portfolioId: string
@@ -26,24 +26,12 @@ export default function ExportButton({
       setIsExporting(true)
       setError(null)
 
-      // Determine the API endpoint
-      const endpoint = type === 'transactions' 
-        ? `/api/transactions/export?portfolioId=${portfolioId}`
-        : `/api/holdings/export?portfolioId=${portfolioId}`
+      // Fetch the CSV blob via API wrapper
+      const blob = type === 'transactions'
+        ? await TransactionApi.exportCsv(portfolioId)
+        : await PortfolioApi.exportHoldingsCsv(portfolioId)
 
-      // Fetch the CSV file
-      const response = await fetch(endpoint)
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Export failed')
-      }
-
-      // Get the CSV content
-      const csvContent = await response.text()
-
-      // Create a blob and download link
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      // Create a download link
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
@@ -60,9 +48,9 @@ export default function ExportButton({
       // Cleanup
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Export error:', err)
-      setError(err instanceof Error ? err.message : 'Export failed')
+      setError(err.response?.data?.error || err.message || 'Export failed')
     } finally {
       setIsExporting(false)
     }
