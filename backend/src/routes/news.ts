@@ -1,15 +1,14 @@
-import { PrismaClient } from '@prisma/client'
 import { Request, Response, Router } from 'express'
 import { FinnhubClient } from '../lib/api/finnhub-client'
+import prisma from '../lib/prisma'
 import { authMiddleware } from '../middleware/auth'
 import { CredibilityService } from '../services/credibility.service'
 import { NewsService } from '../services/news.service'
 import { SentimentAnalysisService } from '../services/sentiment-analysis.service'
+import { getPathParam, getQueryParam } from './request-utils'
 
 const router = Router()
-const prisma = new PrismaClient()
-const sentimentPrisma = new PrismaClient()
-const sentimentService = new SentimentAnalysisService(sentimentPrisma)
+const sentimentService = new SentimentAnalysisService(prisma)
 
 router.get('/sources', async (_req: Request, res: Response) => {
   try {
@@ -40,7 +39,7 @@ router.get('/sources', async (_req: Request, res: Response) => {
 
 router.get('/sentiment/:symbol', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const symbol = req.params.symbol
+    const symbol = getPathParam(req, 'symbol')
 
     if (!symbol) {
       return res.status(400).json({ error: '股票代號為必填欄位' })
@@ -70,14 +69,19 @@ router.get('/sentiment/:symbol', authMiddleware, async (req: Request, res: Respo
   } catch (error) {
     console.error('Error fetching sentiment analysis:', error)
     return res.status(500).json({ error: '無法取得情緒分析資料' })
-  } finally {
-    await sentimentPrisma.$disconnect()
   }
 })
 
 router.get('/portfolio/:portfolioId', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const portfolioId = req.params.portfolioId
+    const portfolioId = getPathParam(req, 'portfolioId')
+
+    if (!portfolioId) {
+      return res.status(400).json({
+        success: false,
+        error: '投資組合 ID 為必填欄位',
+      })
+    }
 
     const portfolio = await prisma.portfolio.findUnique({
       where: { id: portfolioId },
@@ -132,9 +136,16 @@ router.get('/portfolio/:portfolioId', authMiddleware, async (req: Request, res: 
 
 router.get('/:symbol', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const rawSymbol = req.params.symbol
-    const symbol = rawSymbol.toUpperCase()
-    const limit = parseInt((req.query.limit as string) || '10', 10)
+    const rawSymbol = getPathParam(req, 'symbol')
+    const symbol = rawSymbol?.toUpperCase()
+    const limit = parseInt(getQueryParam(req, 'limit') || '10', 10)
+
+    if (!symbol) {
+      return res.status(400).json({
+        success: false,
+        error: '股票代號為必填欄位',
+      })
+    }
 
     const apiKey = process.env.FINNHUB_API_KEY
     if (!apiKey) {

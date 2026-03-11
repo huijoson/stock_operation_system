@@ -2,7 +2,7 @@ import prisma from '../lib/prisma'
 import { Decimal } from 'decimal.js'
 import { RealizedPL, HoldingPeriod, RealizedPLSummary } from '../types/insights'
 import { taxLotService, TaxLotService } from './tax-lot.service'
-import { Transaction } from '@prisma/client'
+import { Transaction } from '../lib/prisma-client'
 
 export class RealizedPLService {
   private taxLotService: TaxLotService

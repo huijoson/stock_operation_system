@@ -1,17 +1,14 @@
-import { PrismaClient } from '@prisma/client'
 import { Request, Response, Router } from 'express'
 import prisma from '../lib/prisma'
 import { StockService } from '../services/stock.service'
+import { getPathParam, getQueryParam } from './request-utils'
 
 const router = Router()
-const searchPrisma = new PrismaClient()
-const priceStockService = new StockService(prisma)
-const historyPrisma = new PrismaClient()
-const historyStockService = new StockService(historyPrisma)
+const stockService = new StockService(prisma)
 
 router.get('/search', async (req: Request, res: Response) => {
   try {
-    const keyword = req.query.q as string | undefined
+    const keyword = getQueryParam(req, 'q')
 
     if (!keyword) {
       return res.status(400).json({ error: 'Search keyword is required' })
@@ -21,7 +18,6 @@ router.get('/search', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Search keyword must be at least 2 characters' })
     }
 
-    const stockService = new StockService(searchPrisma)
     const stocks = await stockService.searchStocks(keyword)
 
     return res.json({
@@ -39,13 +35,13 @@ router.get('/search', async (req: Request, res: Response) => {
 
 router.get('/:symbol/price', async (req: Request, res: Response) => {
   try {
-    const symbol = req.params.symbol
+    const symbol = getPathParam(req, 'symbol')
 
     if (!symbol) {
       return res.status(400).json({ error: 'Stock symbol is required' })
     }
 
-    const price = await priceStockService.getCurrentPrice(symbol)
+    const price = await stockService.getCurrentPrice(symbol)
 
     return res.json({
       symbol,
@@ -69,9 +65,9 @@ router.get('/:symbol/price', async (req: Request, res: Response) => {
 
 router.get('/:symbol/history', async (req: Request, res: Response) => {
   try {
-    const symbol = req.params.symbol
-    const startDateParam = req.query.startDate as string | undefined
-    const endDateParam = req.query.endDate as string | undefined
+    const symbol = getPathParam(req, 'symbol')
+    const startDateParam = getQueryParam(req, 'startDate')
+    const endDateParam = getQueryParam(req, 'endDate')
 
     if (!symbol) {
       return res.status(400).json({ error: 'Stock symbol is required' })
@@ -92,7 +88,7 @@ router.get('/:symbol/history', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'startDate must be before endDate' })
     }
 
-    const prices = await historyStockService.getHistoricalPrices(symbol, startDate, endDate)
+    const prices = await stockService.getHistoricalPrices(symbol, startDate, endDate)
 
     return res.json({
       symbol,
@@ -115,8 +111,6 @@ router.get('/:symbol/history', async (req: Request, res: Response) => {
     }
 
     return res.status(500).json({ error: 'Failed to fetch historical prices' })
-  } finally {
-    await historyPrisma.$disconnect()
   }
 })
 

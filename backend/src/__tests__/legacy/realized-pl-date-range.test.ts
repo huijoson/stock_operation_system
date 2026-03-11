@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals'
 import { realizedPLService } from '@/services/realized-pl.service'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../../lib/prisma-client'
 import Decimal from 'decimal.js'
 
 const prisma = new PrismaClient()

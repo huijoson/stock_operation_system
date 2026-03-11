@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { StrategyInput, StrategyService } from '../services/strategy.service'
+import { getPathParam, getQueryParam } from './request-utils'
 
 const router = Router()
 
@@ -88,7 +89,11 @@ router.get('/:id', async (req: Request, res: Response) => {
       throw new Error('Unauthorized')
     }
 
-    const strategyId = req.params.id
+    const strategyId = getPathParam(req, 'id')
+
+    if (!strategyId) {
+      return res.status(400).json({ error: 'Strategy ID is required' })
+    }
 
     const strategyService = new StrategyService()
     const strategy = await strategyService.getStrategy(strategyId)
@@ -120,7 +125,11 @@ router.put('/:id', async (req: Request, res: Response) => {
       throw new Error('Unauthorized')
     }
 
-    const strategyId = req.params.id
+    const strategyId = getPathParam(req, 'id')
+
+    if (!strategyId) {
+      return res.status(400).json({ error: 'Strategy ID is required' })
+    }
     const strategyService = new StrategyService()
     const existingStrategy = await strategyService.getStrategy(strategyId)
 
@@ -185,7 +194,11 @@ router.delete('/:id', async (req: Request, res: Response) => {
       throw new Error('Unauthorized')
     }
 
-    const strategyId = req.params.id
+    const strategyId = getPathParam(req, 'id')
+
+    if (!strategyId) {
+      return res.status(400).json({ error: 'Strategy ID is required' })
+    }
     const strategyService = new StrategyService()
     const existingStrategy = await strategyService.getStrategy(strategyId)
 
@@ -222,10 +235,14 @@ router.get('/:id/backtest', async (req: Request, res: Response) => {
       throw new Error('Unauthorized')
     }
 
-    const strategyId = req.params.id
-    const symbol = req.query.symbol as string | undefined
-    const startDateStr = req.query.startDate as string | undefined
-    const endDateStr = req.query.endDate as string | undefined
+    const strategyId = getPathParam(req, 'id')
+    const symbol = getQueryParam(req, 'symbol')
+    const startDateStr = getQueryParam(req, 'startDate')
+    const endDateStr = getQueryParam(req, 'endDate')
+
+    if (!strategyId) {
+      return res.status(400).json({ error: 'Strategy ID is required' })
+    }
 
     if (!symbol) {
       return res.status(400).json({ error: 'Symbol is required' })

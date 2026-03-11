@@ -1,4 +1,4 @@
-import { PrismaClient, RiskAssessment } from '@prisma/client';
+import { PrismaClient, RiskAssessment } from '../lib/prisma-client';
 import Decimal from 'decimal.js';
 import { TechnicalScoreService, MarketData } from './technical-score.service';
 import { SentimentAnalysisService } from './sentiment-analysis.service';

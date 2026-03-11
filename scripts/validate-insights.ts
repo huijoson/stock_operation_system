@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client'
+import 'dotenv/config'
+import { createPrismaClient } from '../backend/src/lib/prisma-factory'
 import { Decimal } from 'decimal.js'
 
-const prisma = new PrismaClient()
+const prisma = createPrismaClient()
 
 async function validateInsights() {
   console.log('開始驗證資料完整性...\n')

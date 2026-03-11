@@ -45,7 +45,7 @@ export class FinnhubClient {
     }
 
     const data = await response.json();
-    return data;
+    return data as FinnhubNews[];
   }
 
   async getMarketNews(category: string = 'general'): Promise<FinnhubNews[]> {
@@ -64,7 +64,7 @@ export class FinnhubClient {
     }
 
     const data = await response.json();
-    return data;
+    return data as FinnhubNews[];
   }
 
   private async fetchWithTlsHandling(url: string): Promise<Response> {

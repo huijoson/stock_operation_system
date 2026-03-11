@@ -1,5 +1,16 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+require('dotenv/config');
+const { PrismaPg } = require('@prisma/adapter-pg');
+const { PrismaClient } = require('./backend/src/generated/prisma/client');
+
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is required for query-tsm.js');
+}
+
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
+
 
 async function queryTSM() {
   try {

@@ -47,7 +47,7 @@ export const ALPHA_VANTAGE_TOPIC_MAP: Readonly<Record<string, NewsCategory>> = O
 export function mapTopicsToCategory(topics: string[]): NewsCategory {
   for (const topic of topics) {
     const normalised = topic.toLowerCase().trim();
-    if (Object.hasOwn(ALPHA_VANTAGE_TOPIC_MAP, normalised)) {
+    if (Object.prototype.hasOwnProperty.call(ALPHA_VANTAGE_TOPIC_MAP, normalised)) {
       return ALPHA_VANTAGE_TOPIC_MAP[normalised];
     }
   }

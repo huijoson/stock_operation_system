@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../lib/prisma-client'
 
 /**
  * Chart Data Service

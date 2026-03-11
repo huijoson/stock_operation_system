@@ -1,4 +1,4 @@
-import { PrismaClient, StockNews } from '@prisma/client';
+import { PrismaClient, StockNews } from '../lib/prisma-client';
 import { FinnhubClient, FinnhubNews } from '../lib/api/finnhub-client';
 import { CredibilityService } from './credibility.service';
 import Decimal from 'decimal.js';

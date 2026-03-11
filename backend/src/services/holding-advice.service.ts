@@ -1,4 +1,4 @@
-import { PrismaClient, HoldingAdvice, RiskAssessment } from '@prisma/client';
+import { PrismaClient, HoldingAdvice, RiskAssessment } from '../lib/prisma-client';
 
 export type AdviceType = 'reduce' | 'hold' | 'add';
 
