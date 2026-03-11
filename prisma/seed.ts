@@ -1,6 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import 'dotenv/config'
+import { createPrismaClient } from '../backend/src/lib/prisma-factory'
 
-const prisma = new PrismaClient()
+const prisma = createPrismaClient()
 
 /**
  * Taiwan stock data for seeding

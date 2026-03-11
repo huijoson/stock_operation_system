@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../lib/prisma-client'
 import prisma from '../lib/prisma'
 import Decimal from 'decimal.js'
 import axios from 'axios'

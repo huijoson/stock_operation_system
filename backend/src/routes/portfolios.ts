@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express'
 import prisma from '../lib/prisma'
+import { getPathParam } from './request-utils'
 import { PortfolioService } from '../services/portfolio.service'
 import { TransactionService } from '../services/transaction.service'
 
@@ -51,7 +52,11 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = getPathParam(req, 'id')
+
+    if (!id) {
+      return res.status(400).json({ error: 'Portfolio ID is required' })
+    }
 
     const portfolio = await prisma.portfolio.findUnique({
       where: { id },
@@ -79,8 +84,12 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = getPathParam(req, 'id')
     const { name } = req.body
+
+    if (!id) {
+      return res.status(400).json({ error: 'Portfolio ID is required' })
+    }
 
     if (!name) {
       return res.status(400).json({ error: 'Portfolio name is required' })
@@ -111,7 +120,11 @@ router.put('/:id', async (req: Request, res: Response) => {
 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = getPathParam(req, 'id')
+
+    if (!id) {
+      return res.status(400).json({ error: 'Portfolio ID is required' })
+    }
 
     const portfolioService = new PortfolioService()
     await portfolioService.deletePortfolio(id)
@@ -134,7 +147,11 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
 router.get('/:id/holdings', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = getPathParam(req, 'id')
+
+    if (!id) {
+      return res.status(400).json({ error: 'Portfolio ID is required' })
+    }
 
     const portfolioService = new PortfolioService()
     const holdings = await portfolioService.getHoldings(id)
@@ -153,7 +170,11 @@ router.get('/:id/holdings', async (req: Request, res: Response) => {
 
 router.get('/:id/transactions', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = getPathParam(req, 'id')
+
+    if (!id) {
+      return res.status(400).json({ error: 'Portfolio ID is required' })
+    }
 
     const transactionService = new TransactionService()
     const transactions = await transactionService.getTransactions(id)

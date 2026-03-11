@@ -71,3 +71,4 @@ MIGRATION_QUICK_REFERENCE.md
 # source maps accidentally generated in src/
 src/**/*.js.map
 src/**/*.d.ts.map
+backend/src/generated/

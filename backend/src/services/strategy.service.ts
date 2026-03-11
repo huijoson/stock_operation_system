@@ -1,5 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../lib/prisma-client'
 import Decimal from 'decimal.js'
+import prisma from '../lib/prisma'
 import { RSIService } from './rsi.service'
 import { MACDService } from './macd.service'
 import { BollingerBandsService } from './bollinger-bands.service'
@@ -101,8 +102,8 @@ export class StrategyService {
   private fibonacciService: FibonacciService
   private stockService: StockService
 
-  constructor(prisma?: PrismaClient) {
-    this.prisma = prisma || new PrismaClient()
+  constructor(prismaClient: PrismaClient = prisma) {
+    this.prisma = prismaClient
     this.rsiService = new RSIService()
     this.macdService = new MACDService()
     this.bollingerService = new BollingerBandsService()
@@ -622,4 +623,3 @@ export class StrategyService {
     await this.prisma.$disconnect()
   }
 }
-

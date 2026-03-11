@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../../lib/prisma-client'
 import Decimal from 'decimal.js'
 import { RealizedPLService } from '@/services/realized-pl.service'
 import { TaxLotService } from '@/services/tax-lot.service'
 
 // Mock Prisma Client
-jest.mock('@prisma/client', () => ({
+jest.mock('../../lib/prisma-client', () => ({
   PrismaClient: jest.fn()
 }))
 

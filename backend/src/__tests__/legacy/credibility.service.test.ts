@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { CredibilityService } from '@/services/credibility.service';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../lib/prisma-client';
 
-jest.mock('@prisma/client');
+jest.mock('../../lib/prisma-client');
 
 describe('CredibilityService', () => {
   let service: CredibilityService;

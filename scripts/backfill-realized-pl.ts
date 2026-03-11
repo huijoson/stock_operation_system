@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client'
+import 'dotenv/config'
+import { createPrismaClient } from '../backend/src/lib/prisma-factory'
 import { Decimal } from 'decimal.js'
 
-const prisma = new PrismaClient()
+const prisma = createPrismaClient()
 
 async function backfillRealizedPL(portfolioId?: string) {
   console.log('開始回填 RealizedPL 資料...')

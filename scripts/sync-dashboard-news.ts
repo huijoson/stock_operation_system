@@ -1,3 +1,4 @@
+import 'dotenv/config'
 /**
  * Manual sync script for local/VM environments where Vercel Cron is unavailable.
  *
@@ -9,10 +10,10 @@
  *   - ALPHA_VANTAGE_API_KEY in .env
  */
 
-import { PrismaClient } from '@prisma/client'
+import { createPrismaClient } from '../backend/src/lib/prisma-factory'
 import { createHash } from 'crypto'
 
-const prisma = new PrismaClient()
+const prisma = createPrismaClient()
 
 const SERVICE_NAME = 'alpha-vantage'
 const SOFT_LIMIT = 20

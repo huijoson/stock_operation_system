@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NewsService } from '@/services/news.service';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../lib/prisma-client';
 import { FinnhubClient } from '@/lib/api/finnhub-client';
 
 jest.mock('@/lib/api/finnhub-client');
-jest.mock('@prisma/client');
+jest.mock('../../lib/prisma-client');
 
 describe('NewsService', () => {
   let service: NewsService;

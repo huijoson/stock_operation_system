@@ -1,5 +1,5 @@
+import { Prisma } from '../lib/prisma-client'
 import { Request, Response, NextFunction } from 'express'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 /**
  * Error codes for the application
@@ -53,14 +53,14 @@ class ApplicationError extends Error {
 /**
  * Type guard to check if error is a Prisma error
  */
-function isPrismaError(error: unknown): error is PrismaClientKnownRequestError {
-  return error instanceof PrismaClientKnownRequestError
+function isPrismaError(error: unknown): error is Prisma.PrismaClientKnownRequestError {
+  return error instanceof Prisma.PrismaClientKnownRequestError
 }
 
 /**
  * Handle Prisma-specific errors
  */
-function handlePrismaError(error: PrismaClientKnownRequestError, res: Response): void {
+function handlePrismaError(error: Prisma.PrismaClientKnownRequestError, res: Response): void {
   switch (error.code) {
     case 'P2002':
       res.status(409).json({

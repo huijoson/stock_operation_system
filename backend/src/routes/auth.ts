@@ -1,4 +1,4 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { Prisma } from '../lib/prisma-client'
 import { Router, Request, Response, NextFunction } from 'express'
 import { authMiddleware } from '../middleware/auth'
 import { AuthService } from '../services/auth.service'
@@ -20,8 +20,8 @@ const ErrorCode = {
   INTERNAL_ERROR: 'INTERNAL_ERROR',
 } as const
 
-function isPrismaError(error: unknown): error is PrismaClientKnownRequestError {
-  return error instanceof PrismaClientKnownRequestError
+function isPrismaError(error: unknown): error is Prisma.PrismaClientKnownRequestError {
+  return error instanceof Prisma.PrismaClientKnownRequestError
 }
 
 function isApplicationError(error: unknown): error is ApplicationErrorShape {

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import Decimal from 'decimal.js';
 import { HoldingAdviceService } from '@/services/holding-advice.service';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../lib/prisma-client';
 
-jest.mock('@prisma/client');
+jest.mock('../../lib/prisma-client');
 
 describe('HoldingAdviceService', () => {
   let service: HoldingAdviceService;

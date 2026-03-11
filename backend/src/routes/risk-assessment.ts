@@ -2,12 +2,17 @@ import { Router, Request, Response } from 'express'
 import { prisma } from '../lib/prisma'
 import { RiskAssessmentService } from '../services/risk-assessment.service'
 import { SentimentAnalysisService } from '../services/sentiment-analysis.service'
+import { getPathParam } from './request-utils'
 
 const router = Router()
 
 router.get('/:symbol', async (req: Request, res: Response) => {
   try {
-    const { symbol } = req.params
+    const symbol = getPathParam(req, 'symbol')
+
+    if (!symbol) {
+      return res.status(400).json({ error: 'Stock symbol is required' })
+    }
 
     const sentimentService = new SentimentAnalysisService(prisma)
     const riskService = new RiskAssessmentService(prisma, sentimentService)
@@ -115,8 +120,12 @@ router.post('/batch', async (req: Request, res: Response) => {
 
 router.get('/portfolio/:portfolioId', async (req: Request, res: Response) => {
   try {
-    const { portfolioId } = req.params
+    const portfolioId = getPathParam(req, 'portfolioId')
     const user = req.user
+
+    if (!portfolioId) {
+      return res.status(400).json({ error: 'Portfolio ID is required' })
+    }
 
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' })

@@ -1,9 +1,12 @@
 import { Router, Request, Response } from 'express'
 import { realizedPLService } from '../services/realized-pl.service'
+import { getPathParam, getQueryParam } from './request-utils'
 
 const router = Router()
 
-function isValidTimePeriod(period: string): boolean {
+type TimePeriod = 'month' | 'quarter' | 'year' | 'all'
+
+function isValidTimePeriod(period: string): period is TimePeriod {
   return ['month', 'quarter', 'year', 'all'].includes(period)
 }
 
@@ -14,7 +17,7 @@ router.get('/', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    const periodParam = (req.query.period as string) || 'all'
+    const periodParam = getQueryParam(req, 'period') || 'all'
 
     if (!isValidTimePeriod(periodParam)) {
       return res
@@ -54,9 +57,13 @@ router.get('/portfolio/:portfolioId', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    const { portfolioId } = req.params
-    const periodParam = (req.query.period as string) || 'all'
-    const symbol = (req.query.symbol as string) || undefined
+    const portfolioId = getPathParam(req, 'portfolioId')
+    const periodParam = getQueryParam(req, 'period') || 'all'
+    const symbol = getQueryParam(req, 'symbol')
+
+    if (!portfolioId) {
+      return res.status(400).json({ error: 'Portfolio ID is required' })
+    }
 
     if (!isValidTimePeriod(periodParam)) {
       return res

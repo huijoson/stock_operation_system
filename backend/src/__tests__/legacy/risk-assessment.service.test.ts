@@ -1,6 +1,6 @@
 import { RiskAssessmentService } from '@/services/risk-assessment.service';
 import { SentimentAnalysisService } from '@/services/sentiment-analysis.service';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../lib/prisma-client';
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
 
 jest.mock('@/services/sentiment-analysis.service');

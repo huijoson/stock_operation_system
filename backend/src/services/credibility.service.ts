@@ -1,4 +1,4 @@
-import { PrismaClient, NewsSourceRating } from '@prisma/client';
+import { PrismaClient, NewsSourceRating } from '../lib/prisma-client';
 
 export type CredibilityLevel = 'official' | 'mainstream' | 'unverified';
 

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../lib/prisma-client'
 import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 import prisma from '../lib/prisma'

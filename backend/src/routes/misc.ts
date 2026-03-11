@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express'
-import { PrismaClient } from '@prisma/client'
-import { authMiddleware } from '../middleware/auth'
 import prisma from '../lib/prisma'
+import { authMiddleware } from '../middleware/auth'
 import { DashboardNewsQueryService } from '../services/dashboard-news.service'
 import { DashboardNewsSyncService } from '../services/dashboard-news-sync.service'
 import { TransactionService } from '../services/transaction.service'
@@ -153,10 +152,8 @@ router.post('/sync/dashboard-news', authMiddleware, async (req: Request, res: Re
 })
 
 router.get('/query-tsm', authMiddleware, async (_req: Request, res: Response) => {
-  const queryPrisma = new PrismaClient()
-
   try {
-    const tsmTransactions = await queryPrisma.transaction.findMany({
+    const tsmTransactions = await prisma.transaction.findMany({
       where: {
         symbol: {
           equals: 'TSM',
@@ -171,7 +168,7 @@ router.get('/query-tsm', authMiddleware, async (_req: Request, res: Response) =>
       },
     })
 
-    const currentHolding = await queryPrisma.holding.findFirst({
+    const currentHolding = await prisma.holding.findFirst({
       where: {
         symbol: {
           equals: 'TSM',
@@ -228,8 +225,6 @@ router.get('/query-tsm', authMiddleware, async (_req: Request, res: Response) =>
   } catch (error: any) {
     console.error('Query error:', error)
     return res.status(500).json({ error: error.message })
-  } finally {
-    await queryPrisma.$disconnect()
   }
 })
 

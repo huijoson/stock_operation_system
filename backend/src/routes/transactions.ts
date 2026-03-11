@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import Decimal from 'decimal.js'
 import prisma from '../lib/prisma'
+import { getPathParam } from './request-utils'
 import { TransactionService } from '../services/transaction.service'
 
 const router = Router()
@@ -63,8 +64,12 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = getPathParam(req, 'id')
     const { type, quantity, price, date } = req.body
+
+    if (!id) {
+      return res.status(400).json({ error: 'Transaction ID is required' })
+    }
 
     if (!type || !quantity || !price || !date) {
       return res.status(400).json({ error: 'Missing required fields' })
@@ -108,7 +113,11 @@ router.put('/:id', async (req: Request, res: Response) => {
 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = getPathParam(req, 'id')
+
+    if (!id) {
+      return res.status(400).json({ error: 'Transaction ID is required' })
+    }
 
     const transactionService = new TransactionService()
     await transactionService.deleteTransaction(id)

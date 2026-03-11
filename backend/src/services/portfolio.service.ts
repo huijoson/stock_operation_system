@@ -1,4 +1,4 @@
-import { PrismaClient, Portfolio, Holding } from '@prisma/client'
+import { PrismaClient, Portfolio, Holding } from '../lib/prisma-client'
 import prisma from '../lib/prisma'
 
 /**

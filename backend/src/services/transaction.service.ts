@@ -1,4 +1,4 @@
-import { PrismaClient, Transaction, Holding } from '@prisma/client'
+import { PrismaClient, Transaction, Holding } from '../lib/prisma-client'
 import prisma from '../lib/prisma'
 import Decimal from 'decimal.js'
 import { parseCSV, CSVFormat } from '../lib/csv/csv-parser'

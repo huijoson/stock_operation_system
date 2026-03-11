@@ -1,4 +1,4 @@
-jest.mock('@prisma/client', () => {
+jest.mock('../lib/prisma-client', () => {
   const createDelegate = () => ({
     findUnique: jest.fn(),
     findMany: jest.fn(),
@@ -17,9 +17,15 @@ jest.mock('@prisma/client', () => {
     portfolio = createDelegate()
     transaction = createDelegate()
     holding = createDelegate()
+    taxLot = createDelegate()
+    realizedPL = createDelegate()
     strategy = createDelegate()
     stockPrice = createDelegate()
     indicatorCache = createDelegate()
+    stockNews = createDelegate()
+    newsSourceRating = createDelegate()
+    riskAssessment = createDelegate()
+    holdingAdvice = createDelegate()
     dashboardNewsItem = createDelegate()
     syncQuotaLog = createDelegate()
     sourceCredibility = createDelegate()

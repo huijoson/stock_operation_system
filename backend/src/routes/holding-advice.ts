@@ -1,13 +1,20 @@
 import { Router, Request, Response } from 'express'
-import { PrismaClient } from '@prisma/client'
+import prisma from '../lib/prisma'
+import { getPathParam } from './request-utils'
 import { HoldingAdviceService } from '../services/holding-advice.service'
 
 const router = Router()
-const prisma = new PrismaClient()
 
 router.get('/:symbol', async (req: Request, res: Response) => {
   try {
-    const symbol = req.params.symbol.toUpperCase()
+    const symbol = getPathParam(req, 'symbol')?.toUpperCase()
+
+    if (!symbol) {
+      return res.status(400).json({
+        success: false,
+        error: '股票代號為必填欄位',
+      })
+    }
 
     const service = new HoldingAdviceService(prisma)
     const advice = await service.generateAdvice(symbol)
@@ -35,7 +42,14 @@ router.get('/:symbol', async (req: Request, res: Response) => {
 
 router.get('/portfolio/:portfolioId', async (req: Request, res: Response) => {
   try {
-    const { portfolioId } = req.params
+    const portfolioId = getPathParam(req, 'portfolioId')
+
+    if (!portfolioId) {
+      return res.status(400).json({
+        success: false,
+        error: '投資組合 ID 為必填欄位',
+      })
+    }
 
     const portfolio = await prisma.portfolio.findUnique({
       where: { id: portfolioId },

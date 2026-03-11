@@ -1,5 +1,5 @@
 import * as fc from 'fast-check'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../../lib/prisma-client'
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended'
 import Decimal from 'decimal.js'
 import { it } from 'node:test'
@@ -40,8 +40,8 @@ import { beforeEach } from 'node:test'
 // ============================================================================
 
 // Mock Prisma Client
-jest.mock('@prisma/client', () => ({
-  ...jest.requireActual('@prisma/client'),
+jest.mock('../../lib/prisma-client', () => ({
+  ...jest.requireActual('../../lib/prisma-client'),
   PrismaClient: jest.fn(),
 }))
 
