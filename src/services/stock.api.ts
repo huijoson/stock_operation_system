@@ -3,7 +3,7 @@ import apiClient from './api-client'
 export const StockApi = {
   async search<T = unknown>(keyword: string): Promise<T> {
     const { data } = await apiClient.get<T>('/stocks/search', {
-      params: { keyword },
+      params: { q: keyword },
     })
     return data
   },
@@ -31,4 +31,3 @@ export const StockApi = {
     return data
   },
 }
-
