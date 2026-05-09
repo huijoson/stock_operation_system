@@ -98,6 +98,23 @@ describe('dashboard chart data helpers', () => {
     ])
   })
 
+  it('aggregates trend points by UTC calendar day', () => {
+    const result = buildPortfolioTrendData(holdings, {
+      TSM: [
+        { date: '2026-05-01T16:00:00.000Z', price: new Decimal(600) },
+        { date: '2026-05-02T00:00:00.000Z', price: new Decimal(610) },
+      ],
+      NVDA: [
+        { date: '2026-05-01T23:59:59.999Z', price: new Decimal(200) },
+        { date: '2026-05-02T00:00:00.000Z', price: new Decimal(210) },
+      ],
+    })
+
+    expect(result).toEqual([
+      { date: '2026/05/01', value: 7000 },
+      { date: '2026/05/02', value: 7150 },
+    ])
+  })
   it('does not fabricate a trend when fewer than two dates are available', () => {
     const result = buildPortfolioTrendData(holdings, {
       TSM: [{ date: '2026-05-01T00:00:00.000Z', price: new Decimal(590) }],
@@ -106,3 +123,4 @@ describe('dashboard chart data helpers', () => {
     expect(result).toEqual([])
   })
 })
+
