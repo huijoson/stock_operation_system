@@ -16,6 +16,7 @@ export interface HistoricalPricePoint {
 }
 
 export interface AllocationChartDatum {
+  [key: string]: unknown
   symbol: string
   name: string
   value: number
