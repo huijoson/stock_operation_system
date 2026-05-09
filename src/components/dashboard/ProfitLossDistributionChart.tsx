@@ -35,7 +35,11 @@ export default function ProfitLossDistributionChart({ data }: ProfitLossDistribu
       </div>
 
       <div className="mt-6 h-[320px]">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+          initialDimension={{ width: 640, height: 320 }}
+        >
           <BarChart data={data} margin={{ top: 12, right: 24, bottom: 12, left: 12 }}>
             <CartesianGrid stroke="#334155" strokeDasharray="4 8" vertical={false} />
             <XAxis dataKey="symbol" tick={{ fill: '#94a3b8', fontSize: 12 }} tickLine={false} />
@@ -96,4 +100,5 @@ function compactNumber(value: number): string {
     maximumFractionDigits: 1,
   })
 }
+
 
