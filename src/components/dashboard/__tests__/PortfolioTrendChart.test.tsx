@@ -12,6 +12,7 @@ describe('PortfolioTrendChart', () => {
 
     expect(screen.getByText('投資組合市值趨勢')).toBeInTheDocument()
     expect(screen.getByText('目前沒有足夠的歷史價格資料可顯示趨勢線')).toBeInTheDocument()
+    expect(screen.queryByText('近 30 日')).not.toBeInTheDocument()
   })
 
   it('renders the trend chart when at least two points are available', () => {

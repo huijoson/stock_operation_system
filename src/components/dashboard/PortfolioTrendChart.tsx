@@ -24,9 +24,11 @@ export default function PortfolioTrendChart({ data }: PortfolioTrendChartProps) 
           <h3 className="text-xl font-semibold text-white">投資組合市值趨勢</h3>
           <p className="mt-1 text-sm text-gray-400">觀察整體持股市值是否穩定上升或轉弱。</p>
         </div>
-        <span className="mt-3 inline-flex w-fit rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200 sm:mt-0">
-          近 30 日
-        </span>
+        {hasTrend ? (
+          <span className="mt-3 inline-flex w-fit rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200 sm:mt-0">
+            近 30 日
+          </span>
+        ) : null}
       </div>
 
       {!hasTrend ? (
