@@ -72,3 +72,6 @@ MIGRATION_QUICK_REFERENCE.md
 src/**/*.js.map
 src/**/*.d.ts.map
 backend/src/generated/
+
+# superpowers worktrees
+.worktrees/
