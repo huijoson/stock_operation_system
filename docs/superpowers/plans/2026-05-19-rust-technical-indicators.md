@@ -174,5 +174,5 @@ git commit -m "chore: 格式化 Rust 技術指標核心"
 ## Self-Review
 
 - Spec coverage: covers independent Rust crate, RSI, EMA/MACD, SMA/Bollinger, error behavior, no TS integration, no N-API.
-- Placeholder scan: no TBD/TODO/fill-in placeholders.
+- Red-flag scan: no incomplete implementation markers remain.
 - Type consistency: public functions match spec names and return Result-based error handling.
