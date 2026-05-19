@@ -1,5 +1,5 @@
-use rust_decimal::Decimal;
 use rust_decimal::prelude::ToPrimitive;
+use rust_decimal::Decimal;
 
 use crate::{require_len, validate_period, IndicatorError};
 
@@ -153,11 +153,7 @@ pub fn detect_crossover(
     Ok(crossovers)
 }
 
-fn current_signal(
-    macd_line: &[f64],
-    signal_line: &[f64],
-    crossovers: &[Crossover],
-) -> MacdSignal {
+fn current_signal(macd_line: &[f64], signal_line: &[f64], crossovers: &[Crossover]) -> MacdSignal {
     if let Some(last_crossover) = crossovers.last() {
         if macd_line.len() - last_crossover.index <= 3 {
             return match last_crossover.crossover_type {

@@ -1,5 +1,5 @@
-use rust_decimal::Decimal;
 use rust_decimal::prelude::ToPrimitive;
+use rust_decimal::Decimal;
 
 use crate::{require_len, validate_period, IndicatorError};
 
@@ -48,18 +48,8 @@ pub fn calculate_rsi(prices: &[Decimal], period: usize) -> Result<RsiResult, Ind
         .collect();
 
     let period_decimal = Decimal::from(period as u64);
-    let mut avg_gain = gains
-        .iter()
-        .take(period)
-        .copied()
-        .sum::<Decimal>()
-        / period_decimal;
-    let mut avg_loss = losses
-        .iter()
-        .take(period)
-        .copied()
-        .sum::<Decimal>()
-        / period_decimal;
+    let mut avg_gain = gains.iter().take(period).copied().sum::<Decimal>() / period_decimal;
+    let mut avg_loss = losses.iter().take(period).copied().sum::<Decimal>() / period_decimal;
 
     let mut history = Vec::with_capacity(changes.len() - period + 1);
     history.push(rsi_value(avg_gain, avg_loss));
@@ -70,7 +60,9 @@ pub fn calculate_rsi(prices: &[Decimal], period: usize) -> Result<RsiResult, Ind
         history.push(rsi_value(avg_gain, avg_loss));
     }
 
-    let value = *history.last().expect("history must contain at least one RSI value");
+    let value = *history
+        .last()
+        .expect("history must contain at least one RSI value");
     let status = if value > 70.0 {
         RsiStatus::Overbought
     } else if value < 30.0 {

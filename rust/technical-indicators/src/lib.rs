@@ -6,7 +6,10 @@ pub use bollinger::{
     calculate_bollinger_bands, calculate_sma, calculate_standard_deviation, detect_squeeze,
     BollingerBandsResult, BollingerPosition,
 };
-pub use macd::{calculate_ema, calculate_macd, detect_crossover, Crossover, CrossoverType, MacdResult, MacdSignal};
+pub use macd::{
+    calculate_ema, calculate_macd, detect_crossover, Crossover, CrossoverType, MacdResult,
+    MacdSignal,
+};
 pub use rsi::{calculate_rsi, RsiResult, RsiStatus};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -49,7 +52,10 @@ impl std::fmt::Display for IndicatorError {
 
 impl std::error::Error for IndicatorError {}
 
-pub(crate) fn validate_period(period: usize, indicator: &'static str) -> Result<(), IndicatorError> {
+pub(crate) fn validate_period(
+    period: usize,
+    indicator: &'static str,
+) -> Result<(), IndicatorError> {
     if period == 0 {
         return Err(IndicatorError::InvalidPeriod { period, indicator });
     }
