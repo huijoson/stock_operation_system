@@ -42,6 +42,7 @@ prisma/migrations
 /dist
 /backend/dist
 /.next
+**/target/
 
 # OS files
 Thumbs.db

@@ -1,0 +1,8 @@
+[package]
+name = "technical-indicators"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rust_decimal = { version = "=1.30.0", default-features = false, features = ["std"] }
+
