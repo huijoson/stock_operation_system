@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Decimal } from 'decimal.js'
-import PieChart from '@/components/charts/PieChart'
-import LineChart from '@/components/charts/LineChart'
-import BarChart from '@/components/charts/BarChart'
+import HoldingsAllocationCard from '@/components/dashboard/HoldingsAllocationCard'
+import PortfolioTrendChart from '@/components/dashboard/PortfolioTrendChart'
+import ProfitLossDistributionChart from '@/components/dashboard/ProfitLossDistributionChart'
 import DashboardNewsWidget from '@/components/news/DashboardNewsWidget'
 import RealizedPLCard from '@/components/portfolio/RealizedPLCard'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import {
+  HistoricalPricePoint,
+  buildAllocationData,
+  buildPortfolioTrendData,
+  buildProfitLossData,
+} from '@/lib/dashboard/chart-data'
 import { AuthApi } from '@/services/auth.api'
 import { PortfolioApi } from '@/services/portfolio.api'
 import { StockApi } from '@/services/stock.api'
@@ -42,6 +48,7 @@ export default function DashboardPage() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([])
   const [allHoldings, setAllHoldings] = useState<Holding[]>([])
   const [currentPrices, setCurrentPrices] = useState<Record<string, Decimal>>({})
+  const [priceHistories, setPriceHistories] = useState<Record<string, HistoricalPricePoint[]>>({})
   const [summary, setSummary] = useState<PortfolioSummary | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -78,6 +85,35 @@ export default function DashboardPage() {
           }
         }
         setCurrentPrices(prices)
+
+        const endDate = new Date()
+        const startDate = new Date()
+        startDate.setDate(endDate.getDate() - 30)
+
+        const histories: Record<string, HistoricalPricePoint[]> = {}
+
+        await Promise.all(
+          uniqueSymbols.map(async (symbol) => {
+            try {
+              const historyData = await StockApi.getHistory<{
+                prices: Array<{ date: string; price: string | number }>
+              }>(
+                symbol,
+                startDate.toISOString().split('T')[0],
+                endDate.toISOString().split('T')[0]
+              )
+
+              histories[symbol] = historyData.prices.map((point) => ({
+                date: point.date,
+                price: new Decimal(point.price),
+              }))
+            } catch (err) {
+              console.warn(`Failed to fetch history for ${symbol}:`, err)
+            }
+          })
+        )
+
+        setPriceHistories(histories)
 
         // Calculate summary
         calculateSummary(allHoldingsData, prices)
@@ -146,6 +182,11 @@ export default function DashboardPage() {
       console.error('Logout error:', error)
     }
   }
+
+  const allocationData = buildAllocationData(allHoldings, currentPrices)
+  const profitLossData = buildProfitLossData(allHoldings, currentPrices)
+  const trendData = buildPortfolioTrendData(allHoldings, priceHistories)
+  const hasChartData = allHoldings.length > 0 && Object.keys(currentPrices).length > 0
 
   if (loading) {
     return (
@@ -347,64 +388,12 @@ export default function DashboardPage() {
           </div>
 
           {/* Charts Section */}
-          {allHoldings.length > 0 && Object.keys(currentPrices).length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {/* Realized P&L Card */}
-              <RealizedPLCard className="lg:col-span-2" />
-
-              {/* Market Value Distribution Pie Chart */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-4 sm:p-6">
-                <PieChart
-                  data={allHoldings
-                    .filter(h => currentPrices[h.symbol])
-                    .map(h => {
-                      const quantity = new Decimal(h.quantity)
-                      const currentPrice = currentPrices[h.symbol]
-                      const marketValue = quantity.times(currentPrice).toNumber()
-                      
-                      // Calculate percentage
-                      const totalMarketValue = allHoldings
-                        .filter(holding => currentPrices[holding.symbol])
-                        .reduce((sum, holding) => {
-                          const qty = new Decimal(holding.quantity)
-                          const price = currentPrices[holding.symbol]
-                          return sum.plus(qty.times(price))
-                        }, new Decimal(0))
-                      
-                      const percentage = totalMarketValue.isZero()
-                        ? 0
-                        : new Decimal(marketValue).div(totalMarketValue).times(100).toNumber()
-                      
-                      return {
-                        name: h.symbol,
-                        value: marketValue,
-                        percentage,
-                      }
-                    })}
-                  title="持股市值佔比"
-                />
-              </div>
-
-              {/* P&L Distribution Bar Chart */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 p-4 sm:p-6">
-                <BarChart
-                  data={allHoldings
-                    .filter(h => currentPrices[h.symbol])
-                    .map(h => {
-                      const quantity = new Decimal(h.quantity)
-                      const averageCost = new Decimal(h.averageCost)
-                      const currentPrice = currentPrices[h.symbol]
-                      const pl = currentPrice.minus(averageCost).times(quantity).toNumber()
-                      
-                      return {
-                        name: h.symbol,
-                        value: pl,
-                      }
-                    })}
-                  title="各持股損益分布"
-                  yAxisLabel="損益 (TWD)"
-                />
-              </div>
+          {hasChartData && (
+            <div className="space-y-4 sm:space-y-6">
+              <RealizedPLCard />
+              <HoldingsAllocationCard data={allocationData} />
+              <PortfolioTrendChart data={trendData} />
+              <ProfitLossDistributionChart data={profitLossData} />
             </div>
           )}
         </div>
