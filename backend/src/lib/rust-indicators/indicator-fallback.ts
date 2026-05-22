@@ -2,6 +2,7 @@ import Decimal from 'decimal.js'
 
 import { abs, divide } from '../calculations/decimal-utils'
 import type { Divergence, RSIResult } from '../../services/rsi.service'
+import type { Crossover, MACDResult } from '../../services/macd.service'
 
 export function calculateRsiFallback(
   prices: Decimal.Value[],
@@ -72,4 +73,88 @@ export function calculateRsiFallback(
     history,
     divergences,
   }
+}
+
+export function calculateMacdFallback(
+  prices: Decimal.Value[],
+  fastPeriod: number,
+  slowPeriod: number,
+  signalPeriod: number,
+  detectCrossover: (macdLine: number[], signalLine: number[]) => Crossover[]
+): MACDResult {
+  if (prices.length < slowPeriod + signalPeriod) {
+    throw new Error(
+      `Insufficient data: need at least ${slowPeriod + signalPeriod} prices for MACD calculation`
+    )
+  }
+
+  const fastEMA = calculateEmaFallback(prices, fastPeriod)
+  const slowEMA = calculateEmaFallback(prices, slowPeriod)
+  const offset = slowPeriod - fastPeriod
+  const alignedFastEMA = fastEMA.slice(offset)
+
+  const macdLine: number[] = []
+  for (let index = 0; index < slowEMA.length; index++) {
+    const macdValue = new Decimal(alignedFastEMA[index]).minus(slowEMA[index])
+    macdLine.push(macdValue.toNumber())
+  }
+
+  const signalLine = calculateEmaFallback(macdLine, signalPeriod)
+  const alignedMACDLine = macdLine.slice(signalPeriod - 1)
+
+  const histogram: number[] = []
+  for (let index = 0; index < signalLine.length; index++) {
+    const histogramValue = new Decimal(alignedMACDLine[index]).minus(signalLine[index])
+    histogram.push(histogramValue.toNumber())
+  }
+
+  const crossovers = detectCrossover(alignedMACDLine, signalLine)
+
+  let currentSignal: 'bullish' | 'bearish' | 'neutral' = 'neutral'
+  const currentMACD = alignedMACDLine[alignedMACDLine.length - 1]
+  const currentSignalValue = signalLine[signalLine.length - 1]
+
+  if (currentMACD > currentSignalValue) {
+    currentSignal = 'bullish'
+  } else if (currentMACD < currentSignalValue) {
+    currentSignal = 'bearish'
+  }
+
+  if (crossovers.length > 0) {
+    const lastCrossover = crossovers[crossovers.length - 1]
+    if (alignedMACDLine.length - lastCrossover.index <= 3) {
+      currentSignal = lastCrossover.type === 'golden' ? 'bullish' : 'bearish'
+    }
+  }
+
+  return {
+    macdLine: alignedMACDLine,
+    signalLine,
+    histogram,
+    crossovers,
+    currentSignal,
+  }
+}
+
+function calculateEmaFallback(prices: Decimal.Value[], period: number): number[] {
+  if (prices.length < period) {
+    throw new Error(`Insufficient data: need at least ${period} prices for EMA calculation`)
+  }
+
+  const priceDecimals = prices.map((price) => new Decimal(price))
+  const emaValues: number[] = []
+  const alpha = new Decimal(2).dividedBy(period + 1)
+
+  let ema = priceDecimals
+    .slice(0, period)
+    .reduce((sum, price) => sum.plus(price), new Decimal(0))
+    .dividedBy(period)
+  emaValues.push(ema.toNumber())
+
+  for (let index = period; index < priceDecimals.length; index++) {
+    ema = ema.times(new Decimal(1).minus(alpha)).plus(priceDecimals[index].times(alpha))
+    emaValues.push(ema.toNumber())
+  }
+
+  return emaValues
 }

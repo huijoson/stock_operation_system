@@ -1,4 +1,7 @@
 import Decimal from 'decimal.js'
+import { calculateMacdFallback } from '../lib/rust-indicators/indicator-fallback'
+import { loadRustIndicatorsNative } from '../lib/rust-indicators/native-loader'
+import { calculateMacdViaNative, RustMacdAddon } from '../lib/rust-indicators/macd-adapter'
 
 /**
  * Crossover detection result
@@ -101,71 +104,26 @@ export class MACDService {
     slowPeriod: number = this.DEFAULT_SLOW_PERIOD,
     signalPeriod: number = this.DEFAULT_SIGNAL_PERIOD
   ): MACDResult {
-    if (prices.length < slowPeriod + signalPeriod) {
-      throw new Error(
-        `Insufficient data: need at least ${slowPeriod + signalPeriod} prices for MACD calculation`
+    const native = loadRustIndicatorsNative()
+
+    if (native.available) {
+      const priceStrings = prices.map((price) => new Decimal(price).toString())
+      return calculateMacdViaNative(
+        native.addon as RustMacdAddon,
+        priceStrings,
+        fastPeriod,
+        slowPeriod,
+        signalPeriod
       )
     }
 
-    // Calculate fast and slow EMAs
-    const fastEMA = this.calculateEMA(prices, fastPeriod)
-    const slowEMA = this.calculateEMA(prices, slowPeriod)
-
-    // Align the EMAs (slow EMA starts later)
-    const offset = slowPeriod - fastPeriod
-    const alignedFastEMA = fastEMA.slice(offset)
-
-    // Calculate MACD line (Fast EMA - Slow EMA)
-    const macdLine: number[] = []
-    for (let i = 0; i < slowEMA.length; i++) {
-      const macdValue = new Decimal(alignedFastEMA[i]).minus(slowEMA[i])
-      macdLine.push(macdValue.toNumber())
-    }
-
-    // Calculate signal line (EMA of MACD line)
-    const signalLine = this.calculateEMA(macdLine, signalPeriod)
-
-    // Align MACD line with signal line
-    const alignedMACDLine = macdLine.slice(signalPeriod - 1)
-
-    // Calculate histogram (MACD - Signal)
-    const histogram: number[] = []
-    for (let i = 0; i < signalLine.length; i++) {
-      const histValue = new Decimal(alignedMACDLine[i]).minus(signalLine[i])
-      histogram.push(histValue.toNumber())
-    }
-
-    // Detect crossovers
-    const crossovers = this.detectCrossover(alignedMACDLine, signalLine)
-
-    // Determine current signal
-    let currentSignal: 'bullish' | 'bearish' | 'neutral' = 'neutral'
-    const currentMACD = alignedMACDLine[alignedMACDLine.length - 1]
-    const currentSignalValue = signalLine[signalLine.length - 1]
-    const currentHistogram = histogram[histogram.length - 1]
-
-    if (currentMACD > currentSignalValue) {
-      currentSignal = 'bullish'
-    } else if (currentMACD < currentSignalValue) {
-      currentSignal = 'bearish'
-    }
-
-    // Check for recent crossover to strengthen signal
-    if (crossovers.length > 0) {
-      const lastCrossover = crossovers[crossovers.length - 1]
-      // If crossover happened in last 3 periods, use that signal
-      if (alignedMACDLine.length - lastCrossover.index <= 3) {
-        currentSignal = lastCrossover.type === 'golden' ? 'bullish' : 'bearish'
-      }
-    }
-
-    return {
-      macdLine: alignedMACDLine,
-      signalLine,
-      histogram,
-      crossovers,
-      currentSignal
-    }
+    return calculateMacdFallback(
+      prices,
+      fastPeriod,
+      slowPeriod,
+      signalPeriod,
+      this.detectCrossover.bind(this)
+    )
   }
 
   /**

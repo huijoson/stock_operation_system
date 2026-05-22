@@ -65,3 +65,63 @@ describe('RSIService native parity', () => {
     expect(result.divergences).toEqual([])
   })
 })
+
+describe('MACDService native parity', () => {
+  beforeEach(() => {
+    jest.resetModules()
+    mockLoadRustIndicatorsNative.mockReset()
+  })
+
+  it('falls back to TypeScript implementation when native addon is unavailable', async () => {
+    mockLoadRustIndicatorsNative.mockReturnValue({
+      available: false,
+      reason: 'missing addon',
+    })
+
+    const { MACDService } = await import('../services/macd.service')
+
+    const service = new MACDService()
+    const prices = Array.from({ length: 50 }, (_, index) => 100 + index * 0.5)
+    const result = service.calculateMACD(prices, 12, 26, 9)
+
+    expect(result.macdLine).toHaveLength(17)
+    expect(result.signalLine).toHaveLength(17)
+    expect(result.histogram).toHaveLength(17)
+    expect(result.currentSignal).toBe('neutral')
+  })
+
+  it('uses native addon result when native addon is available', async () => {
+    mockLoadRustIndicatorsNative.mockReturnValue({
+      available: true,
+      addon: {
+        calculateMacd: jest.fn().mockReturnValue({
+          macdLine: [1.1, 1.2, 1.3],
+          signalLine: [0.9, 1.0, 1.1],
+          histogram: [0.2, 0.2, 0.2],
+          crossovers: [
+            {
+              type: 'golden',
+              index: 1,
+              macdValue: 1.2,
+              signalValue: 1.0,
+            },
+          ],
+          currentSignal: 'bullish',
+        }),
+      },
+    })
+
+    const { MACDService } = await import('../services/macd.service')
+
+    const service = new MACDService()
+    const prices = Array.from({ length: 50 }, (_, index) => new Decimal(100 + index * 0.5))
+    const result = service.calculateMACD(prices, 12, 26, 9)
+
+    expect(result.macdLine).toEqual([1.1, 1.2, 1.3])
+    expect(result.signalLine).toEqual([0.9, 1.0, 1.1])
+    expect(result.histogram).toEqual([0.2, 0.2, 0.2])
+    expect(result.crossovers).toHaveLength(1)
+    expect(result.crossovers[0].type).toBe('golden')
+    expect(result.currentSignal).toBe('bullish')
+  })
+})
