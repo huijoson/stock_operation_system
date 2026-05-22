@@ -125,3 +125,54 @@ describe('MACDService native parity', () => {
     expect(result.currentSignal).toBe('bullish')
   })
 })
+
+describe('BollingerBandsService native parity', () => {
+  beforeEach(() => {
+    jest.resetModules()
+    mockLoadRustIndicatorsNative.mockReset()
+  })
+
+  it('falls back to TypeScript implementation when native addon is unavailable', async () => {
+    mockLoadRustIndicatorsNative.mockReturnValue({
+      available: false,
+      reason: 'missing addon',
+    })
+
+    const { BollingerBandsService } = await import('../services/bollinger-bands.service')
+
+    const service = new BollingerBandsService()
+    const prices = [100, 102, 104, 106, 108, 110]
+    const result = service.calculateBands(prices, 3, 2)
+
+    expect(result.middle).toHaveLength(4)
+    expect(result.currentPosition).toBe('within_bands')
+    expect(service.detectSqueeze(result, 30)).toBe(false)
+  })
+
+  it('uses native addon result when native addon is available', async () => {
+    mockLoadRustIndicatorsNative.mockReturnValue({
+      available: true,
+      addon: {
+        calculateBollinger: jest.fn().mockReturnValue({
+          upper: [101.1, 102.2],
+          middle: ['100.1', '101.2'],
+          lower: [99.1, 100.2],
+          bandwidth: [0.02, 0.019],
+          currentPosition: 'above_upper',
+        }),
+      },
+    })
+
+    const { BollingerBandsService } = await import('../services/bollinger-bands.service')
+
+    const service = new BollingerBandsService()
+    const prices = Array.from({ length: 30 }, (_, index) => new Decimal(100 + index))
+    const result = service.calculateBands(prices, 20, 2)
+
+    expect(result.upper[0].toNumber()).toBe(101.1)
+    expect(result.middle[0].toString()).toBe('100.1')
+    expect(result.lower[0].toNumber()).toBe(99.1)
+    expect(result.bandwidth).toEqual([0.02, 0.019])
+    expect(result.currentPosition).toBe('above_upper')
+  })
+})

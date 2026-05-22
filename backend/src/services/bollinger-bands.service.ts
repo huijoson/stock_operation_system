@@ -1,4 +1,7 @@
 import Decimal from 'decimal.js'
+import { calculateBollingerFallback } from '../lib/rust-indicators/indicator-fallback'
+import { loadRustIndicatorsNative } from '../lib/rust-indicators/native-loader'
+import { calculateBollingerViaNative, RustBollingerAddon } from '../lib/rust-indicators/bollinger-adapter'
 
 /**
  * Bollinger Bands calculation result
@@ -115,54 +118,18 @@ export class BollingerBandsService {
     period: number = this.DEFAULT_PERIOD,
     stdDevMultiplier: number = this.DEFAULT_STD_DEV_MULTIPLIER
   ): BollingerBandsResult {
-    if (prices.length < period) {
-      throw new Error(`Insufficient data: need at least ${period} prices for Bollinger Bands calculation`)
+    const native = loadRustIndicatorsNative()
+
+    if (native.available) {
+      return calculateBollingerViaNative(
+        native.addon as RustBollingerAddon,
+        prices,
+        period,
+        stdDevMultiplier
+      )
     }
 
-    // Calculate middle band (SMA)
-    const middle = this.calculateSMA(prices, period)
-
-    // Calculate standard deviation
-    const stdDev = this.calculateStandardDeviation(prices, period, middle)
-
-    // Calculate upper and lower bands
-    const upper: Decimal[] = []
-    const lower: Decimal[] = []
-    const bandwidth: number[] = []
-
-    for (let i = 0; i < middle.length; i++) {
-      const upperBand = middle[i].plus(stdDev[i].times(stdDevMultiplier))
-      const lowerBand = middle[i].minus(stdDev[i].times(stdDevMultiplier))
-      
-      upper.push(upperBand)
-      lower.push(lowerBand)
-
-      // Bandwidth = (Upper - Lower) / Middle
-      const bw = upperBand.minus(lowerBand).dividedBy(middle[i]).toNumber()
-      bandwidth.push(bw)
-    }
-
-    // Determine current position
-    const currentPrice = new Decimal(prices[prices.length - 1])
-    const currentUpper = upper[upper.length - 1]
-    const currentLower = lower[lower.length - 1]
-
-    let currentPosition: 'above_upper' | 'below_lower' | 'within_bands'
-    if (currentPrice.greaterThan(currentUpper)) {
-      currentPosition = 'above_upper'
-    } else if (currentPrice.lessThan(currentLower)) {
-      currentPosition = 'below_lower'
-    } else {
-      currentPosition = 'within_bands'
-    }
-
-    return {
-      upper,
-      middle,
-      lower,
-      bandwidth,
-      currentPosition
-    }
+    return calculateBollingerFallback(prices, period, stdDevMultiplier)
   }
 
   /**

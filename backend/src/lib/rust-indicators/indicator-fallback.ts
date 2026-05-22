@@ -3,6 +3,7 @@ import Decimal from 'decimal.js'
 import { abs, divide } from '../calculations/decimal-utils'
 import type { Divergence, RSIResult } from '../../services/rsi.service'
 import type { Crossover, MACDResult } from '../../services/macd.service'
+import type { BollingerBandsResult } from '../../services/bollinger-bands.service'
 
 export function calculateRsiFallback(
   prices: Decimal.Value[],
@@ -134,6 +135,96 @@ export function calculateMacdFallback(
     crossovers,
     currentSignal,
   }
+}
+
+export function calculateBollingerFallback(
+  prices: Decimal.Value[],
+  period: number,
+  stdDevMultiplier: number
+): BollingerBandsResult {
+  if (prices.length < period) {
+    throw new Error(`Insufficient data: need at least ${period} prices for Bollinger Bands calculation`)
+  }
+
+  const middle = calculateSmaFallback(prices, period)
+  const stdDev = calculateStandardDeviationFallback(prices, period, middle)
+  const upper: Decimal[] = []
+  const lower: Decimal[] = []
+  const bandwidth: number[] = []
+
+  for (let index = 0; index < middle.length; index++) {
+    const upperBand = middle[index].plus(stdDev[index].times(stdDevMultiplier))
+    const lowerBand = middle[index].minus(stdDev[index].times(stdDevMultiplier))
+    upper.push(upperBand)
+    lower.push(lowerBand)
+    bandwidth.push(upperBand.minus(lowerBand).dividedBy(middle[index]).toNumber())
+  }
+
+  const currentPrice = new Decimal(prices[prices.length - 1])
+  const currentUpper = upper[upper.length - 1]
+  const currentLower = lower[lower.length - 1]
+
+  const currentPosition = currentPrice.greaterThan(currentUpper)
+    ? 'above_upper'
+    : currentPrice.lessThan(currentLower)
+      ? 'below_lower'
+      : 'within_bands'
+
+  return {
+    upper,
+    middle,
+    lower,
+    bandwidth,
+    currentPosition,
+  }
+}
+
+function calculateSmaFallback(prices: Decimal.Value[], period: number): Decimal[] {
+  if (prices.length < period) {
+    throw new Error(`Insufficient data: need at least ${period} prices for SMA calculation`)
+  }
+
+  const priceDecimals = prices.map((price) => new Decimal(price))
+  const smaValues: Decimal[] = []
+
+  for (let index = period - 1; index < priceDecimals.length; index++) {
+    const sum = priceDecimals
+      .slice(index - period + 1, index + 1)
+      .reduce((accumulator, price) => accumulator.plus(price), new Decimal(0))
+    smaValues.push(sum.dividedBy(period))
+  }
+
+  return smaValues
+}
+
+function calculateStandardDeviationFallback(
+  prices: Decimal.Value[],
+  period: number,
+  smaValues?: Decimal[]
+): Decimal[] {
+  if (prices.length < period) {
+    throw new Error(`Insufficient data: need at least ${period} prices for standard deviation calculation`)
+  }
+
+  const priceDecimals = prices.map((price) => new Decimal(price))
+  const smas = smaValues || calculateSmaFallback(prices, period)
+  const stdDevValues: Decimal[] = []
+
+  for (let index = period - 1; index < priceDecimals.length; index++) {
+    const smaIndex = index - period + 1
+    const sma = smas[smaIndex]
+    const variance = priceDecimals
+      .slice(index - period + 1, index + 1)
+      .reduce((accumulator, price) => {
+        const diff = price.minus(sma)
+        return accumulator.plus(diff.times(diff))
+      }, new Decimal(0))
+      .dividedBy(period)
+
+    stdDevValues.push(new Decimal(Math.sqrt(variance.toNumber())))
+  }
+
+  return stdDevValues
 }
 
 function calculateEmaFallback(prices: Decimal.Value[], period: number): number[] {
