@@ -1,5 +1,7 @@
 import Decimal from 'decimal.js'
-import { divide, abs } from '../lib/calculations/decimal-utils'
+import { calculateRsiFallback } from '../lib/rust-indicators/indicator-fallback'
+import { loadRustIndicatorsNative } from '../lib/rust-indicators/native-loader'
+import { calculateRsiViaNative, RustRsiAddon } from '../lib/rust-indicators/rsi-adapter'
 
 /**
  * Divergence detection result
@@ -50,78 +52,18 @@ export class RSIService {
     prices: Decimal.Value[],
     period: number = this.DEFAULT_PERIOD
   ): RSIResult {
-    if (prices.length < period + 1) {
-      throw new Error(`Insufficient data: need at least ${period + 1} prices for RSI calculation`)
+    const native = loadRustIndicatorsNative()
+
+    if (native.available) {
+      return calculateRsiViaNative(
+        native.addon as RustRsiAddon,
+        prices,
+        period,
+        this.detectDivergence.bind(this)
+      )
     }
 
-    const priceDecimals = prices.map(p => new Decimal(p))
-    const history: Array<{ date: Date; value: number }> = []
-    
-    // Calculate price changes
-    const changes: Decimal[] = []
-    for (let i = 1; i < priceDecimals.length; i++) {
-      changes.push(priceDecimals[i].minus(priceDecimals[i - 1]))
-    }
-
-    // Separate gains and losses
-    const gains: Decimal[] = changes.map(change => 
-      change.greaterThan(0) ? change : new Decimal(0)
-    )
-    const losses: Decimal[] = changes.map(change => 
-      change.lessThan(0) ? abs(change) : new Decimal(0)
-    )
-
-    // Calculate initial average gain and loss (SMA for first period)
-    let avgGain = gains.slice(0, period).reduce((sum, gain) => sum.plus(gain), new Decimal(0)).dividedBy(period)
-    let avgLoss = losses.slice(0, period).reduce((sum, loss) => sum.plus(loss), new Decimal(0)).dividedBy(period)
-
-    // Calculate first RSI value
-    const rsiValues: number[] = []
-    let rs = avgLoss.isZero() ? new Decimal(100) : divide(avgGain, avgLoss)
-    let rsi = new Decimal(100).minus(new Decimal(100).dividedBy(rs.plus(1)))
-    rsiValues.push(rsi.toNumber())
-
-    // Calculate subsequent RSI values using smoothed averages
-    for (let i = period; i < changes.length; i++) {
-      // Smoothed average: (Previous Average × (period - 1) + Current Value) / period
-      avgGain = avgGain.times(period - 1).plus(gains[i]).dividedBy(period)
-      avgLoss = avgLoss.times(period - 1).plus(losses[i]).dividedBy(period)
-
-      rs = avgLoss.isZero() ? new Decimal(100) : divide(avgGain, avgLoss)
-      rsi = new Decimal(100).minus(new Decimal(100).dividedBy(rs.plus(1)))
-      rsiValues.push(rsi.toNumber())
-    }
-
-    // Build history (using placeholder dates for now)
-    const currentDate = new Date()
-    for (let i = 0; i < rsiValues.length; i++) {
-      const date = new Date(currentDate)
-      date.setDate(date.getDate() - (rsiValues.length - 1 - i))
-      history.push({ date, value: rsiValues[i] })
-    }
-
-    // Get current RSI value
-    const currentRSI = rsiValues[rsiValues.length - 1]
-
-    // Determine status
-    let status: 'overbought' | 'oversold' | 'neutral'
-    if (currentRSI > this.OVERBOUGHT_THRESHOLD) {
-      status = 'overbought'
-    } else if (currentRSI < this.OVERSOLD_THRESHOLD) {
-      status = 'oversold'
-    } else {
-      status = 'neutral'
-    }
-
-    // Detect divergences
-    const divergences = this.detectDivergence(priceDecimals.slice(period), rsiValues)
-
-    return {
-      value: currentRSI,
-      status,
-      history,
-      divergences
-    }
+    return calculateRsiFallback(prices, period, this.detectDivergence.bind(this))
   }
 
   /**
