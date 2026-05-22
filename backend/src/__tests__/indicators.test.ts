@@ -18,6 +18,11 @@ jest.mock('../middleware/auth', () => ({
   requireAuth: jest.fn(),
 }))
 
+jest.mock('../lib/prisma', () => ({
+  __esModule: true,
+  default: {},
+}))
+
 jest.mock('../services/indicator-cache.service', () => ({
   IndicatorCacheService: jest.fn().mockImplementation(() => ({
     get: mockCacheGet,
