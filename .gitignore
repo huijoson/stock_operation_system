@@ -76,3 +76,6 @@ backend/src/generated/
 
 # superpowers worktrees
 .worktrees/
+
+# secrets / local auth captures (never commit)
+auth.json
