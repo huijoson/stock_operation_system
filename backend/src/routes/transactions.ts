@@ -62,6 +62,72 @@ router.post('/', async (req: Request, res: Response) => {
   }
 })
 
+router.post('/bulk', async (req: Request, res: Response) => {
+  try {
+    const { portfolioId, transactions } = req.body
+
+    if (!portfolioId) {
+      return res.status(400).json({ error: 'portfolioId is required' })
+    }
+
+    if (!Array.isArray(transactions) || transactions.length === 0) {
+      return res.status(400).json({ error: 'transactions must be a non-empty array' })
+    }
+
+    const inputs = transactions.map((t: any, i: number) => {
+      const { symbol, type, quantity, price, date } = t
+      if (!symbol || !type || !quantity || !price || !date) {
+        throw Object.assign(new Error(`Missing required fields in transaction at index ${i}`), { status: 400 })
+      }
+      if (type !== 'BUY' && type !== 'SELL') {
+        throw Object.assign(new Error(`Invalid type at index ${i}`), { status: 400 })
+      }
+      return {
+        symbol,
+        type,
+        quantity: new Decimal(quantity),
+        price: new Decimal(price),
+        date: new Date(date),
+      }
+    })
+
+    const transactionService = new TransactionService()
+    const created = await transactionService.createTransactionsBulk(portfolioId, inputs)
+
+    return res.status(201).json({ transactions: created })
+  } catch (error: unknown) {
+    console.error('Error bulk creating transactions:', error)
+
+    if (error instanceof Error && (error as any).status === 400) {
+      return res.status(400).json({ error: error.message })
+    }
+
+    if (error instanceof Error && error.message.includes('must not be empty')) {
+      return res.status(400).json({ error: error.message })
+    }
+
+    if (
+      error instanceof Error &&
+      (error.message.includes('Cannot sell') || error.message.includes('no holding exists'))
+    ) {
+      return res.status(422).json({ error: error.message })
+    }
+
+    if (
+      error instanceof Error &&
+      (error.message.includes('quantity') ||
+        error.message.includes('price') ||
+        error.message.includes('type') ||
+        error.message.includes('symbol') ||
+        error.message.includes('portfolioId'))
+    ) {
+      return res.status(400).json({ error: error.message })
+    }
+
+    return res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
 router.put('/:id', async (req: Request, res: Response) => {
   try {
     const id = getPathParam(req, 'id')

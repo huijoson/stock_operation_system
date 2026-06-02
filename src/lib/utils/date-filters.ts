@@ -47,6 +47,18 @@ export function getDateRangeForPeriod(period: TimePeriod = 'all'): DateRange {
 }
 
 /**
+ * Returns yesterday's date as a YYYY-MM-DD string in local time.
+ */
+export function getYesterdayDateString(): string {
+  const d = new Date()
+  d.setDate(d.getDate() - 1)
+  const yyyy = d.getFullYear()
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+/**
  * Validate if a time period is valid
  */
 export function isValidTimePeriod(period: string): period is TimePeriod {

@@ -49,7 +49,7 @@ export class RealizedPLService {
     saleDate: Date
   ): Promise<RealizedPL[]> {
     const results: RealizedPL[] = []
-    
+
     // Get available TaxLots (FIFO order)
     const availableLots = await this.taxLotService.getAvailableLots(
       portfolioId,

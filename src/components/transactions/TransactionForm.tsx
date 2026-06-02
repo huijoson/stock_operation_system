@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import StockSearchBar from '@/components/stocks/StockSearchBar'
+import { getYesterdayDateString } from '@/lib/utils/date-filters'
 
 interface TransactionFormProps {
   portfolioId: string
@@ -19,7 +20,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
   const [type, setType] = useState<'BUY' | 'SELL'>('BUY')
   const [quantity, setQuantity] = useState('')
   const [price, setPrice] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+  const [date, setDate] = useState(getYesterdayDateString())
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [useSearch, setUseSearch] = useState(true)
@@ -62,7 +63,7 @@ export default function TransactionForm({ portfolioId, onSubmit, onCancel }: Tra
       setStockName('')
       setQuantity('')
       setPrice('')
-      setDate(new Date().toISOString().split('T')[0])
+      setDate(getYesterdayDateString())
     } catch (err: any) {
       setError(err.message)
     } finally {
