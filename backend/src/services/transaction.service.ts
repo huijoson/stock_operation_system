@@ -2,8 +2,8 @@ import { PrismaClient, Transaction, Holding } from '../lib/prisma-client'
 import prisma from '../lib/prisma'
 import Decimal from 'decimal.js'
 import { parseCSV, CSVFormat } from '../lib/csv/csv-parser'
-import { taxLotService } from './tax-lot.service'
-import { realizedPLService } from './realized-pl.service'
+import { TaxLotService } from './tax-lot.service'
+import { RealizedPLService } from './realized-pl.service'
 
 /**
  * Transaction input type
@@ -142,8 +142,9 @@ export class TransactionService {
         },
       })
 
-      // Create TaxLot for this BUY transaction (T025)
-      await taxLotService.createFromTransaction(createdTransaction)
+      // Create TaxLot using the same prisma client (transactional or global)
+      const txTaxLotService = new TaxLotService(this.prisma as any)
+      await txTaxLotService.createFromTransaction(createdTransaction)
 
       return createdTransaction
     } else if (type === 'SELL') {
@@ -160,6 +161,10 @@ export class TransactionService {
           `Cannot sell ${quantity.toString()} shares: only ${currentQuantity.toString()} available`
         )
       }
+
+      // Backfill missing TaxLots before Holdings is reduced, so the gap calculation is accurate
+      const preSellTaxLotService = new TaxLotService(this.prisma as any)
+      await preSellTaxLotService.backfillForSymbol(portfolioId, symbol)
 
       const newQuantity = currentQuantity.minus(quantity)
 
@@ -200,14 +205,38 @@ export class TransactionService {
         },
       })
 
-      // Calculate and create RealizedPL records for this SELL transaction (T026)
-      await realizedPLService.calculateRealizedPL(createdTransaction)
+      // Calculate and create RealizedPL records using the same prisma client (transactional or global)
+      const txTaxLotService = new TaxLotService(this.prisma as any)
+      const txRealizedPLService = new RealizedPLService(this.prisma as any, txTaxLotService)
+      await txRealizedPLService.calculateRealizedPL(createdTransaction)
 
       return createdTransaction
     }
 
     // This should not be reached due to validation
     throw new Error('Invalid transaction type')
+  }
+
+  async createTransactionsBulk(
+    portfolioId: string,
+    transactions: Omit<TransactionInput, 'portfolioId'>[]
+  ): Promise<Transaction[]> {
+    if (!transactions || transactions.length === 0) {
+      throw new Error('transactions array must not be empty')
+    }
+
+    const inputs: TransactionInput[] = transactions.map((t) => ({ ...t, portfolioId }))
+    inputs.forEach((t) => this.validateTransaction(t))
+
+    const results: Transaction[] = []
+    await this.prisma.$transaction(async (tx) => {
+      const svc = new TransactionService(tx as unknown as PrismaClient)
+      for (const input of inputs) {
+        const created = await svc.createTransaction(input)
+        results.push(created)
+      }
+    })
+    return results
   }
 
   /**

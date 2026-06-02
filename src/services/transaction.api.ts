@@ -16,6 +16,20 @@ export const TransactionApi = {
     return data
   },
 
+  async createBulk<T = unknown>(payload: {
+    portfolioId: string
+    transactions: Array<{
+      symbol: string
+      type: 'BUY' | 'SELL'
+      quantity: number
+      price: number
+      date: string
+    }>
+  }): Promise<T> {
+    const { data } = await apiClient.post<T>('/transactions/bulk', payload)
+    return data
+  },
+
   async exportCsv(portfolioId: string): Promise<Blob> {
     const { data } = await apiClient.get<Blob>('/transactions/export', {
       params: { portfolioId },

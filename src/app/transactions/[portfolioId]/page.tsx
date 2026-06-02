@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import TransactionTable from '@/components/transactions/TransactionTable'
 import TransactionForm from '@/components/transactions/TransactionForm'
+import BulkTransactionForm from '@/components/transactions/BulkTransactionForm'
 import ImportDialog from '@/components/transactions/ImportDialog'
 import ExportButton from '@/components/transactions/ExportButton'
 import EditTransactionDialog from '@/components/transactions/EditTransactionDialog'
@@ -29,6 +30,7 @@ export default function TransactionListPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [formMode, setFormMode] = useState<'single' | 'bulk'>('single')
   const [showImportDialog, setShowImportDialog] = useState(false)
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
   const [symbolFilter, setSymbolFilter] = useState<string>('')
@@ -159,10 +161,16 @@ export default function TransactionListPage() {
               匯入 CSV
             </button>
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => { setFormMode('single'); setShowForm(!showForm || formMode !== 'single') }}
               className="flex-1 sm:flex-none bg-blue-600 dark:bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition text-sm sm:text-base"
             >
-              {showForm ? '取消' : '新增交易'}
+              {showForm && formMode === 'single' ? '取消' : '新增交易'}
+            </button>
+            <button
+              onClick={() => { setFormMode('bulk'); setShowForm(!showForm || formMode !== 'bulk') }}
+              className="flex-1 sm:flex-none bg-blue-500 dark:bg-blue-400 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-500 transition text-sm sm:text-base"
+            >
+              {showForm && formMode === 'bulk' ? '取消' : '批次新增'}
             </button>
           </div>
         </div>
@@ -173,11 +181,21 @@ export default function TransactionListPage() {
           </div>
         )}
 
-        {showForm && (
+        {showForm && formMode === 'single' && (
           <div className="mb-6 sm:mb-8">
             <TransactionForm
               portfolioId={portfolioId}
               onSubmit={handleCreate}
+              onCancel={() => setShowForm(false)}
+            />
+          </div>
+        )}
+
+        {showForm && formMode === 'bulk' && (
+          <div className="mb-6 sm:mb-8">
+            <BulkTransactionForm
+              portfolioId={portfolioId}
+              onSuccess={() => { fetchTransactions(); setShowForm(false) }}
               onCancel={() => setShowForm(false)}
             />
           </div>
