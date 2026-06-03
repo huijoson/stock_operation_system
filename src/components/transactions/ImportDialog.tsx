@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { TransactionApi } from '@/services/transaction.api'
+import { csvFormatLabel } from '@/lib/utils/csv-format-labels'
 
 interface ImportDialogProps {
   portfolioId: string
@@ -18,6 +19,7 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
     errorCount: number
     skippedCount: number
     errors: Array<{ row: number; message: string }>
+    format?: string
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -45,6 +47,7 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
         errorCount: number
         skippedCount: number
         errors: Array<{ row: number; message: string }>
+        format?: string
       }>(file, format, portfolioId)
 
       setResult(data)
@@ -139,6 +142,7 @@ export default function ImportDialog({ portfolioId, onClose, onSuccess }: Import
             <div className="space-y-3">
               <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded">
                 <p className="font-semibold">匯入完成</p>
+                {result.format && <p>偵測格式: {csvFormatLabel(result.format)}</p>}
                 <p>成功: {result.successCount} 筆</p>
                 <p>跳過: {result.skippedCount} 筆</p>
                 <p>錯誤: {result.errorCount} 筆</p>

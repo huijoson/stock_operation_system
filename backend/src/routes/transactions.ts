@@ -266,7 +266,7 @@ router.post('/import', async (req: Request, res: Response) => {
     const transactionService = new TransactionService(prisma)
     const result = await transactionService.importFromCSV(portfolioId, csvContent, format)
 
-    return res.status(200).json(result)
+    return res.status(200).json({ ...result, format })
   } catch (error: unknown) {
     console.error('CSV import error:', error)
     return res.status(500).json({
