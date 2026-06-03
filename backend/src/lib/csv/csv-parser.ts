@@ -10,6 +10,7 @@ export interface ParsedTransaction {
   type: 'BUY' | 'SELL'
   quantity: Decimal
   price: Decimal
+  externalId?: string
 }
 
 /**
@@ -18,12 +19,13 @@ export interface ParsedTransaction {
 export interface CSVParseResult {
   transactions: ParsedTransaction[]
   errors: Array<{ row: number; message: string }>
+  skippedCount: number
 }
 
 /**
  * CSV format type
  */
-export type CSVFormat = 'schwab' | 'firstrade'
+export type CSVFormat = 'schwab' | 'firstrade' | 'schwab-zh' | 'firstrade-zh'
 
 /**
  * Parse Schwab format CSV
@@ -128,16 +130,71 @@ function parseFirstradeRow(row: any, rowIndex: number): ParsedTransaction | { er
   }
 }
 
+/** 解析 YYYY/M/D 為 UTC 當日午夜，避免時區位移 */
+function parseSlashDateUTC(s: string): Date | null {
+  const m = String(s).trim().match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/)
+  if (!m) return null
+  return new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
+}
+
+/**
+ * Parse Schwab 中文成交明細
+ * 表頭: 日期,交易類別,數量,說明,代號,賬戶類別,價格,金額
+ */
+function parseSchwabZhRow(row: any): ParsedTransaction | { error: string } {
+  try {
+    const dateStr = row['日期']
+    const action = row['交易類別']
+    const quantityStr = row['數量']
+    const symbol = row['代號']
+    const priceStr = row['價格']
+
+    if (!dateStr || !action || quantityStr == null || quantityStr === '' || !symbol || !priceStr) {
+      return { error: 'Missing required fields' }
+    }
+
+    const date = parseSlashDateUTC(dateStr)
+    if (!date || isNaN(date.getTime())) {
+      return { error: 'Invalid date format' }
+    }
+
+    const type = action === '買進' ? 'BUY' : action === '賣出' ? 'SELL' : null
+    if (!type) {
+      return { error: 'Invalid action type' }
+    }
+
+    const quantity = new Decimal(String(quantityStr).replace(/,/g, '')).abs()
+    if (quantity.lessThanOrEqualTo(0) || quantity.isNaN()) {
+      return { error: 'Invalid quantity' }
+    }
+
+    const price = new Decimal(String(priceStr).replace(/,/g, ''))
+    if (price.lessThanOrEqualTo(0) || price.isNaN()) {
+      return { error: 'Invalid price' }
+    }
+
+    return { date, symbol: String(symbol).trim(), type, quantity, price }
+  } catch (error) {
+    return { error: `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}` }
+  }
+}
+
+/** Firstrade 中文訂單狀態 parser（於後續任務實作） */
+function parseFirstradeZhRow(row: any): ParsedTransaction | { error: string } | { skip: string } {
+  return { error: 'not implemented' }
+}
+
 /**
  * Parse CSV content
- * 
+ *
  * @param csvContent - CSV file content as string
- * @param format - CSV format (schwab or firstrade)
- * @returns Parse result with transactions and errors
+ * @param format - CSV format
+ * @returns Parse result with transactions, errors and skipped count
  */
 export function parseCSV(csvContent: string, format: CSVFormat): CSVParseResult {
   const transactions: ParsedTransaction[] = []
   const errors: Array<{ row: number; message: string }> = []
+  let skippedCount = 0
 
   // Parse CSV
   const parseResult = Papa.parse(csvContent, {
@@ -150,20 +207,26 @@ export function parseCSV(csvContent: string, format: CSVFormat): CSVParseResult 
   parseResult.data.forEach((row: any, index: number) => {
     const rowNumber = index + 2 // +2 because index is 0-based and we skip header
 
-    let result: ParsedTransaction | { error: string }
-    
+    let result: ParsedTransaction | { error: string } | { skip: string }
+
     if (format === 'schwab') {
       result = parseSchwabRow(row, rowNumber)
-    } else {
+    } else if (format === 'firstrade') {
       result = parseFirstradeRow(row, rowNumber)
+    } else if (format === 'schwab-zh') {
+      result = parseSchwabZhRow(row)
+    } else {
+      result = parseFirstradeZhRow(row)
     }
 
     if ('error' in result) {
       errors.push({ row: rowNumber, message: result.error })
+    } else if ('skip' in result) {
+      skippedCount++
     } else {
       transactions.push(result)
     }
   })
 
-  return { transactions, errors }
+  return { transactions, errors, skippedCount }
 }
