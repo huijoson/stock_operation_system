@@ -27,49 +27,68 @@ export interface CSVParseResult {
  */
 export type CSVFormat = 'schwab' | 'firstrade' | 'schwab-zh' | 'firstrade-zh'
 
-/**
- * Parse Schwab format CSV
- * Format: Date,Action,Symbol,Quantity,Price
- * Date format: YYYY-MM-DD
- * Action: Buy or Sell
- */
-function parseSchwabRow(row: any, rowIndex: number): ParsedTransaction | { error: string } {
-  try {
-    const { Date: dateStr, Action, Symbol, Quantity, Price } = row
+/** 去除金額/數量字串中的 $、千分位逗號與空白，供 Decimal 解析 */
+function cleanNumericString(s: unknown): string {
+  return String(s ?? '').replace(/[$,\s]/g, '')
+}
 
-    // Validate required fields
-    if (!dateStr || !Action || !Symbol || !Quantity || !Price) {
+/** 解析 Schwab 日期（MM/DD/YYYY 或 YYYY-MM-DD / YYYY/MM/DD）為 UTC 當日，避免時區位移 */
+function parseSchwabDateUTC(s: unknown): Date | null {
+  const str = String(s ?? '').trim()
+  let m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+  if (m) return new Date(Date.UTC(Number(m[3]), Number(m[1]) - 1, Number(m[2])))
+  m = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/)
+  if (m) return new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
+  const d = new Date(str)
+  return isNaN(d.getTime()) ? null : d
+}
+
+/**
+ * Parse Schwab format CSV (real "Transactions" export)
+ * Header: Date,Action,Symbol,Description,Quantity,Price,Fees & Comm,Amount
+ *   - Price/Amount may carry "$" and thousands separators
+ *   - Non-trade rows (Margin Interest, dividends, journals, …) are skipped
+ * Also backward-compatible with the simplified Date,Action,Symbol,Quantity,Price form.
+ */
+function parseSchwabRow(row: any, rowIndex: number): ParsedTransaction | { error: string } | { skip: string } {
+  try {
+    const dateStr = row['Date']
+    const action = row['Action']
+    const symbol = row['Symbol']
+    const quantityStr = row['Quantity']
+    const priceStr = row['Price']
+
+    // Determine trade type first. Schwab exports interleave non-trade rows
+    // (Margin Interest, Cash Dividend, Journal, …) — skip anything that is not Buy/Sell.
+    const normalizedAction = String(action ?? '').trim().toLowerCase()
+    const type = normalizedAction === 'buy' ? 'BUY' : normalizedAction === 'sell' ? 'SELL' : null
+    if (!type) {
+      return { skip: `non-trade action: ${action || 'empty'}` }
+    }
+
+    // Trade rows require these fields
+    if (!dateStr || !symbol || !quantityStr || !priceStr) {
       return { error: 'Missing required fields' }
     }
 
-    // Parse date (YYYY-MM-DD)
-    const date = new Date(dateStr)
-    if (isNaN(date.getTime())) {
+    const date = parseSchwabDateUTC(dateStr)
+    if (!date || isNaN(date.getTime())) {
       return { error: 'Invalid date format' }
     }
 
-    // Parse action
-    const type = Action.toLowerCase() === 'buy' ? 'BUY' : Action.toLowerCase() === 'sell' ? 'SELL' : null
-    if (!type) {
-      return { error: 'Invalid action type' }
-    }
-
-
-    // Parse quantity
-    const quantity = new Decimal(Quantity)
+    const quantity = new Decimal(cleanNumericString(quantityStr)).abs()
     if (quantity.lessThanOrEqualTo(0) || quantity.isNaN()) {
       return { error: 'Invalid quantity' }
     }
 
-    // Parse price
-    const price = new Decimal(Price)
+    const price = new Decimal(cleanNumericString(priceStr))
     if (price.lessThanOrEqualTo(0) || price.isNaN()) {
       return { error: 'Invalid price' }
     }
 
     return {
       date,
-      symbol: Symbol.trim(),
+      symbol: String(symbol).trim(),
       type,
       quantity,
       price,
@@ -298,7 +317,7 @@ export function detectCSVFormat(csvContent: string): CSVFormat | null {
   if (firstLine.includes('訂單號碼') && firstLine.includes('狀態')) return 'firstrade-zh'
   if (firstLine.includes('交易類別') && firstLine.includes('賬戶類別')) return 'schwab-zh'
 
-  const cols = firstLine.split(',').map((c) => c.trim().toLowerCase())
+  const cols = firstLine.split(',').map((c) => c.trim().replace(/^"|"$/g, '').toLowerCase())
   const actionIdx = cols.indexOf('action')
   const symbolIdx = cols.indexOf('symbol')
   if (actionIdx !== -1 && symbolIdx !== -1) {
