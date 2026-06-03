@@ -291,3 +291,18 @@ export function parseCSV(csvContent: string, format: CSVFormat): CSVParseResult 
 
   return { transactions, errors, skippedCount }
 }
+
+/** 依 CSV 表頭自動偵測格式；無法判斷回傳 null */
+export function detectCSVFormat(csvContent: string): CSVFormat | null {
+  const firstLine = csvContent.split(/\r?\n/)[0] || ''
+  if (firstLine.includes('訂單號碼') && firstLine.includes('狀態')) return 'firstrade-zh'
+  if (firstLine.includes('交易類別') && firstLine.includes('賬戶類別')) return 'schwab-zh'
+
+  const cols = firstLine.split(',').map((c) => c.trim().toLowerCase())
+  const actionIdx = cols.indexOf('action')
+  const symbolIdx = cols.indexOf('symbol')
+  if (actionIdx !== -1 && symbolIdx !== -1) {
+    return actionIdx < symbolIdx ? 'schwab' : 'firstrade'
+  }
+  return null
+}

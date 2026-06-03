@@ -1,4 +1,4 @@
-import { parseCSV } from '../lib/csv/csv-parser'
+import { parseCSV, detectCSVFormat } from '../lib/csv/csv-parser'
 
 const SCHWAB_ZH = `"日期","交易類別","數量","說明","代號","賬戶類別","價格","金額"
 "2026/6/2","買進","15","Marvell Technology Inc.","MRVL","融資","285.202","-4,278.03"
@@ -46,5 +46,21 @@ describe('parseCSV firstrade-zh', () => {
     expect(transactions[0].quantity.toString()).toBe('20')
     expect(transactions[0].price.toString()).toBe('422.55')
     expect(transactions[0].date.toISOString()).toBe('2026-06-02T00:00:00.000Z')
+  })
+})
+
+describe('detectCSVFormat', () => {
+  it('依中文表頭偵測 zh 格式', () => {
+    expect(detectCSVFormat(SCHWAB_ZH)).toBe('schwab-zh')
+    expect(detectCSVFormat(FIRSTRADE_ZH)).toBe('firstrade-zh')
+  })
+
+  it('依英文表頭欄位順序偵測 schwab/firstrade', () => {
+    expect(detectCSVFormat('Date,Action,Symbol,Quantity,Price\n2024-01-15,Buy,AAPL,1,1')).toBe('schwab')
+    expect(detectCSVFormat('Date,Symbol,Action,Quantity,Price\n01/15/2024,AAPL,Bought,1,1')).toBe('firstrade')
+  })
+
+  it('無法辨識回傳 null', () => {
+    expect(detectCSVFormat('foo,bar\n1,2')).toBeNull()
   })
 })
