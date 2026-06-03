@@ -39,17 +39,15 @@ export const TransactionApi = {
   },
 
   async importCsv<T = unknown>(file: File, format: string, portfolioId?: string): Promise<T> {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('format', format)
-    if (portfolioId) {
-      formData.append('portfolioId', portfolioId)
-    }
+    // Read the file on the client and send its text in a JSON body. The backend
+    // /transactions/import handler reads `req.body.file` as a string (no multer
+    // dependency required).
+    const fileContent = await file.text()
 
-    const { data } = await apiClient.post<T>('/transactions/import', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    const { data } = await apiClient.post<T>('/transactions/import', {
+      file: fileContent,
+      format,
+      portfolioId,
     })
 
     return data
