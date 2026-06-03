@@ -15,6 +15,7 @@ export interface TransactionInput {
   quantity: Decimal
   price: Decimal
   date: Date
+  externalId?: string
 }
 
 /**
@@ -82,7 +83,7 @@ export class TransactionService {
     // Validate transaction parameters
     this.validateTransaction(transaction)
 
-    const { portfolioId, symbol, type, quantity, price, date } = transaction
+    const { portfolioId, symbol, type, quantity, price, date, externalId } = transaction
 
     // Get existing holding
     const existingHolding = await this.prisma.holding.findUnique({
@@ -139,6 +140,7 @@ export class TransactionService {
           quantity: quantity.toFixed(8),
           price: price.toFixed(8),
           date,
+          externalId,
         },
       })
 
@@ -202,6 +204,7 @@ export class TransactionService {
           quantity: quantity.toFixed(8),
           price: price.toFixed(8),
           date,
+          externalId,
         },
       })
 
@@ -490,11 +493,13 @@ export class TransactionService {
    */
   async importFromCSV(portfolioId: string, csvContent: string, format: CSVFormat): Promise<ImportResult> {
     // Parse CSV
-    const { transactions: parsedTransactions, errors: parseErrors } = parseCSV(csvContent, format)
+    const { transactions: parsedTransactions, errors: parseErrors, skippedCount: parseSkipped } =
+      parseCSV(csvContent, format)
 
     let successCount = 0
-    let skippedCount = 0
+    let skippedCount = parseSkipped
     const errors: Array<{ row: number; message: string }> = [...parseErrors]
+    const seenExternalIds = new Set<string>()
 
     // Get existing transactions to check for duplicates
     const existingTransactions = await this.prisma.transaction.findMany({
@@ -504,19 +509,31 @@ export class TransactionService {
     // Process each parsed transaction
     for (const parsedTx of parsedTransactions) {
       try {
-        // Check for duplicate
-        const isDuplicate = existingTransactions.some(existing => {
-          const existingQty = new Decimal(existing.quantity.toString())
-          const existingPrice = new Decimal(existing.price.toString())
-          
-          return (
-            existing.symbol === parsedTx.symbol &&
-            existing.type === parsedTx.type &&
-            existingQty.equals(parsedTx.quantity) &&
-            existingPrice.equals(parsedTx.price) &&
-            existing.date.toISOString().split('T')[0] === parsedTx.date.toISOString().split('T')[0]
-          )
-        })
+        // Check for duplicate: externalId is authoritative, else composite match
+        let isDuplicate: boolean
+        if (parsedTx.externalId) {
+          if (seenExternalIds.has(parsedTx.externalId)) {
+            isDuplicate = true
+          } else {
+            isDuplicate = existingTransactions.some(
+              (existing) => existing.externalId === parsedTx.externalId
+            )
+          }
+          seenExternalIds.add(parsedTx.externalId)
+        } else {
+          isDuplicate = existingTransactions.some((existing) => {
+            const existingQty = new Decimal(existing.quantity.toString())
+            const existingPrice = new Decimal(existing.price.toString())
+
+            return (
+              existing.symbol === parsedTx.symbol &&
+              existing.type === parsedTx.type &&
+              existingQty.equals(parsedTx.quantity) &&
+              existingPrice.equals(parsedTx.price) &&
+              existing.date.toISOString().split('T')[0] === parsedTx.date.toISOString().split('T')[0]
+            )
+          })
+        }
 
         if (isDuplicate) {
           skippedCount++
@@ -531,6 +548,7 @@ export class TransactionService {
           quantity: parsedTx.quantity,
           price: parsedTx.price,
           date: parsedTx.date,
+          externalId: parsedTx.externalId,
         })
 
         successCount++
