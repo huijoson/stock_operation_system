@@ -179,9 +179,70 @@ function parseSchwabZhRow(row: any): ParsedTransaction | { error: string } {
   }
 }
 
-/** Firstrade 中文訂單狀態 parser（於後續任務實作） */
+/** 解析 "1:00 PM 06/02/2026" 中的 MM/DD/YYYY 為 UTC 當日（不做時區換算，僅取日） */
+function parseFirstradeDateTimeUTC(s: string): Date | null {
+  const m = String(s).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/)
+  if (!m) return null
+  return new Date(Date.UTC(Number(m[3]), Number(m[1]) - 1, Number(m[2])))
+}
+
+/**
+ * Parse Firstrade 中文訂單狀態
+ * 表頭: 代號,策略名稱,證券名稱,狀態,行動,數量|面值,價格,時間限制,成交價格,
+ *       成交價是平均值,時間和日期（美東時間）,最新活動(美東時間),資本利得再投資,訂單號碼
+ * 僅匯入「已成交」；其餘狀態與無成交價者視為 skip。
+ */
 function parseFirstradeZhRow(row: any): ParsedTransaction | { error: string } | { skip: string } {
-  return { error: 'not implemented' }
+  try {
+    const status = row['狀態']
+    if (status !== '已成交') {
+      return { skip: `status=${status ?? 'unknown'}` }
+    }
+
+    const symbol = row['代號']
+    const action = row['行動']
+    const qtyRaw = row['數量|面值']
+    const execPrice = row['成交價格']
+    const dateTime = row['時間和日期（美東時間）']
+
+    if (!symbol || !action || !qtyRaw || !dateTime) {
+      return { error: 'Missing required fields' }
+    }
+
+    const type = action === '買入' ? 'BUY' : action === '賣出' ? 'SELL' : null
+    if (!type) {
+      return { error: 'Invalid action type' }
+    }
+
+    const qtyMatch = String(qtyRaw).match(/[\d.,]+/)
+    if (!qtyMatch) {
+      return { error: 'Invalid quantity' }
+    }
+    const quantity = new Decimal(qtyMatch[0].replace(/,/g, '')).abs()
+    if (quantity.lessThanOrEqualTo(0) || quantity.isNaN()) {
+      return { error: 'Invalid quantity' }
+    }
+
+    const priceClean = String(execPrice ?? '').replace(/[$,\s]/g, '')
+    if (!priceClean || priceClean === '-') {
+      return { skip: 'no execution price' }
+    }
+    const price = new Decimal(priceClean)
+    if (price.lessThanOrEqualTo(0) || price.isNaN()) {
+      return { error: 'Invalid price' }
+    }
+
+    const date = parseFirstradeDateTimeUTC(dateTime)
+    if (!date || isNaN(date.getTime())) {
+      return { error: 'Invalid date format' }
+    }
+
+    const orderId = row['訂單號碼'] ? String(row['訂單號碼']).trim() : undefined
+
+    return { date, symbol: String(symbol).trim(), type, quantity, price, externalId: orderId }
+  } catch (error) {
+    return { error: `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}` }
+  }
 }
 
 /**

@@ -27,3 +27,24 @@ describe('parseCSV schwab-zh', () => {
     expect(errors).toHaveLength(1)
   })
 })
+
+const FIRSTRADE_ZH = `代號,策略名稱,證券名稱,狀態,行動,數量|面值,價格,時間限制,成交價格,成交價是平均值,時間和日期（美東時間）,最新活動(美東時間),資本利得再投資,訂單號碼
+TSLA,,TESLA INC,已成交,買入,20 股數,市價,當天,$422.55,否,1:00 PM 06/02/2026,1:00 PM 06/02/2026,,1006575884073
+NVDA,,NVIDIA CORP,已取消,買入,50 股數,限價 $228.00,GTC,-,否,7:57 AM 06/02/2026,8:04 AM 06/02/2026,,1006563842083`
+
+describe('parseCSV firstrade-zh', () => {
+  it('匯入已成交、跳過已取消、解析數量/價格/日期/訂單號碼', () => {
+    const { transactions, errors, skippedCount } = parseCSV(FIRSTRADE_ZH, 'firstrade-zh')
+    expect(errors).toHaveLength(0)
+    expect(skippedCount).toBe(1)
+    expect(transactions).toHaveLength(1)
+    expect(transactions[0]).toMatchObject({
+      symbol: 'TSLA',
+      type: 'BUY',
+      externalId: '1006575884073',
+    })
+    expect(transactions[0].quantity.toString()).toBe('20')
+    expect(transactions[0].price.toString()).toBe('422.55')
+    expect(transactions[0].date.toISOString()).toBe('2026-06-02T00:00:00.000Z')
+  })
+})
