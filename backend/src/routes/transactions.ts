@@ -3,6 +3,7 @@ import Decimal from 'decimal.js'
 import prisma from '../lib/prisma'
 import { getPathParam } from './request-utils'
 import { TransactionService } from '../services/transaction.service'
+import { detectCSVFormat, CSVFormat } from '../lib/csv/csv-parser'
 
 const router = Router()
 
@@ -236,7 +237,7 @@ router.post('/import', async (req: Request, res: Response) => {
   try {
     const file = req.body?.file as { text: () => Promise<string> } | string | undefined
     const portfolioId = req.body?.portfolioId as string
-    const format = req.body?.format as 'schwab' | 'firstrade'
+    const requestedFormat = (req.body?.format as string) || 'auto'
 
     if (!file) {
       return res.status(400).json({ error: 'No file provided' })
@@ -246,11 +247,21 @@ router.post('/import', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Portfolio ID is required' })
     }
 
-    if (!format || (format !== 'schwab' && format !== 'firstrade')) {
-      return res.status(400).json({ error: 'Invalid format. Must be "schwab" or "firstrade"' })
-    }
-
     const csvContent = typeof file === 'string' ? file : await file.text()
+
+    const validFormats: CSVFormat[] = ['schwab', 'firstrade', 'schwab-zh', 'firstrade-zh']
+    let format: CSVFormat
+    if (requestedFormat === 'auto') {
+      const detected = detectCSVFormat(csvContent)
+      if (!detected) {
+        return res.status(400).json({ error: 'Unable to auto-detect CSV format' })
+      }
+      format = detected
+    } else if (validFormats.includes(requestedFormat as CSVFormat)) {
+      format = requestedFormat as CSVFormat
+    } else {
+      return res.status(400).json({ error: 'Invalid format' })
+    }
 
     const transactionService = new TransactionService(prisma)
     const result = await transactionService.importFromCSV(portfolioId, csvContent, format)
