@@ -66,10 +66,12 @@ model Transaction {
   quantity    Decimal      @db.Decimal(18, 8)
   price       Decimal      @db.Decimal(18, 8)
   date        DateTime
+  externalId  String?
   createdAt   DateTime     @default(now())
   taxLot      TaxLot?
   realizedPLs RealizedPL[]
 
+  @@unique([portfolioId, externalId])
   @@index([portfolioId, date])
 }
 
