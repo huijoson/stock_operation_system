@@ -16,6 +16,8 @@
     "test:property": "jest --testPathPattern=property",
     "test:coverage": "jest --coverage",
     "db:migrate": "node scripts/db-migrate.mjs",
+    "db:push": "node scripts/db-push.mjs",
+    "db:push:accept": "node scripts/db-push.mjs --accept-data-loss",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "backend:dev": "npx prisma generate --no-hints && cd backend && ts-node --transpile-only --project tsconfig.json src/server.ts",
