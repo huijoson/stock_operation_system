@@ -79,3 +79,5 @@ backend/src/generated/
 
 # secrets / local auth captures (never commit)
 auth.json
+.spectra/
+openspec/.vector-search.db*
