@@ -21,6 +21,7 @@ export function getRustIndicatorsNativePath(): string {
 }
 
 export function loadRustIndicatorsNative(
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- dynamic require of native addon
   loader: (targetPath: string) => unknown = (targetPath) => require(targetPath)
 ): NativeAddonLoadResult {
   const mode = getRustIndicatorsMode()

@@ -8,7 +8,7 @@ async function validateInsights() {
   console.log('開始驗證資料完整性...\n')
   
   let errors = 0
-  let warnings = 0
+  const warnings = 0
   
   // 1. Validate all BUY transactions have TaxLots
   console.log('1. 檢查 BUY 交易的 TaxLot...')

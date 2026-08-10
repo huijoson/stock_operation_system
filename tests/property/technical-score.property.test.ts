@@ -1276,7 +1276,7 @@ describe('TechnicalScore Service - Property-Based Tests', () => {
             fc.constant('volatile_decline')
           ),
           (startPrice, length, patternType) => {
-            let prices: number[] = [startPrice]
+            const prices: number[] = [startPrice]
             
             if (patternType === 'steep_decline') {
               // Steep continuous decline

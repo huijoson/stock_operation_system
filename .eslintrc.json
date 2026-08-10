@@ -17,5 +17,19 @@
     "@typescript-eslint/no-explicit-any": "warn",
     "no-unused-vars": "off"
   },
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off"
+      }
+    },
+    {
+      "files": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off"
+      }
+    }
+  ],
   "ignorePatterns": ["dist", "node_modules", "backend/next-api-legacy"]
 }

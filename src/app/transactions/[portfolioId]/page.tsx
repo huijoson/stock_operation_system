@@ -64,17 +64,13 @@ export default function TransactionListPage() {
     price: number
     date: string
   }) => {
-    try {
-      await TransactionApi.create({
-        portfolioId,
-        ...transaction,
-      })
+    await TransactionApi.create({
+      portfolioId,
+      ...transaction,
+    })
 
-      await fetchTransactions()
-      setShowForm(false)
-    } catch (err: any) {
-      throw err
-    }
+    await fetchTransactions()
+    setShowForm(false)
   }
 
   const handleEdit = (transaction: Transaction) => {
@@ -87,14 +83,10 @@ export default function TransactionListPage() {
     price: number
     date: string
   }) => {
-    try {
-      await TransactionApi.update(id, data)
+    await TransactionApi.update(id, data)
 
-      await fetchTransactions()
-      setEditingTransaction(null)
-    } catch (err: any) {
-      throw err
-    }
+    await fetchTransactions()
+    setEditingTransaction(null)
   }
 
   const handleDelete = async (id: string) => {

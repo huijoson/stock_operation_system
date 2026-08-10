@@ -67,7 +67,7 @@ describe('BacktestResultsPage', () => {
   })
 
   it('should display strategy name when loaded', async () => {
-    ;(StrategyApi.getById as jest.Mock).mockResolvedValueOnce({
+    (StrategyApi.getById as jest.Mock).mockResolvedValueOnce({
       id: 'strategy-1',
       name: 'Test Strategy',
       conditions: [],

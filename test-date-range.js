@@ -10,8 +10,10 @@ function getDateRange(period) {
       startDate = new Date(now.getFullYear(), now.getMonth(), 1)
       break
     case 'quarter':
-      const currentQuarter = Math.floor(now.getMonth() / 3)
-      startDate = new Date(now.getFullYear(), currentQuarter * 3, 1)
+      {
+        const currentQuarter = Math.floor(now.getMonth() / 3)
+        startDate = new Date(now.getFullYear(), currentQuarter * 3, 1)
+      }
       break
     case 'year':
       startDate = new Date(now.getFullYear(), 0, 1)

@@ -342,8 +342,10 @@ export class RealizedPLService {
         break
       case 'quarter':
         // Start of current quarter in UTC
-        const currentQuarter = Math.floor(now.getUTCMonth() / 3)
-        startDate = new Date(Date.UTC(now.getUTCFullYear(), currentQuarter * 3, 1, 0, 0, 0, 0))
+        {
+          const currentQuarter = Math.floor(now.getUTCMonth() / 3)
+          startDate = new Date(Date.UTC(now.getUTCFullYear(), currentQuarter * 3, 1, 0, 0, 0, 0))
+        }
         break
       case 'year':
         // Start of current year in UTC
@@ -375,8 +377,10 @@ export class RealizedPLService {
         startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
         break
       case 'quarter':
-        const currentQuarter = Math.floor(now.getUTCMonth() / 3)
-        startDate = new Date(Date.UTC(now.getUTCFullYear(), currentQuarter * 3, 1, 0, 0, 0, 0))
+        {
+          const currentQuarter = Math.floor(now.getUTCMonth() / 3)
+          startDate = new Date(Date.UTC(now.getUTCFullYear(), currentQuarter * 3, 1, 0, 0, 0, 0))
+        }
         break
       case 'year':
         startDate = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0))

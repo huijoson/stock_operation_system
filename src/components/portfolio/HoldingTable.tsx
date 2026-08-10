@@ -109,7 +109,6 @@ export default function HoldingTable({ holdings, currentPrices = {} }: HoldingTa
       }
       return sortDirection === 'asc' ? cmp : -cmp
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [holdings, currentPrices, sortKey, sortDirection])
 
   const handleSort = (key: SortKey): void => {
