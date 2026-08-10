@@ -1,3 +1,8 @@
+// The prisma singleton (../lib/prisma) calls createPrismaClient() at module load,
+// which throws without DATABASE_URL. Mock it globally so tests that don't need the
+// real client don't fail on import. Tests that exercise the client mock it themselves.
+jest.mock('../lib/prisma', () => ({}))
+
 jest.mock('../lib/prisma-client', () => {
   const createDelegate = () => ({
     findUnique: jest.fn(),
