@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+      # Root npm ci runs postinstall (prisma generate) which produces the
+      # gitignored generated client under backend/src/generated/.
+      - run: npm ci
       - run: cd backend && npm ci
       - run: cd backend && npm run build
       - name: Upload backend artifacts
