@@ -1,22 +1,6 @@
 import * as fc from 'fast-check'
 import { PrismaClient, User, Session } from '../../lib/prisma-client'
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { beforeEach } from 'node:test'
 
 /**
  * Property-based tests for AuthService

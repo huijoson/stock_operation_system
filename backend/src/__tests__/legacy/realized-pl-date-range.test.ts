@@ -1,9 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals'
 import { realizedPLService } from '@/services/realized-pl.service'
-import { PrismaClient } from '../../lib/prisma-client'
+import { createPrismaClient } from '../../lib/prisma-factory'
 import Decimal from 'decimal.js'
 
-const prisma = new PrismaClient()
+// These tests require a real PostgreSQL database. Skip when no DATABASE_URL is
+// set (e.g. local runs without a DB); CI provides a Postgres service.
+const hasDb = Boolean(process.env.DATABASE_URL)
+const describeDb = hasDb ? describe : describe.skip
+const prisma = hasDb ? createPrismaClient() : (null as unknown as ReturnType<typeof createPrismaClient>)
 
 // Test data setup
 async function setupTestData() {
@@ -11,7 +15,7 @@ async function setupTestData() {
   const user = await prisma.user.create({
     data: {
       email: 'test-date-range@example.com',
-      name: 'Test User'
+      password: 'test-password'
     }
   })
 
@@ -179,7 +183,7 @@ async function cleanupTestData() {
   })
 }
 
-describe('Realized P/L Service - Date Range and Short/Long Term', () => {
+describeDb('Realized P/L Service - Date Range and Short/Long Term', () => {
   let testUser: any
   let testPortfolio: any
 

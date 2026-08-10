@@ -1,9 +1,16 @@
 // The prisma singleton (../lib/prisma) calls createPrismaClient() at module load,
-// which throws without DATABASE_URL. Mock it globally so tests that don't need the
-// real client don't fail on import. Tests that exercise the client mock it themselves.
-jest.mock('../lib/prisma', () => ({}))
+// which throws without DATABASE_URL. When no DATABASE_URL is set (e.g. local runs
+// without a DB), mock the client so tests that don't need the real client don't
+// fail on import. When DATABASE_URL IS set (e.g. CI with a Postgres service), the
+// factories fall through to the real modules so DB-backed property/integration
+// tests can run.
+const hasDatabaseUrl = Boolean(process.env.DATABASE_URL)
 
 jest.mock('../lib/prisma-client', () => {
+  if (hasDatabaseUrl) {
+    return jest.requireActual('../lib/prisma-client')
+  }
+
   const createDelegate = () => ({
     findUnique: jest.fn(),
     findMany: jest.fn(),
@@ -56,16 +63,44 @@ jest.mock('../lib/prisma-client', () => {
   }
 })
 
-const createRouterMock = () => {
-  const express = require('express')
-  return { router: express.Router() }
-}
+jest.mock('../lib/prisma', () => {
+  if (hasDatabaseUrl) {
+    return jest.requireActual('../lib/prisma')
+  }
 
-jest.mock('../routes/auth', () => createRouterMock())
-jest.mock('../routes/portfolios', () => createRouterMock())
-jest.mock('../routes/transactions', () => createRouterMock())
-jest.mock('../routes/stocks', () => createRouterMock())
-jest.mock('../routes/news', () => createRouterMock())
-jest.mock('../routes/risk-assessment', () => createRouterMock())
-jest.mock('../routes/realized-pl', () => createRouterMock())
-jest.mock('../routes/holding-advice', () => createRouterMock())
+  const createDelegate = () => ({
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    createMany: jest.fn(),
+    update: jest.fn(),
+    upsert: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+  })
+
+  const prisma = {
+    session: createDelegate(),
+    user: createDelegate(),
+    portfolio: createDelegate(),
+    transaction: createDelegate(),
+    holding: createDelegate(),
+    taxLot: createDelegate(),
+    realizedPL: createDelegate(),
+    strategy: createDelegate(),
+    stockPrice: createDelegate(),
+    indicatorCache: createDelegate(),
+    stockNews: createDelegate(),
+    newsSourceRating: createDelegate(),
+    riskAssessment: createDelegate(),
+    holdingAdvice: createDelegate(),
+    dashboardNewsItem: createDelegate(),
+    syncQuotaLog: createDelegate(),
+    sourceCredibility: createDelegate(),
+    $disconnect: jest.fn(),
+    $connect: jest.fn(),
+  }
+
+  return { prisma, default: prisma }
+})

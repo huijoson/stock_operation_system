@@ -1,8 +1,12 @@
 import * as fc from 'fast-check'
 import { IndicatorCacheService } from '@/services/indicator-cache.service'
-import prisma from '@/lib/db/prisma'
+import prisma from '@/lib/prisma'
 
-describe('IndicatorCacheService - Property-Based Tests', () => {
+// These tests require a real PostgreSQL database. Skip when no DATABASE_URL is
+// set (e.g. local runs without a DB); CI provides a Postgres service.
+const describeDb = process.env.DATABASE_URL ? describe : describe.skip
+
+describeDb('IndicatorCacheService - Property-Based Tests', () => {
   let service: IndicatorCacheService
 
   beforeEach(() => {

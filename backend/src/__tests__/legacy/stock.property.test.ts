@@ -2,31 +2,6 @@ import * as fc from 'fast-check'
 import { PrismaClient } from '../../lib/prisma-client'
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended'
 import Decimal from 'decimal.js'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { it } from 'node:test'
-import { describe } from 'node:test'
-import { afterEach } from 'node:test'
-import { beforeEach } from 'node:test'
 
 /**
  * Property-based tests for StockService
@@ -43,6 +18,12 @@ import { beforeEach } from 'node:test'
 jest.mock('../../lib/prisma-client', () => ({
   ...jest.requireActual('../../lib/prisma-client'),
   PrismaClient: jest.fn(),
+}))
+
+// Mock axios so the Yahoo Finance fallback in searchStocks returns empty
+// instead of hitting the real network (which times out / returns live data).
+jest.mock('axios', () => ({
+  get: jest.fn().mockResolvedValue({ data: { quotes: [] } }),
 }))
 
 let prismaMock: DeepMockProxy<PrismaClient>

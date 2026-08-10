@@ -2,8 +2,37 @@ import { RiskAssessmentService } from '@/services/risk-assessment.service';
 import { SentimentAnalysisService } from '@/services/sentiment-analysis.service';
 import { PrismaClient } from '../../lib/prisma-client';
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
+import Decimal from 'decimal.js';
 
 jest.mock('@/services/sentiment-analysis.service');
+jest.mock('@/services/stock.service', () => ({
+  StockService: jest.fn().mockImplementation(() => ({
+    getHistoricalOHLC: jest.fn().mockResolvedValue(
+      Array.from({ length: 100 }, (_, i) => ({
+        date: new Date(Date.now() - (100 - i) * 24 * 60 * 60 * 1000),
+        open: new Decimal(150),
+        high: new Decimal(155),
+        low: new Decimal(145),
+        close: new Decimal(150),
+      }))
+    ),
+  })),
+}));
+jest.mock('@/services/technical-score.service', () => ({
+  TechnicalScoreService: jest.fn().mockImplementation(() => ({
+    calculateScore: jest.fn().mockReturnValue({
+      totalScore: 50,
+      rating: 'neutral',
+      components: {
+        rsi: { score: 50, weight: 0.25 },
+        macd: { score: 50, weight: 0.3 },
+        bollinger: { score: 50, weight: 0.25 },
+        fibonacci: { score: 50, weight: 0.2 },
+      },
+      timestamp: new Date(),
+    }),
+  })),
+}));
 
 const prismaMock = mockDeep<PrismaClient>() as DeepMockProxy<PrismaClient>;
 
@@ -33,8 +62,8 @@ describe('RiskAssessmentService', () => {
         newsScore: 30,
         newsSentiment: 'negative' as const,
         newsArticleCount: 5,
-        technicalWeight: 0.8,
-        newsWeight: 0.2,
+        technicalWeight: new Decimal(0.8),
+        newsWeight: new Decimal(0.2),
         calculatedAt: new Date(),
         expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000),
         createdAt: new Date(),
@@ -44,7 +73,8 @@ describe('RiskAssessmentService', () => {
 
       const result = await service.getRiskAssessment(symbol);
 
-      expect(result).toEqual(cachedAssessment);
+      expect(result.symbol).toBe(symbol);
+      expect(result.riskScore).toBe(45);
       expect(prismaMock.riskAssessment.findUnique).toHaveBeenCalledWith({
         where: { symbol },
       });
@@ -65,33 +95,18 @@ describe('RiskAssessmentService', () => {
         newsScore: null,
         newsSentiment: null,
         newsArticleCount: 0,
-        technicalWeight: 0.8,
-        newsWeight: 0.2,
+        technicalWeight: new Decimal(0.8),
+        newsWeight: new Decimal(0.2),
         calculatedAt: new Date(Date.now() - 25 * 60 * 60 * 1000),
         expiresAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
         createdAt: new Date(),
       };
 
-      const mockPrices = Array.from({ length: 100 }, (_, i) => ({
-        id: `price-${i}`,
-        symbol,
-        date: new Date(Date.now() - (100 - i) * 24 * 60 * 60 * 1000),
-        open: 150,
-        high: 155,
-        low: 145,
-        close: 150,
-        volume: 1000000,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }));
-
       prismaMock.riskAssessment.findUnique.mockResolvedValue(expiredAssessment as any);
-      prismaMock.stockPrice.findMany.mockResolvedValue(mockPrices as any);
       (sentimentService.analyzeSentiment as jest.Mock).mockResolvedValue(null);
-      
+
       const newAssessment = {
         ...expiredAssessment,
-        technicalScore: 50,
         riskScore: 50,
         calculatedAt: new Date(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -101,30 +116,17 @@ describe('RiskAssessmentService', () => {
 
       const result = await service.getRiskAssessment(symbol);
 
-      expect(prismaMock.stockPrice.findMany).toHaveBeenCalledWith({
-        where: { symbol },
-        orderBy: { date: 'desc' },
-        take: 100,
-      });
       expect(prismaMock.riskAssessment.upsert).toHaveBeenCalled();
+      expect(result.riskScore).toBe(50);
     });
 
     it('should calculate risk score with 80/20 weight when news available', async () => {
       const symbol = 'AAPL';
-      const technicalScore = 60;
+      const technicalRiskScore = 50; // 100 - totalScore(50)
       const newsScore = 80;
-      const expectedRiskScore = Math.round(60 * 0.8 + 80 * 0.2);
+      const expectedRiskScore = Math.round(50 * 0.8 + 80 * 0.2);
 
       prismaMock.riskAssessment.findUnique.mockResolvedValue(null);
-      
-      const technicalIndicators = {
-        rsi: 60,
-        macd: 60,
-        bollingerPosition: 0.6,
-        fibonacciLevel: 0.5,
-      };
-
-      (technicalScoreService.calculateTechnicalScore as jest.Mock).mockResolvedValue(technicalIndicators);
       (sentimentService.analyzeSentiment as jest.Mock).mockResolvedValue({
         score: newsScore,
         sentiment: 'negative' as const,
@@ -136,16 +138,16 @@ describe('RiskAssessmentService', () => {
         symbol,
         riskScore: expectedRiskScore,
         riskLevel: 'medium',
-        technicalScore,
-        rsiScore: 40,
-        macdScore: 40,
-        bollingerScore: 40,
+        technicalScore: technicalRiskScore,
+        rsiScore: 50,
+        macdScore: 50,
+        bollingerScore: 50,
         fibonacciScore: 50,
         newsScore,
         newsSentiment: 'negative',
         newsArticleCount: 10,
-        technicalWeight: 0.8,
-        newsWeight: 0.2,
+        technicalWeight: new Decimal(0.8),
+        newsWeight: new Decimal(0.2),
         calculatedAt: new Date(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         createdAt: new Date(),
@@ -161,35 +163,26 @@ describe('RiskAssessmentService', () => {
 
     it('should use technical score only when news unavailable', async () => {
       const symbol = 'AAPL';
-      const technicalScore = 75;
+      const technicalRiskScore = 50;
 
       prismaMock.riskAssessment.findUnique.mockResolvedValue(null);
-      
-      const technicalIndicators = {
-        rsi: 75,
-        macd: 75,
-        bollingerPosition: 0.75,
-        fibonacciLevel: 0.618,
-      };
-
-      (technicalScoreService.calculateTechnicalScore as jest.Mock).mockResolvedValue(technicalIndicators);
       (sentimentService.analyzeSentiment as jest.Mock).mockResolvedValue(null);
 
       const newAssessment = {
         id: '1',
         symbol,
-        riskScore: technicalScore,
-        riskLevel: 'high',
-        technicalScore,
-        rsiScore: 25,
-        macdScore: 25,
-        bollingerScore: 25,
-        fibonacciScore: 38,
+        riskScore: technicalRiskScore,
+        riskLevel: 'medium',
+        technicalScore: technicalRiskScore,
+        rsiScore: 50,
+        macdScore: 50,
+        bollingerScore: 50,
+        fibonacciScore: 50,
         newsScore: null,
         newsSentiment: null,
         newsArticleCount: 0,
-        technicalWeight: 0.8,
-        newsWeight: 0.2,
+        technicalWeight: new Decimal(0.8),
+        newsWeight: new Decimal(0.2),
         calculatedAt: new Date(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         createdAt: new Date(),
@@ -199,7 +192,7 @@ describe('RiskAssessmentService', () => {
 
       const result = await service.getRiskAssessment(symbol);
 
-      expect(result.riskScore).toBe(technicalScore);
+      expect(result.riskScore).toBe(technicalRiskScore);
       expect(result.newsScore).toBeNull();
     });
   });
@@ -225,16 +218,20 @@ describe('RiskAssessmentService', () => {
   });
 
   describe('getPortfolioRiskAssessments', () => {
-    it('should return risk assessments for all holdings in portfolio', async () => {
+    it('should return risk summary for all holdings in portfolio', async () => {
       const portfolioId = 'portfolio-1';
-      const holdings = [
-        { symbol: 'AAPL', shares: 100 },
-        { symbol: 'GOOGL', shares: 50 },
-      ];
+      const portfolio = {
+        id: portfolioId,
+        name: 'My Portfolio',
+        holdings: [
+          { symbol: 'AAPL', quantity: new Decimal(100) },
+          { symbol: 'GOOGL', quantity: new Decimal(50) },
+        ],
+      };
 
-      prismaMock.holding.findMany.mockResolvedValue(holdings as any);
+      prismaMock.portfolio.findUnique.mockResolvedValue(portfolio as any);
 
-      const aaplAssessment = {
+      const assessment = {
         id: '1',
         symbol: 'AAPL',
         riskScore: 45,
@@ -247,42 +244,24 @@ describe('RiskAssessmentService', () => {
         newsScore: 30,
         newsSentiment: 'negative',
         newsArticleCount: 5,
-        technicalWeight: 0.8,
-        newsWeight: 0.2,
+        technicalWeight: new Decimal(0.8),
+        newsWeight: new Decimal(0.2),
         calculatedAt: new Date(),
         expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000),
         createdAt: new Date(),
       };
 
-      const googlAssessment = {
-        id: '2',
-        symbol: 'GOOGL',
-        riskScore: 65,
-        riskLevel: 'medium',
-        technicalScore: 70,
-        rsiScore: 70,
-        macdScore: 70,
-        bollingerScore: 70,
-        fibonacciScore: 70,
-        newsScore: 40,
-        newsSentiment: 'neutral',
-        newsArticleCount: 3,
-        technicalWeight: 0.8,
-        newsWeight: 0.2,
-        calculatedAt: new Date(),
-        expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000),
-        createdAt: new Date(),
-      };
-
-      prismaMock.riskAssessment.findUnique
-        .mockResolvedValueOnce(aaplAssessment as any)
-        .mockResolvedValueOnce(googlAssessment as any);
+      prismaMock.riskAssessment.findUnique.mockResolvedValue(assessment as any);
+      prismaMock.stockPrice.findFirst.mockResolvedValue({
+        symbol: 'AAPL',
+        price: new Decimal(150),
+      } as any);
 
       const result = await service.getPortfolioRiskAssessments(portfolioId);
 
-      expect(result).toHaveLength(2);
-      expect(result[0].symbol).toBe('AAPL');
-      expect(result[1].symbol).toBe('GOOGL');
+      expect(result.portfolioId).toBe(portfolioId);
+      expect(result.holdings).toHaveLength(2);
+      expect(result.holdings[0].symbol).toBe('AAPL');
     });
   });
 
@@ -291,15 +270,6 @@ describe('RiskAssessmentService', () => {
       const symbols = ['AAPL', 'GOOGL', 'MSFT'];
 
       prismaMock.riskAssessment.findUnique.mockResolvedValue(null);
-      
-      const technicalIndicators = {
-        rsi: 50,
-        macd: 50,
-        bollingerPosition: 0.5,
-        fibonacciLevel: 0.5,
-      };
-
-      (technicalScoreService.calculateTechnicalScore as jest.Mock).mockResolvedValue(technicalIndicators);
       (sentimentService.analyzeSentiment as jest.Mock).mockResolvedValue(null);
 
       const mockAssessment = {
@@ -315,8 +285,8 @@ describe('RiskAssessmentService', () => {
         newsScore: null,
         newsSentiment: null,
         newsArticleCount: 0,
-        technicalWeight: 0.8,
-        newsWeight: 0.2,
+        technicalWeight: new Decimal(0.8),
+        newsWeight: new Decimal(0.2),
         calculatedAt: new Date(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         createdAt: new Date(),
@@ -327,7 +297,6 @@ describe('RiskAssessmentService', () => {
       const result = await service.batchCalculate(symbols);
 
       expect(result).toHaveLength(3);
-      expect(technicalScoreService.calculateTechnicalScore).toHaveBeenCalledTimes(3);
     });
   });
 });

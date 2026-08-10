@@ -2,6 +2,15 @@ import Decimal from 'decimal.js'
 
 jest.mock('../lib/prisma', () => ({}))
 
+jest.mock('../lib/prisma-client', () => {
+  class PrismaClient {
+    constructor() {
+      // no-op: delegates are assigned by the test
+    }
+  }
+  return { PrismaClient }
+})
+
 import { TransactionService } from '../services/transaction.service'
 import { PrismaClient } from '../lib/prisma-client'
 

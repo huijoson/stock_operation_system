@@ -33,7 +33,8 @@ describe('RealizedPLService', () => {
     mockTaxLotService = {
       getAvailableLots: jest.fn(),
       consumeLots: jest.fn(),
-      createLotFromTransaction: jest.fn()
+      createLotFromTransaction: jest.fn(),
+      reduceShares: jest.fn(),
     } as any
 
     service = new RealizedPLService(mockPrisma, mockTaxLotService)
@@ -98,8 +99,8 @@ describe('RealizedPLService', () => {
       expect(result).toHaveLength(1)
       expect(result[0].realizedPL.toString()).toBe('500')
       expect(result[0].holdingPeriod).toBe('SHORT')
-      expect(mockTaxLotService.getAvailableLots).toHaveBeenCalledWith(portfolioId, symbol)
-      expect(mockTaxLotService.consumeLots).toHaveBeenCalled()
+      expect(mockTaxLotService.getAvailableLots).toHaveBeenCalledWith(portfolioId, symbol, sellTransaction.date)
+      expect(mockTaxLotService.reduceShares).toHaveBeenCalled()
     })
 
     it('應正確判斷持有期間（SHORT vs LONG）', async () => {
@@ -282,7 +283,7 @@ describe('RealizedPLService', () => {
 
       await expect(
         service.calculateRealizedPL(sellTransaction as any)
-      ).rejects.toThrow('Insufficient shares')
+      ).rejects.toThrow('無法賣出')
     })
   })
 

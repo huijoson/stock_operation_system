@@ -13,7 +13,7 @@ import { createHash } from 'crypto';
 
 // ── Prisma mock ──────────────────────────────────────────────────────
 
-jest.mock('@/lib/db/prisma', () => ({
+jest.mock('@/lib/prisma', () => ({
   __esModule: true,
   default: {
     syncQuotaLog: {
@@ -57,7 +57,7 @@ import {
   HARD_LIMIT,
   type SyncResult,
 } from '@/services/dashboard-news-sync.service';
-import prisma from '@/lib/db/prisma';
+import prisma from '@/lib/prisma';
 
 // Get typed references to the mock fns
 const mockPrisma = prisma as unknown as {

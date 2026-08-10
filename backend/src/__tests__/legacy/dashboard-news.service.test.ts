@@ -11,7 +11,7 @@
 
 // ── Prisma mock ──────────────────────────────────────────────────────
 
-jest.mock('@/lib/db/prisma', () => ({
+jest.mock('@/lib/prisma', () => ({
   __esModule: true,
   default: {
     dashboardNewsItem: {
@@ -32,7 +32,7 @@ import {
   MIN_LIMIT,
   MAX_LIMIT,
 } from '@/services/dashboard-news.service';
-import prisma from '@/lib/db/prisma';
+import prisma from '@/lib/prisma';
 import type { NewsCategory } from '@/types/news.types';
 
 // Get typed references to the mock fns

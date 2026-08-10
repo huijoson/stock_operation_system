@@ -2,7 +2,11 @@ import * as fc from 'fast-check'
 import Decimal from 'decimal.js'
 import { StrategyService, BacktestResult } from '@/services/strategy.service'
 
-describe('Strategy Service - Property-Based Tests', () => {
+// These tests require a real PostgreSQL database. Skip when no DATABASE_URL is
+// set (e.g. local runs without a DB); CI provides a Postgres service.
+const describeDb = process.env.DATABASE_URL ? describe : describe.skip
+
+describeDb('Strategy Service - Property-Based Tests', () => {
   let service: StrategyService
 
   beforeEach(() => {

@@ -20,6 +20,21 @@ jest.mock('../../lib/prisma-client', () => ({
   PrismaClient: jest.fn(),
 }))
 
+jest.mock('../../services/tax-lot.service', () => ({
+  TaxLotService: jest.fn().mockImplementation(() => ({
+    createFromTransaction: jest.fn().mockResolvedValue(undefined),
+    backfillForSymbol: jest.fn().mockResolvedValue(undefined),
+    getAvailableLots: jest.fn().mockResolvedValue([]),
+    reduceShares: jest.fn().mockResolvedValue(undefined),
+  })),
+}))
+
+jest.mock('../../services/realized-pl.service', () => ({
+  RealizedPLService: jest.fn().mockImplementation(() => ({
+    calculateRealizedPL: jest.fn().mockResolvedValue(undefined),
+  })),
+}))
+
 let prismaMock: DeepMockProxy<PrismaClient>
 
 beforeEach(() => {

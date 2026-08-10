@@ -64,7 +64,7 @@ describe('NewsService', () => {
     });
 
     it('應該從 Finnhub 取得新聞如果快取過期', async () => {
-      (mockPrisma.stockNews.findMany as jest.Mock).mockResolvedValue([]);
+      (mockPrisma.stockNews.findMany as jest.Mock).mockResolvedValueOnce([]);
 
       const finnhubNews = [
         {
