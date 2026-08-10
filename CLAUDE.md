@@ -154,3 +154,17 @@ The directory `src/app/` is a leftover naming convention from the Next.js era, n
 routing; routing is defined in `src/routes.tsx`. Trust `package.json`, `vite.config.ts`, and
 the constitution's Technology Stack section over the copilot/kiro docs when they conflict.
 ```
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as GitHub issues, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles mapped to default labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
